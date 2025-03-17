@@ -46,6 +46,7 @@
                 )))
      stream)))
 
+;; FLAG read this directly from master file. 
 (defun generate-mcp-openapi-spec ()
   "Generate an OpenAPI specification for Claude MCP integration."
   ;; Returns string with API spec suitable for inclusion in claude-desktop-json.conf
@@ -322,3 +323,44 @@
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (initialize-standard-endpoints))
+
+#|
+{
+    "mcpServers": {
+        "weather": {
+            "command": "wsl",
+            "args": [
+                "~/.local/bin/uv",
+                "--directory",
+                "~/garage/weather",
+                "run",
+                "weather.py"
+            ]
+        },
+        "filesystem": {
+            "command": "wsl",
+            "args": [
+                "docker",
+                "run",
+                "-i",
+                "--rm",
+                "--mount", "type=bind,src=/home/dcooper8/gornskew/xfer,dst=/projects/xfer",
+		        "--mount", "type=bind,src=/mnt/c/Users/david/AppData/Roaming/Claude,dst=/projects/Claude",
+                "mcp/filesystem",
+                "/projects"
+            ]
+        },
+        "gendl": {
+            "command": "wsl",
+            "args": ["node", "/home/dcooper8/gornskew/xfer/gendl-mcp/mcp-format-wrapper.js"],
+            "env": {
+                "NODE_ENV": "production",
+                "DEBUG": "*"
+            },
+            "persistent": true,
+            "timeout": 60000
+        }
+    }
+}
+
+|#
