@@ -1,0 +1,261 @@
+dcooper8@doona:~/gornskew/xfer/gendl-mcp$ node ./simulate-claude.js 
+[2025-03-16T23:08:49.995Z] Starting Claude MCP simulation
+[2025-03-16T23:08:49.999Z] Spawning wrapper process: node /home/dcooper8/gornskew/xfer/gendl-mcp/debug-wrapper.js
+[2025-03-16T23:08:50.010Z] Simulation started, waiting for wrapper responses...
+[2025-03-16T23:08:50.073Z] Wrapper stderr: [2025-03-16T23:08:50.069Z] [DEBUG] Environment variables:
+[2025-03-16T23:08:50.075Z] Wrapper stderr: [2025-03-16T23:08:50.072Z] [DEBUG] SHELL=/bin/bash
+[2025-03-16T23:08:50.072Z] [DEBUG] WSL2_GUI_APPS_ENABLED=1
+[2025-03-16T23:08:50.073Z] [DEBUG] WSL_DISTRO_NAME=Ubuntu
+[2025-03-16T23:08:50.073Z] [DEBUG] WT_SESSION=5b612b05-e580-44c0-a3ab-a94d5c1cbb81
+[2025-03-16T23:08:50.073Z] [DEBUG] TERMCAP=
+[2025-03-16T23:08:50.073Z] [DEBUG] INSIDE_EMACS=30.1,comint
+[2025-03-16T23:08:50.073Z] [DEBUG] GITLAB_WBL_TOKEN=glpat-Mo2upZg7pcNHdQsYxyTe
+[2025-03-16T23:08:50.073Z] [DEBUG] EDITOR=emacsclient -t
+[2025-03-16T23:08:50.073Z] [DEBUG] NAME=doona
+[2025-03-16T23:08:50.074Z] [DEBUG] SNAP_EUID=1000
+[2025-03-16T23:08:50.074Z] [DEBUG] PWD=/home/dcooper8/gornskew/xfer/gendl-mcp
+[2025-03-16T23:08:50.074Z] [DEBUG] LOGNAME=dcooper8
+[2025-03-16T23:08:50.074Z] [DEBUG] MOTD_SHOWN=update-motd
+[2025-03-16T23:08:50.074Z] [DEBUG] HOME=/home/dcooper8
+[2025-03-16T23:08:50.074Z] [DEBUG] LANG=C.UTF-8
+[2025-03-16T23:08:50.074Z] [DEBUG] WSL_INTEROP=/run/WSL/6916_interop
+[2025-03-16T23:08:50.075Z] [DEBUG] LS_COLORS=
+[2025-03-16T23:08:50.075Z] Wrapper stderr: [2025-03-16T23:08:50.075Z] [DEBUG] COLUMNS=80
+[2025-03-16T23:08:50.075Z] [DEBUG] EMACS_SNAP_DIR=/snap/emacs/2778
+[2025-03-16T23:08:50.075Z] [DEBUG] WAYLAND_DISPLAY=wayland-0
+[2025-03-16T23:08:50.075Z] [DEBUG] EMACS_SNAP_USER_COMMON=/home/dcooper8/snap/emacs/common
+[2025-03-16T23:08:50.075Z] [DEBUG] SNAP_UID=1000
+[2025-03-16T23:08:50.075Z] [DEBUG] NVM_DIR=/home/dcooper8/.nvm
+[2025-03-16T23:08:50.075Z] [DEBUG] DOCKER_GENDL_CID=none
+[2025-03-16T23:08:50.075Z] [DEBUG] LESSCLOSE=/usr/bin/lesspipe %s %s
+[2025-03-16T23:08:50.075Z] [DEBUG] TERM=dumb
+[2025-03-16T23:08:50.075Z] [DEBUG] LESSOPEN=| /usr/bin/lesspipe %s
+[2025-03-16T23:08:50.075Z] [DEBUG] USER=dcooper8
+[2025-03-16T23:08:50.075Z] [DEBUG] VISUAL=emacsclient -c -a emacs
+[2025-03-16T23:08:50.075Z] [DEBUG] DISPLAY=:0
+[2025-03-16T23:08:50.076Z] Wrapper stderr: [2025-03-16T23:08:50.075Z] [DEBUG] SHLVL=2
+[2025-03-16T23:08:50.075Z] [DEBUG] XDG_RUNTIME_DIR=/run/user/1000/
+[2025-03-16T23:08:50.075Z] [DEBUG] WSLENV=WT_SESSION:WT_PROFILE_ID:
+[2025-03-16T23:08:50.075Z] [DEBUG] XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+[2025-03-16T23:08:50.075Z] [DEBUG] ALTERNATE_EDITOR=
+[2025-03-16T23:08:50.075Z] [DEBUG] PATH=/home/dcooper8/.local/bin:/home/dcooper8/bin:/usr/local/texlive/2024/bin/x86_64-linux/:/snap/bin:/home/dcooper8/.local/bin:/home/dcooper8/bin:/usr/local/texlive/2024/bin/x86_64-linux/:/snap/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/david/apps/acl11.0.64/openssl-bin:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/WireGuard/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Git/usr/bin:/mnt/c/Program Files (x86)/GnuPG/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/WireGuard/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Git/usr/bin:/mnt/c/Program Files (x86)/GnuPG/bin:/mnt/c/Program:/mnt/c/Users/david/AppData/Roaming/Amazon:/mnt/c/Users/david/AppData/Local/Microsoft/WindowsApps:/snap/bin:/snap/emacs/2778/usr/bin
+[2025-03-16T23:08:50.075Z] [DEBUG] DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+[2025-03-16T23:08:50.075Z] [DEBUG] HOSTTYPE=x86_64
+[2025-03-16T23:08:50.076Z] [DEBUG] PULSE_SERVER=unix:/mnt/wslg/PulseServer
+[2025-03-16T23:08:50.076Z] [DEBUG] WT_PROFILE_ID={2c4de342-38b7-51cf-b940-2309a097f518}
+[2025-03-16T23:08:50.076Z] [DEBUG] OLDPWD=/home/dcooper8
+[2025-03-16T23:08:50.076Z] [DEBUG] _=/usr/bin/node
+[2025-03-16T23:08:50.078Z] Wrapper stderr: [2025-03-16T23:08:50.076Z] [DEBUG] NODE_ENV=production
+[2025-03-16T23:08:50.076Z] [DEBUG] DEBUG=*
+[2025-03-16T23:08:50.076Z] [INFO] Starting enhanced debug Gendl MCP wrapper
+[2025-03-16T23:08:50.082Z] Wrapper stderr: [2025-03-16T23:08:50.082Z] [INFO] Debug Gendl MCP wrapper initialized - ready to handle requests
+[2025-03-16T23:08:51.012Z] Sending to wrapper: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.014Z] Wrapper stderr: [2025-03-16T23:08:51.014Z] [INFO] Received input line: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.014Z] Wrapper stderr: [2025-03-16T23:08:51.014Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.015Z] Wrapper stderr: [2025-03-16T23:08:51.014Z] [INFO] Handling initialize request
+[2025-03-16T23:08:51.015Z] Wrapper stderr: [2025-03-16T23:08:51.015Z] [INFO] Making GET request to http://127.0.0.1:9081/mcp/claude/ping
+[2025-03-16T23:08:51.025Z] Wrapper stderr: [2025-03-16T23:08:51.024Z] [INFO] Response status: 200
+[2025-03-16T23:08:51.025Z] Wrapper stderr: [2025-03-16T23:08:51.025Z] [INFO] Response headers: {"date":"Sun, 16 Mar 2025 23:08:51 GMT","connection":"Keep-Alive","keep-alive":"timeout=60","server":"AllegroServe/1.3.75","transfer-encoding":"chunked"}
+[2025-03-16T23:08:51.025Z] Wrapper stderr: [2025-03-16T23:08:51.025Z] [INFO] Response data: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:51.027Z] Wrapper stderr: [2025-03-16T23:08:51.026Z] [INFO] Gendl connection test successful: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:51.027Z] Wrapper stderr: [2025-03-16T23:08:51.027Z] [INFO] Sending response: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"0.1.0","capabilities":{"experimental":{},"prompts":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"tools":{"listChanged":false}},"serverInfo":{"name":"gendl-mcp-debug","version":"1.0.0"}}}
+[2025-03-16T23:08:51.027Z] [INFO] Initialization complete
+[2025-03-16T23:08:51.027Z] Received from wrapper: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"0.1.0","capabilities":{"experimental":{},"prompts":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"tools":{"listChanged":false}},"serverInfo":{"name":"gendl-mcp-debug","version":"1.0.0"}}}
+[2025-03-16T23:08:51.027Z] Initialization successful, sending tools/list request
+[2025-03-16T23:08:52.031Z] Sending to wrapper: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] Wrapper stderr: [2025-03-16T23:08:52.032Z] [INFO] Received input line: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] Wrapper stderr: [2025-03-16T23:08:52.032Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] [INFO] Handling tools/list request
+[2025-03-16T23:08:52.032Z] Wrapper stderr: [2025-03-16T23:08:52.032Z] [INFO] Sending response: {"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"ping_gendl","description":"Check if the Gendl server is available","inputSchema":{"properties":{},"required":[],"type":"object"}}]}}
+[2025-03-16T23:08:52.033Z] Received from wrapper: {"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"ping_gendl","description":"Check if the Gendl server is available","inputSchema":{"properties":{},"required":[],"type":"object"}}]}}
+[2025-03-16T23:08:52.033Z] Tools list successful, sending tool call
+[2025-03-16T23:08:53.036Z] Sending to wrapper: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] Wrapper stderr: [2025-03-16T23:08:53.037Z] [INFO] Received input line: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] Wrapper stderr: [2025-03-16T23:08:53.037Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] Wrapper stderr: [2025-03-16T23:08:53.037Z] [INFO] Handling tool call: ping_gendl
+[2025-03-16T23:08:53.037Z] [INFO] Making GET request to http://127.0.0.1:9081/mcp/claude/ping
+[2025-03-16T23:08:53.040Z] Wrapper stderr: [2025-03-16T23:08:53.040Z] [INFO] Response status: 200
+[2025-03-16T23:08:53.041Z] Wrapper stderr: [2025-03-16T23:08:53.040Z] [INFO] Response headers: {"date":"Sun, 16 Mar 2025 23:08:53 GMT","connection":"Keep-Alive","keep-alive":"timeout=60","server":"AllegroServe/1.3.75","transfer-encoding":"chunked"}
+[2025-03-16T23:08:53.040Z] [INFO] Response data: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:53.041Z] Wrapper stderr: [2025-03-16T23:08:53.041Z] [INFO] Sending response: {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"Gendl MCP server is ready for Claude interaction!"}]}}
+[2025-03-16T23:08:53.041Z] Received from wrapper: {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"Gendl MCP server is ready for Claude interaction!"}]}}
+  C-c C-c[2025-03-16T23:09:25.728Z] Received SIGINT, closing
+dcooper8@doona:~/gornskew/xfer/gendl-mcp$ cat /tmp/simulate-claude.log 
+[2025-03-16T23:07:36.714Z] Starting Claude MCP simulation
+[2025-03-16T23:07:36.718Z] Spawning wrapper process: node /home/dcooper8/gornskew/xfer/gendl-mcp/debug-wrapper.js
+[2025-03-16T23:07:36.724Z] Simulation started, waiting for wrapper responses...
+[2025-03-16T23:07:36.782Z] Wrapper stderr: /home/dcooper8/gornskew/xfer/gendl-mcp/debug-wrapper.js:111
+      const response = {
+            ^
+
+SyntaxError: Identifier 'response' has already been declared
+    at internalCompileFunction (node:internal/vm:73:18)
+    at wrapSafe (node:internal/modules/cjs/loader:1153:20)
+    at Module._compile (node:internal/modules/cjs/loader:1197:27)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1287:10)
+    at Module.load (node:internal/modules/cjs/loader:1091:32)
+    at Module._load (node:internal/modules/cjs/loader:938:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:83:12)
+    at node:internal/main/run_main_module:23:47
+
+Node.js v20.5.1
+[2025-03-16T23:07:36.789Z] Wrapper process exited with code 1
+[2025-03-16T23:08:49.995Z] Starting Claude MCP simulation
+[2025-03-16T23:08:49.999Z] Spawning wrapper process: node /home/dcooper8/gornskew/xfer/gendl-mcp/debug-wrapper.js
+[2025-03-16T23:08:50.010Z] Simulation started, waiting for wrapper responses...
+[2025-03-16T23:08:50.073Z] Wrapper stderr: [2025-03-16T23:08:50.069Z] [DEBUG] Environment variables:
+[2025-03-16T23:08:50.075Z] Wrapper stderr: [2025-03-16T23:08:50.072Z] [DEBUG] SHELL=/bin/bash
+[2025-03-16T23:08:50.072Z] [DEBUG] WSL2_GUI_APPS_ENABLED=1
+[2025-03-16T23:08:50.073Z] [DEBUG] WSL_DISTRO_NAME=Ubuntu
+[2025-03-16T23:08:50.073Z] [DEBUG] WT_SESSION=5b612b05-e580-44c0-a3ab-a94d5c1cbb81
+[2025-03-16T23:08:50.073Z] [DEBUG] TERMCAP=
+[2025-03-16T23:08:50.073Z] [DEBUG] INSIDE_EMACS=30.1,comint
+[2025-03-16T23:08:50.073Z] [DEBUG] GITLAB_WBL_TOKEN=glpat-Mo2upZg7pcNHdQsYxyTe
+[2025-03-16T23:08:50.073Z] [DEBUG] EDITOR=emacsclient -t
+[2025-03-16T23:08:50.073Z] [DEBUG] NAME=doona
+[2025-03-16T23:08:50.074Z] [DEBUG] SNAP_EUID=1000
+[2025-03-16T23:08:50.074Z] [DEBUG] PWD=/home/dcooper8/gornskew/xfer/gendl-mcp
+[2025-03-16T23:08:50.074Z] [DEBUG] LOGNAME=dcooper8
+[2025-03-16T23:08:50.074Z] [DEBUG] MOTD_SHOWN=update-motd
+[2025-03-16T23:08:50.074Z] [DEBUG] HOME=/home/dcooper8
+[2025-03-16T23:08:50.074Z] [DEBUG] LANG=C.UTF-8
+[2025-03-16T23:08:50.074Z] [DEBUG] WSL_INTEROP=/run/WSL/6916_interop
+[2025-03-16T23:08:50.075Z] [DEBUG] LS_COLORS=
+[2025-03-16T23:08:50.075Z] Wrapper stderr: [2025-03-16T23:08:50.075Z] [DEBUG] COLUMNS=80
+[2025-03-16T23:08:50.075Z] [DEBUG] EMACS_SNAP_DIR=/snap/emacs/2778
+[2025-03-16T23:08:50.075Z] [DEBUG] WAYLAND_DISPLAY=wayland-0
+[2025-03-16T23:08:50.075Z] [DEBUG] EMACS_SNAP_USER_COMMON=/home/dcooper8/snap/emacs/common
+[2025-03-16T23:08:50.075Z] [DEBUG] SNAP_UID=1000
+[2025-03-16T23:08:50.075Z] [DEBUG] NVM_DIR=/home/dcooper8/.nvm
+[2025-03-16T23:08:50.075Z] [DEBUG] DOCKER_GENDL_CID=none
+[2025-03-16T23:08:50.075Z] [DEBUG] LESSCLOSE=/usr/bin/lesspipe %s %s
+[2025-03-16T23:08:50.075Z] [DEBUG] TERM=dumb
+[2025-03-16T23:08:50.075Z] [DEBUG] LESSOPEN=| /usr/bin/lesspipe %s
+[2025-03-16T23:08:50.075Z] [DEBUG] USER=dcooper8
+[2025-03-16T23:08:50.075Z] [DEBUG] VISUAL=emacsclient -c -a emacs
+[2025-03-16T23:08:50.075Z] [DEBUG] DISPLAY=:0
+[2025-03-16T23:08:50.076Z] Wrapper stderr: [2025-03-16T23:08:50.075Z] [DEBUG] SHLVL=2
+[2025-03-16T23:08:50.075Z] [DEBUG] XDG_RUNTIME_DIR=/run/user/1000/
+[2025-03-16T23:08:50.075Z] [DEBUG] WSLENV=WT_SESSION:WT_PROFILE_ID:
+[2025-03-16T23:08:50.075Z] [DEBUG] XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+[2025-03-16T23:08:50.075Z] [DEBUG] ALTERNATE_EDITOR=
+[2025-03-16T23:08:50.075Z] [DEBUG] PATH=/home/dcooper8/.local/bin:/home/dcooper8/bin:/usr/local/texlive/2024/bin/x86_64-linux/:/snap/bin:/home/dcooper8/.local/bin:/home/dcooper8/bin:/usr/local/texlive/2024/bin/x86_64-linux/:/snap/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/david/apps/acl11.0.64/openssl-bin:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/WireGuard/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Git/usr/bin:/mnt/c/Program Files (x86)/GnuPG/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/WireGuard/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Git/usr/bin:/mnt/c/Program Files (x86)/GnuPG/bin:/mnt/c/Program:/mnt/c/Users/david/AppData/Roaming/Amazon:/mnt/c/Users/david/AppData/Local/Microsoft/WindowsApps:/snap/bin:/snap/emacs/2778/usr/bin
+[2025-03-16T23:08:50.075Z] [DEBUG] DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+[2025-03-16T23:08:50.075Z] [DEBUG] HOSTTYPE=x86_64
+[2025-03-16T23:08:50.076Z] [DEBUG] PULSE_SERVER=unix:/mnt/wslg/PulseServer
+[2025-03-16T23:08:50.076Z] [DEBUG] WT_PROFILE_ID={2c4de342-38b7-51cf-b940-2309a097f518}
+[2025-03-16T23:08:50.076Z] [DEBUG] OLDPWD=/home/dcooper8
+[2025-03-16T23:08:50.076Z] [DEBUG] _=/usr/bin/node
+[2025-03-16T23:08:50.078Z] Wrapper stderr: [2025-03-16T23:08:50.076Z] [DEBUG] NODE_ENV=production
+[2025-03-16T23:08:50.076Z] [DEBUG] DEBUG=*
+[2025-03-16T23:08:50.076Z] [INFO] Starting enhanced debug Gendl MCP wrapper
+[2025-03-16T23:08:50.082Z] Wrapper stderr: [2025-03-16T23:08:50.082Z] [INFO] Debug Gendl MCP wrapper initialized - ready to handle requests
+[2025-03-16T23:08:51.012Z] Sending to wrapper: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.014Z] Wrapper stderr: [2025-03-16T23:08:51.014Z] [INFO] Received input line: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.014Z] Wrapper stderr: [2025-03-16T23:08:51.014Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.015Z] Wrapper stderr: [2025-03-16T23:08:51.014Z] [INFO] Handling initialize request
+[2025-03-16T23:08:51.015Z] Wrapper stderr: [2025-03-16T23:08:51.015Z] [INFO] Making GET request to http://127.0.0.1:9081/mcp/claude/ping
+[2025-03-16T23:08:51.025Z] Wrapper stderr: [2025-03-16T23:08:51.024Z] [INFO] Response status: 200
+[2025-03-16T23:08:51.025Z] Wrapper stderr: [2025-03-16T23:08:51.025Z] [INFO] Response headers: {"date":"Sun, 16 Mar 2025 23:08:51 GMT","connection":"Keep-Alive","keep-alive":"timeout=60","server":"AllegroServe/1.3.75","transfer-encoding":"chunked"}
+[2025-03-16T23:08:51.025Z] Wrapper stderr: [2025-03-16T23:08:51.025Z] [INFO] Response data: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:51.027Z] Wrapper stderr: [2025-03-16T23:08:51.026Z] [INFO] Gendl connection test successful: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:51.027Z] Wrapper stderr: [2025-03-16T23:08:51.027Z] [INFO] Sending response: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"0.1.0","capabilities":{"experimental":{},"prompts":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"tools":{"listChanged":false}},"serverInfo":{"name":"gendl-mcp-debug","version":"1.0.0"}}}
+[2025-03-16T23:08:51.027Z] [INFO] Initialization complete
+[2025-03-16T23:08:51.027Z] Received from wrapper: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"0.1.0","capabilities":{"experimental":{},"prompts":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"tools":{"listChanged":false}},"serverInfo":{"name":"gendl-mcp-debug","version":"1.0.0"}}}
+[2025-03-16T23:08:51.027Z] Initialization successful, sending tools/list request
+[2025-03-16T23:08:52.031Z] Sending to wrapper: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] Wrapper stderr: [2025-03-16T23:08:52.032Z] [INFO] Received input line: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] Wrapper stderr: [2025-03-16T23:08:52.032Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] [INFO] Handling tools/list request
+[2025-03-16T23:08:52.032Z] Wrapper stderr: [2025-03-16T23:08:52.032Z] [INFO] Sending response: {"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"ping_gendl","description":"Check if the Gendl server is available","inputSchema":{"properties":{},"required":[],"type":"object"}}]}}
+[2025-03-16T23:08:52.033Z] Received from wrapper: {"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"ping_gendl","description":"Check if the Gendl server is available","inputSchema":{"properties":{},"required":[],"type":"object"}}]}}
+[2025-03-16T23:08:52.033Z] Tools list successful, sending tool call
+[2025-03-16T23:08:53.036Z] Sending to wrapper: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] Wrapper stderr: [2025-03-16T23:08:53.037Z] [INFO] Received input line: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] Wrapper stderr: [2025-03-16T23:08:53.037Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] Wrapper stderr: [2025-03-16T23:08:53.037Z] [INFO] Handling tool call: ping_gendl
+[2025-03-16T23:08:53.037Z] [INFO] Making GET request to http://127.0.0.1:9081/mcp/claude/ping
+[2025-03-16T23:08:53.040Z] Wrapper stderr: [2025-03-16T23:08:53.040Z] [INFO] Response status: 200
+[2025-03-16T23:08:53.041Z] Wrapper stderr: [2025-03-16T23:08:53.040Z] [INFO] Response headers: {"date":"Sun, 16 Mar 2025 23:08:53 GMT","connection":"Keep-Alive","keep-alive":"timeout=60","server":"AllegroServe/1.3.75","transfer-encoding":"chunked"}
+[2025-03-16T23:08:53.040Z] [INFO] Response data: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:53.041Z] Wrapper stderr: [2025-03-16T23:08:53.041Z] [INFO] Sending response: {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"Gendl MCP server is ready for Claude interaction!"}]}}
+[2025-03-16T23:08:53.041Z] Received from wrapper: {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"Gendl MCP server is ready for Claude interaction!"}]}}
+[2025-03-16T23:09:25.728Z] Received SIGINT, closing
+dcooper8@doona:~/gornskew/xfer/gendl-mcp$ cat /tmp/gendl-mcp-debug.log 
+
+
+---- STARTING DEBUG LOG AT 2025-03-16T23:08:50.068Z ----
+
+[2025-03-16T23:08:50.069Z] [DEBUG] Environment variables:
+[2025-03-16T23:08:50.072Z] [DEBUG] SHELL=/bin/bash
+[2025-03-16T23:08:50.072Z] [DEBUG] WSL2_GUI_APPS_ENABLED=1
+[2025-03-16T23:08:50.073Z] [DEBUG] WSL_DISTRO_NAME=Ubuntu
+[2025-03-16T23:08:50.073Z] [DEBUG] WT_SESSION=5b612b05-e580-44c0-a3ab-a94d5c1cbb81
+[2025-03-16T23:08:50.073Z] [DEBUG] TERMCAP=
+[2025-03-16T23:08:50.073Z] [DEBUG] INSIDE_EMACS=30.1,comint
+[2025-03-16T23:08:50.073Z] [DEBUG] GITLAB_WBL_TOKEN=glpat-Mo2upZg7pcNHdQsYxyTe
+[2025-03-16T23:08:50.073Z] [DEBUG] EDITOR=emacsclient -t
+[2025-03-16T23:08:50.073Z] [DEBUG] NAME=doona
+[2025-03-16T23:08:50.074Z] [DEBUG] SNAP_EUID=1000
+[2025-03-16T23:08:50.074Z] [DEBUG] PWD=/home/dcooper8/gornskew/xfer/gendl-mcp
+[2025-03-16T23:08:50.074Z] [DEBUG] LOGNAME=dcooper8
+[2025-03-16T23:08:50.074Z] [DEBUG] MOTD_SHOWN=update-motd
+[2025-03-16T23:08:50.074Z] [DEBUG] HOME=/home/dcooper8
+[2025-03-16T23:08:50.074Z] [DEBUG] LANG=C.UTF-8
+[2025-03-16T23:08:50.074Z] [DEBUG] WSL_INTEROP=/run/WSL/6916_interop
+[2025-03-16T23:08:50.075Z] [DEBUG] LS_COLORS=
+[2025-03-16T23:08:50.075Z] [DEBUG] COLUMNS=80
+[2025-03-16T23:08:50.075Z] [DEBUG] EMACS_SNAP_DIR=/snap/emacs/2778
+[2025-03-16T23:08:50.075Z] [DEBUG] WAYLAND_DISPLAY=wayland-0
+[2025-03-16T23:08:50.075Z] [DEBUG] EMACS_SNAP_USER_COMMON=/home/dcooper8/snap/emacs/common
+[2025-03-16T23:08:50.075Z] [DEBUG] SNAP_UID=1000
+[2025-03-16T23:08:50.075Z] [DEBUG] NVM_DIR=/home/dcooper8/.nvm
+[2025-03-16T23:08:50.075Z] [DEBUG] DOCKER_GENDL_CID=none
+[2025-03-16T23:08:50.075Z] [DEBUG] LESSCLOSE=/usr/bin/lesspipe %s %s
+[2025-03-16T23:08:50.075Z] [DEBUG] TERM=dumb
+[2025-03-16T23:08:50.075Z] [DEBUG] LESSOPEN=| /usr/bin/lesspipe %s
+[2025-03-16T23:08:50.075Z] [DEBUG] USER=dcooper8
+[2025-03-16T23:08:50.075Z] [DEBUG] VISUAL=emacsclient -c -a emacs
+[2025-03-16T23:08:50.075Z] [DEBUG] DISPLAY=:0
+[2025-03-16T23:08:50.075Z] [DEBUG] SHLVL=2
+[2025-03-16T23:08:50.075Z] [DEBUG] XDG_RUNTIME_DIR=/run/user/1000/
+[2025-03-16T23:08:50.075Z] [DEBUG] WSLENV=WT_SESSION:WT_PROFILE_ID:
+[2025-03-16T23:08:50.075Z] [DEBUG] XDG_DATA_DIRS=/usr/local/share:/usr/share:/var/lib/snapd/desktop
+[2025-03-16T23:08:50.075Z] [DEBUG] ALTERNATE_EDITOR=
+[2025-03-16T23:08:50.075Z] [DEBUG] PATH=/home/dcooper8/.local/bin:/home/dcooper8/bin:/usr/local/texlive/2024/bin/x86_64-linux/:/snap/bin:/home/dcooper8/.local/bin:/home/dcooper8/bin:/usr/local/texlive/2024/bin/x86_64-linux/:/snap/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Users/david/apps/acl11.0.64/openssl-bin:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/WireGuard/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Git/usr/bin:/mnt/c/Program Files (x86)/GnuPG/bin:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Windows/System32:/mnt/c/Windows:/mnt/c/Windows/System32/wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/WireGuard/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/Git/usr/bin:/mnt/c/Program Files (x86)/GnuPG/bin:/mnt/c/Program:/mnt/c/Users/david/AppData/Roaming/Amazon:/mnt/c/Users/david/AppData/Local/Microsoft/WindowsApps:/snap/bin:/snap/emacs/2778/usr/bin
+[2025-03-16T23:08:50.075Z] [DEBUG] DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus
+[2025-03-16T23:08:50.075Z] [DEBUG] HOSTTYPE=x86_64
+[2025-03-16T23:08:50.076Z] [DEBUG] PULSE_SERVER=unix:/mnt/wslg/PulseServer
+[2025-03-16T23:08:50.076Z] [DEBUG] WT_PROFILE_ID={2c4de342-38b7-51cf-b940-2309a097f518}
+[2025-03-16T23:08:50.076Z] [DEBUG] OLDPWD=/home/dcooper8
+[2025-03-16T23:08:50.076Z] [DEBUG] _=/usr/bin/node
+[2025-03-16T23:08:50.076Z] [DEBUG] NODE_ENV=production
+[2025-03-16T23:08:50.076Z] [DEBUG] DEBUG=*
+[2025-03-16T23:08:50.076Z] [INFO] Starting enhanced debug Gendl MCP wrapper
+[2025-03-16T23:08:50.082Z] [INFO] Debug Gendl MCP wrapper initialized - ready to handle requests
+[2025-03-16T23:08:51.014Z] [INFO] Received input line: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.014Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"0.1.0"}}
+[2025-03-16T23:08:51.014Z] [INFO] Handling initialize request
+[2025-03-16T23:08:51.015Z] [INFO] Making GET request to http://127.0.0.1:9081/mcp/claude/ping
+[2025-03-16T23:08:51.024Z] [INFO] Response status: 200
+[2025-03-16T23:08:51.025Z] [INFO] Response headers: {"date":"Sun, 16 Mar 2025 23:08:51 GMT","connection":"Keep-Alive","keep-alive":"timeout=60","server":"AllegroServe/1.3.75","transfer-encoding":"chunked"}
+[2025-03-16T23:08:51.025Z] [INFO] Response data: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:51.026Z] [INFO] Gendl connection test successful: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:51.027Z] [INFO] Sending response: {"jsonrpc":"2.0","id":1,"result":{"protocolVersion":"0.1.0","capabilities":{"experimental":{},"prompts":{"listChanged":false},"resources":{"subscribe":false,"listChanged":false},"tools":{"listChanged":false}},"serverInfo":{"name":"gendl-mcp-debug","version":"1.0.0"}}}
+[2025-03-16T23:08:51.027Z] [INFO] Initialization complete
+[2025-03-16T23:08:52.032Z] [INFO] Received input line: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":2,"method":"tools/list","params":{}}
+[2025-03-16T23:08:52.032Z] [INFO] Handling tools/list request
+[2025-03-16T23:08:52.032Z] [INFO] Sending response: {"jsonrpc":"2.0","id":2,"result":{"tools":[{"name":"ping_gendl","description":"Check if the Gendl server is available","inputSchema":{"properties":{},"required":[],"type":"object"}}]}}
+[2025-03-16T23:08:53.037Z] [INFO] Received input line: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] [INFO] Parsed request: {"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"ping_gendl","arguments":{}}}
+[2025-03-16T23:08:53.037Z] [INFO] Handling tool call: ping_gendl
+[2025-03-16T23:08:53.037Z] [INFO] Making GET request to http://127.0.0.1:9081/mcp/claude/ping
+[2025-03-16T23:08:53.040Z] [INFO] Response status: 200
+[2025-03-16T23:08:53.040Z] [INFO] Response headers: {"date":"Sun, 16 Mar 2025 23:08:53 GMT","connection":"Keep-Alive","keep-alive":"timeout=60","server":"AllegroServe/1.3.75","transfer-encoding":"chunked"}
+[2025-03-16T23:08:53.040Z] [INFO] Response data: Gendl MCP server is ready for Claude interaction!
+[2025-03-16T23:08:53.041Z] [INFO] Sending response: {"jsonrpc":"2.0","id":3,"result":{"content":[{"type":"text","text":"Gendl MCP server is ready for Claude interaction!"}]}}
+[2025-03-16T23:09:25.728Z] [INFO] Received SIGINT signal - keeping wrapper alive
+[2025-03-16T23:09:25.729Z] [INFO] Received SIGTERM signal - keeping wrapper alive
+[2025-03-16T23:09:25.734Z] [INFO] Wrapper script exiting
+dcooper8@doona:~/gornskew/xfer/gendl-mcp$ 
