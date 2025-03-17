@@ -5,4 +5,4 @@
  :license "Affero Gnu Public License (http://www.gnu.org/licenses/)"
  :serial t :version "20250317" :depends-on (:cl-json) :components
  ((:file "source/package") (:file "source/mcp-endpoints")
-  (:file "source/mcp-lisp-api") (:file "source/mcp-protocol")))
+  (:file "source/functions")))

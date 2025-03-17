@@ -156,15 +156,6 @@ function handleToolsList(request) {
           }
         },
         {
-          name: "list_objects",
-          description: "List all available Gendl objects",
-          inputSchema: {
-            type: "object",
-            properties: {},
-            required: []
-          }
-        },
-        {
           name: "lisp_eval",
           description: "Evaluate Lisp code in the Gendl environment",
           inputSchema: {
@@ -176,46 +167,6 @@ function handleToolsList(request) {
               }
             },
             required: ["code"]
-          }
-        },
-        {
-          name: "make_object",
-          description: "Create a new Gendl object",
-          inputSchema: {
-            type: "object",
-            properties: {
-              type: {
-                type: "string",
-                description: "The type of Gendl object to create"
-              },
-              parameters: {
-                type: "object",
-                description: "Parameters for the object creation"
-              }
-            },
-            required: ["type"]
-          }
-        },
-        {
-          name: "send_message",
-          description: "Send a message to a Gendl object",
-          inputSchema: {
-            type: "object",
-            properties: {
-              objectId: {
-                type: "string",
-                description: "ID of the object to send the message to"
-              },
-              message: {
-                type: "string",
-                description: "The message to send to the object"
-              },
-              args: {
-                type: "object",
-                description: "Optional arguments for the message"
-              }
-            },
-            required: ["objectId", "message"]
           }
         }
       ]
@@ -294,61 +245,6 @@ function handleToolCall(request) {
         });
       break;
       
-    case 'list_objects':
-      makeGendlRequest(`${GENDL_BASE_PATH}/objects`)
-        .then(data => {
-          try {
-            // Format as text for better display
-            const jsonData = JSON.parse(data);
-            let resultText = "Available Gendl objects:\n";
-            
-            if (jsonData && Array.isArray(jsonData)) {
-              if (jsonData.length === 0) {
-                resultText += "No objects found.";
-              } else {
-                jsonData.forEach((obj, index) => {
-                  resultText += `${index + 1}. ${obj.id} (${obj.type})\n`;
-                });
-              }
-            } else {
-              resultText += "Unexpected response format: " + JSON.stringify(jsonData);
-            }
-            
-            const response = {
-              jsonrpc: '2.0',
-              id: request.id,
-              result: {
-                content: [
-                  {
-                    type: 'text',
-                    text: resultText
-                  }
-                ]
-              }
-            };
-            sendResponse(response);
-          } catch (e) {
-            const response = {
-              jsonrpc: '2.0',
-              id: request.id,
-              result: {
-                content: [
-                  {
-                    type: 'text',
-                    text: "Error parsing objects list: " + data.toString()
-                  }
-                ]
-              }
-            };
-            sendResponse(response);
-          }
-        })
-        .catch(error => {
-          log(`Error calling list_objects: ${error.message}`);
-          sendErrorResponse(request, -32603, `Error calling tool: ${error.message}`);
-        });
-      break;
-      
     case 'lisp_eval':
       if (!args.code) {
         sendErrorResponse(request, -32602, "Invalid params: missing code parameter");
@@ -408,118 +304,6 @@ function handleToolCall(request) {
         .catch(error => {
           log(`Error calling lisp_eval: ${error.message}`);
           sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
-        });
-      break;
-      
-    case 'make_object':
-      if (!args.type) {
-        sendErrorResponse(request, -32602, "Invalid params: missing type parameter");
-        return;
-      }
-      
-      makeGendlRequest(`${GENDL_BASE_PATH}/make-object`, 'POST', JSON.stringify(args))
-        .then(data => {
-          try {
-            // Process make_object response as text
-            const jsonData = JSON.parse(data);
-            let resultText = "";
-            
-            if (jsonData.success) {
-              resultText = `Successfully created ${args.type} object with ID: ${jsonData.id}`;
-            } else {
-              resultText = `Failed to create ${args.type} object: ${jsonData.error || "Unknown error"}`;
-            }
-            
-            const response = {
-              jsonrpc: '2.0',
-              id: request.id,
-              result: {
-                content: [
-                  {
-                    type: 'text',
-                    text: resultText
-                  }
-                ]
-              }
-            };
-            sendResponse(response);
-          } catch (e) {
-            const response = {
-              jsonrpc: '2.0',
-              id: request.id,
-              result: {
-                content: [
-                  {
-                    type: 'text',
-                    text: "Raw response: " + data.toString()
-                  }
-                ]
-              }
-            };
-            sendResponse(response);
-          }
-        })
-        .catch(error => {
-          log(`Error calling make_object: ${error.message}`);
-          sendErrorResponse(request, -32603, `Error calling tool: ${error.message}`);
-        });
-      break;
-      
-    case 'send_message':
-      if (!args.objectId || !args.message) {
-        sendErrorResponse(request, -32602, "Invalid params: missing objectId or message");
-        return;
-      }
-      
-      const path = `${GENDL_BASE_PATH}/theo?object=${args.objectId}&message=${args.message}`;
-      const method = args.args ? 'POST' : 'GET';
-      const body = args.args ? JSON.stringify(args.args) : null;
-      
-      makeGendlRequest(path, method, body)
-        .then(data => {
-          try {
-            // Process send_message response as text
-            const jsonData = JSON.parse(data);
-            let resultText = "";
-            
-            if (jsonData.success) {
-              resultText = `Message "${args.message}" sent to object ${args.objectId}\nResult: ${jsonData.result}`;
-            } else {
-              resultText = `Failed to send message to ${args.objectId}: ${jsonData.error || "Unknown error"}`;
-            }
-            
-            const response = {
-              jsonrpc: '2.0',
-              id: request.id,
-              result: {
-                content: [
-                  {
-                    type: 'text',
-                    text: resultText
-                  }
-                ]
-              }
-            };
-            sendResponse(response);
-          } catch (e) {
-            const response = {
-              jsonrpc: '2.0',
-              id: request.id,
-              result: {
-                content: [
-                  {
-                    type: 'text',
-                    text: "Raw response: " + data.toString()
-                  }
-                ]
-              }
-            };
-            sendResponse(response);
-          }
-        })
-        .catch(error => {
-          log(`Error calling send_message: ${error.message}`);
-          sendErrorResponse(request, -32603, `Error calling tool: ${error.message}`);
         });
       break;
       
