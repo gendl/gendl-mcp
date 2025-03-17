@@ -8,9 +8,18 @@
   :documentation "A simple house model"
   
   :input-slots
-  ((width 10.0 :documentation "Width of the house in meters")
-   (length 12.0 :documentation "Length of the house in meters")
-   (height 8.0 :documentation "Height of the house in meters")
+  (
+
+   ;;
+   ;; NOTE the following is correct comment in Gendl.
+   ;; 
+   ("Number. Width of the house in meters" width 10.0)
+   ("Number. Length of the house in meters" length 12.0)
+
+   ;;
+   ;; FLAG The following should be re-documented in correct manner. 
+   ;;
+   ("Height of the house in meters" height 8.0)
    (roof-height 3.0 :documentation "Height of the roof peak above the house")
    (door-width 1.0 :documentation "Width of the front door")
    (door-height 2.1 :documentation "Height of the front door")
@@ -19,6 +28,9 @@
    (window-count 4 :documentation "Number of windows"))
   
   :computed-slots
+  ;;
+  ;; FLAG - same thing with documentation for these. 
+  ;;
   ((volume (* (the width) (the length) (the height))
            :documentation "Volume of the main house structure in cubic meters")
    (total-height (+ (the height) (the roof-height))
@@ -46,7 +58,11 @@
           :height (the height)
           :display-controls (list :color :cornsilk
                                  :transparency 0.2))
-   
+
+   ;;
+   ;; FLAG -- cone-frustrum doesn't exist, let's keep simple
+   ;; until i share you the whole existing Gendl primitives library. 
+   ;;
    (roof :type 'cone-frustum
          :bottom-radius (/ (sqrt (+ (expt (the width) 2)
                                    (expt (the length) 2)))

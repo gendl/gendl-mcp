@@ -325,6 +325,7 @@
   (initialize-standard-endpoints))
 
 #|
+
 {
     "mcpServers": {
         "weather": {
@@ -337,6 +338,7 @@
                 "weather.py"
             ]
         },
+	
         "filesystem": {
             "command": "wsl",
             "args": [
@@ -345,11 +347,13 @@
                 "-i",
                 "--rm",
                 "--mount", "type=bind,src=/home/dcooper8/gornskew/xfer,dst=/projects/xfer",
-		        "--mount", "type=bind,src=/mnt/c/Users/david/AppData/Roaming/Claude,dst=/projects/Claude",
-                "mcp/filesystem",
-                "/projects"
-            ]
+		"--mount", "type=bind,src=/mnt/c/Users/david/AppData/Roaming/Claude,dst=/projects/Claude",
+		"--mount", "type=bind,src=/home/dcooper8/genworks/training,dst=/projects/gornschool-training",
+		"mcp/filesystem",
+		"/projects"
+	    ]
         },
+	
         "gendl": {
             "command": "wsl",
             "args": ["node", "/home/dcooper8/gornskew/xfer/gendl-mcp/mcp-format-wrapper.js"],
@@ -362,5 +366,6 @@
         }
     }
 }
+
 
 |#
