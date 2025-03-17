@@ -8,7 +8,7 @@
 (defun generate-mcp-tool-description ()
   "Generate a tool description for Claude MCP integration."
   ;; Generate JSON tool descriptions in the format expected by MCP
-  (with-output-to-string (stream)
+  (with-output-to-string (ss)
     (json:encode-json
      `((:tools .
                ,(vector
@@ -49,8 +49,8 @@
                                             ("description" . "The message to send to the object")))
                                ("args" . (("type" . "object")
                                          ("description" . "Optional arguments for the message"))))
-                  :required '("objectId" "message"))))))
-    stream))
+                  :required '("objectId" "message"))))) ss)))
+
 
 (defun make-tool-def (&key name description properties required)
   "Helper function to create a consistent tool definition structure."

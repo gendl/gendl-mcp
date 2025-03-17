@@ -140,40 +140,32 @@ function handleInitialize(request) {
 function handleToolsList(request) {
   log('Handling tools/list request');
   
-  // Strict format for tools list
-  const response = {
-    jsonrpc: '2.0',
-    id: request.id,
-    result: {
-      tools: [
-        {
-          name: "ping_gendl",
-          description: "Check if the Gendl server is available",
-          inputSchema: {
-            type: "object",
-            properties: {},
-            required: []
-          }
-        },
-        {
-          name: "lisp_eval",
-          description: "Evaluate Lisp code in the Gendl environment",
-          inputSchema: {
-            type: "object",
-            properties: {
-              code: {
-                type: "string",
-                description: "Lisp code to evaluate"
-              }
-            },
-            required: ["code"]
-          }
-        }
-      ]
-    }
-  };
-  
-  sendResponse(response);
+  // Fetch tools list from Gendl server endpoint
+  makeGendlRequest(`${GENDL_BASE_PATH}/tools/list`)
+    .then(data => {
+      try {
+        // Parse the response from Gendl
+        const toolsData = JSON.parse(data);
+        log(`Successfully retrieved tools from server`);
+        
+        // Create response with the tools list from Gendl
+        const response = {
+          jsonrpc: '2.0',
+          id: request.id,
+          result: toolsData
+        };
+        
+        sendResponse(response);
+      } catch (error) {
+        log(`Error parsing tools list: ${error.message}`);
+        log(`Raw response from server: ${data}`);
+        sendErrorResponse(request, -32603, `Error parsing tools list: ${error.message}`);
+      }
+    })
+    .catch(error => {
+      log(`Error fetching tools list: ${error.message}`);
+      sendErrorResponse(request, -32603, `Error fetching tools list: ${error.message}`);
+    });
 }
 
 // Handle resources list requests
