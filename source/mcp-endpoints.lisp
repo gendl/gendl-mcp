@@ -13,7 +13,7 @@
    
       ;; Basic ping endpoint for alive test
       (publish
-       :path "/mcp/claude/ping"
+       :path "/mcp/ping-gendl"
        :server server
        :function
        #'(lambda(req ent)

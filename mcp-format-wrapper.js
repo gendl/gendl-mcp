@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
 /*
- * mcp-format-wrapper-fixed.js
+ * mcp-format-wrapper.js
  * 
- * Modified version with improved handling for Gendl API responses
+ * Wrapper script for Gendl MCP integration with improved dynamic tool handling
  */
 
 const http = require('http');
@@ -40,7 +40,10 @@ const log = (message) => {
   }
 };
 
-log('Starting Gendl MCP wrapper with improved handling');
+log('Starting Gendl MCP wrapper with dynamic tool handling');
+
+// Cache for tools definition to avoid repeated requests
+let toolsCache = null;
 
 // Create readline interface for stdin/stdout communication
 let rl = readline.createInterface({
@@ -56,28 +59,30 @@ rl.on('line', (line) => {
   try {
     const request = JSON.parse(line);
     
-    if (request.method === 'initialize') {
-      // Handle MCP initialization
-      handleInitialize(request);
-    } else if (request.method === 'tools/call') {
-      // Handle tool calls
-      handleToolCall(request);
-    } else if (request.method === 'tools/list') {
-      // Handle tools list request
-      handleToolsList(request);
-    } else if (request.method === 'resources/list') {
-      // Handle resources list request
-      handleResourcesList(request);
-    } else if (request.method === 'prompts/list') {
-      // Handle prompts list request
-      handlePromptsList(request);
-    } else if (request.method === 'notifications/initialized') {
-      // Just acknowledge notification, no response needed
-      log('Received initialization notification');
-    } else {
-      // Send method not supported error for any other method
-      log(`Unsupported method: ${request.method}`);
-      sendErrorResponse(request, -32601, `Method not supported: ${request.method}`);
+    switch (request.method) {
+      case 'initialize':
+        handleInitialize(request);
+        break;
+      case 'tools/call':
+        handleToolCall(request);
+        break;
+      case 'tools/list':
+        handleToolsList(request);
+        break;
+      case 'resources/list':
+        sendStandardResponse(request, { resources: [] });
+        break;
+      case 'prompts/list':
+        sendStandardResponse(request, { prompts: [] });
+        break;
+      case 'notifications/initialized':
+        // Just acknowledge notification, no response needed
+        log('Received initialization notification');
+        break;
+      default:
+        // Send method not supported error for any other method
+        log(`Unsupported method: ${request.method}`);
+        sendErrorResponse(request, -32601, `Method not supported: ${request.method}`);
     }
   } catch (error) {
     log(`Error processing request: ${error.message}`);
@@ -96,9 +101,12 @@ rl.on('line', (line) => {
 function handleInitialize(request) {
   log('Handling initialize request');
   
-  // Test connection to Gendl server
-  testGendlConnection()
-    .then((connectionResponse) => {
+  // Test connection to Gendl server and fetch tools list to cache
+  Promise.all([
+    testGendlConnection(),
+    fetchAndCacheTools()
+  ])
+    .then(([connectionResponse, _]) => {
       log(`Gendl connection test successful: ${connectionResponse}`);
       
       // Send successful initialization response with strict adherence to MCP format
@@ -136,31 +144,30 @@ function handleInitialize(request) {
     });
 }
 
+// Fetch and cache the tools definition
+async function fetchAndCacheTools() {
+  if (toolsCache) {
+    return toolsCache;
+  }
+  
+  try {
+    const data = await makeGendlRequest(`${GENDL_BASE_PATH}/tools/list`);
+    toolsCache = JSON.parse(data);
+    log(`Successfully cached ${toolsCache.tools ? toolsCache.tools.length : 0} tools`);
+    return toolsCache;
+  } catch (error) {
+    log(`Error fetching tools list: ${error.message}`);
+    throw error;
+  }
+}
+
 // Handle tool list requests
 function handleToolsList(request) {
   log('Handling tools/list request');
   
-  // Fetch tools list from Gendl server endpoint
-  makeGendlRequest(`${GENDL_BASE_PATH}/tools/list`)
-    .then(data => {
-      try {
-        // Parse the response from Gendl
-        const toolsData = JSON.parse(data);
-        log(`Successfully retrieved tools from server`);
-        
-        // Create response with the tools list from Gendl
-        const response = {
-          jsonrpc: '2.0',
-          id: request.id,
-          result: toolsData
-        };
-        
-        sendResponse(response);
-      } catch (error) {
-        log(`Error parsing tools list: ${error.message}`);
-        log(`Raw response from server: ${data}`);
-        sendErrorResponse(request, -32603, `Error parsing tools list: ${error.message}`);
-      }
+  fetchAndCacheTools()
+    .then(toolsData => {
+      sendStandardResponse(request, toolsData);
     })
     .catch(error => {
       log(`Error fetching tools list: ${error.message}`);
@@ -168,40 +175,8 @@ function handleToolsList(request) {
     });
 }
 
-// Handle resources list requests
-function handleResourcesList(request) {
-  log('Handling resources/list request');
-  
-  // Strict format for resources list
-  const response = {
-    jsonrpc: '2.0',
-    id: request.id,
-    result: {
-      resources: []
-    }
-  };
-  
-  sendResponse(response);
-}
-
-// Handle prompts list requests
-function handlePromptsList(request) {
-  log('Handling prompts/list request');
-  
-  // Strict format for prompts list
-  const response = {
-    jsonrpc: '2.0',
-    id: request.id,
-    result: {
-      prompts: []
-    }
-  };
-  
-  sendResponse(response);
-}
-
-// Handle tool calls
-function handleToolCall(request) {
+// Handle tool calls with dynamic tool resolution
+async function handleToolCall(request) {
   const toolName = request.params?.name;
   const args = request.params?.arguments || {};
   
@@ -212,97 +187,107 @@ function handleToolCall(request) {
     return;
   }
   
-  // Map tool names to Gendl HTTP endpoints
-  switch (toolName) {
-    case 'ping_gendl':
-      makeGendlRequest(`${GENDL_BASE_PATH}/claude/ping`)
-        .then(data => {
-          const response = {
-            jsonrpc: '2.0',
-            id: request.id,
-            result: {
-              content: [
-                {
-                  type: 'text',
-                  text: "Gendl MCP server is ready for Claude interaction!"
-                }
-              ]
-            }
-          };
-          sendResponse(response);
-        })
-        .catch(error => {
-          log(`Error calling ping_gendl: ${error.message}`);
-          sendErrorResponse(request, -32603, `Error calling tool: ${error.message}`);
-        });
-      break;
-      
-    case 'lisp_eval':
-      if (!args.code) {
-        sendErrorResponse(request, -32602, "Invalid params: missing code parameter");
-        return;
-      }
-      
-      makeGendlRequest(`${GENDL_BASE_PATH}/lisp-eval`, 'POST', JSON.stringify({ code: args.code }))
-        .then(data => {
-          try {
-            // Parse the response from Gendl
-            const jsonData = JSON.parse(data);
-            
-            // Check if we have a success or error
-            if (jsonData.success) {
-              // Success response - result field contains the result from Lisp
-              const resultText = `Result: ${jsonData.result}`;
-              
-              const response = {
-                jsonrpc: '2.0',
-                id: request.id,
-                result: {
-                  content: [
-                    {
-                      type: 'text',
-                      text: resultText
-                    }
-                  ]
-                }
-              };
-              sendResponse(response);
-            } else {
-              // Error response - error field contains the error message
-              sendErrorResponse(
-                request, 
-                -32603, 
-                `Error executing code: ${jsonData.error || "Unknown Lisp error"}`
-              );
-            }
-          } catch (e) {
-            // If we can't parse the JSON, return the raw response
-            log(`Error parsing Lisp eval response: ${e.message}`);
-            const response = {
-              jsonrpc: '2.0',
-              id: request.id,
-              result: {
-                content: [
-                  {
-                    type: 'text',
-                    text: "Raw response: " + data.toString()
-                  }
-                ]
-              }
-            };
-            sendResponse(response);
-          }
-        })
-        .catch(error => {
-          log(`Error calling lisp_eval: ${error.message}`);
-          sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
-        });
-      break;
-      
-    default:
+  try {
+    // Ensure we have the tools definition
+    const toolsDefinition = await fetchAndCacheTools();
+    
+    // Find the tool definition to see if it exists
+    const tool = toolsDefinition.tools.find(t => t.name === toolName);
+    
+    if (!tool) {
       log(`Unknown tool: ${toolName}`);
       sendErrorResponse(request, -32601, `Unknown tool: ${toolName}`);
+      return;
+    }
+    
+    // Validate required parameters
+    const requiredParams = tool.inputSchema?.required || [];
+    const missingParams = requiredParams.filter(param => !(param in args));
+    
+    if (missingParams.length > 0) {
+      sendErrorResponse(
+        request, 
+        -32602, 
+        `Missing required parameters: ${missingParams.join(', ')}`
+      );
+      return;
+    }
+    
+    // Convert tool name to endpoint path (convert underscores to hyphens)
+    const endpointPath = `${GENDL_BASE_PATH}/${toolName.replace(/_/g, '-')}`;
+    
+    // Choose HTTP method based on whether we have args or not
+    const method = Object.keys(args).length > 0 ? 'POST' : 'GET';
+    const body = Object.keys(args).length > 0 ? JSON.stringify(args) : null;
+    
+    log(`Calling Gendl endpoint: ${endpointPath} with method ${method}`);
+    
+    const responseData = await makeGendlRequest(endpointPath, method, body);
+    
+    // Process the response based on the tool type
+    handleToolResponse(request, toolName, responseData);
+  } catch (error) {
+    log(`Error in tool call: ${error.message}`);
+    sendErrorResponse(request, -32603, `Error calling tool: ${error.message}`);
   }
+}
+
+// Process tool responses based on tool type
+function handleToolResponse(request, toolName, responseData) {
+  try {
+    // Try to parse as JSON first
+    const jsonData = JSON.parse(responseData);
+    
+    // For lisp_eval and similar tools that return success/error status
+    if ('success' in jsonData) {
+      if (jsonData.success) {
+        // Success response
+        const responseText = `Result: ${jsonData.result}`;
+        sendTextResponse(request, responseText);
+      } else {
+        // Error from the tool
+        sendErrorResponse(
+          request, 
+          -32603, 
+          `Error executing ${toolName}: ${jsonData.error || "Unknown error"}`
+        );
+      }
+    } else {
+      // For other JSON responses, return as formatted text
+      sendTextResponse(request, `${JSON.stringify(jsonData, null, 2)}`);
+    }
+  } catch (e) {
+    // Not JSON, treat as plain text
+    log(`Response is not JSON, treating as text: ${e.message}`);
+    sendTextResponse(request, responseData.toString());
+  }
+}
+
+// Standard text response format
+function sendTextResponse(request, text) {
+  const response = {
+    jsonrpc: '2.0',
+    id: request.id,
+    result: {
+      content: [
+        {
+          type: 'text',
+          text: text
+        }
+      ]
+    }
+  };
+  sendResponse(response);
+}
+
+// Standard response for simple data
+function sendStandardResponse(request, data) {
+  const response = {
+    jsonrpc: '2.0',
+    id: request.id,
+    result: data
+  };
+  sendResponse(response);
 }
 
 // Helper to make HTTP requests to Gendl server
@@ -334,7 +319,7 @@ function makeGendlRequest(path, method = 'GET', body = null) {
       
       res.on('end', () => {
         log(`Response status: ${res.statusCode}`);
-        log(`Response data: ${responseData}`);
+        log(`Response data: ${responseData.substring(0, 500)}${responseData.length > 500 ? '...' : ''}`);
         if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(responseData);
         } else {
