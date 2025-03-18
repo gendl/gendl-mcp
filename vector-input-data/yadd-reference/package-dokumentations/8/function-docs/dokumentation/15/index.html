@@ -1,0 +1,10 @@
+<html><head><title>Macro: GWL:WITH-CL-WHO</title></head><body><p><a href="../../../index.html">&lt;-Back</a></p><h2>Macro: Gwl:With-Cl-Who</h2><p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td ALIGN="LEFT"><b>WITH-CL-WHO</b> <i>form</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Sets up body to be evaluated with cl-who and output the resulting string to the default *stream*
+Note that the args are spliced into cl-who:with-html-output after *stream* nil, so for example you can do <pre>
+    (with-cl-who (:indent t) ...)
+</pre>
+and it will expand into:
+<pre>
+    (with-html-output (*stream* nil :indent t) ...)
+</pre>
+.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr></table></p><p><a href="../../../index.html">&lt;-Back</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></body></html>

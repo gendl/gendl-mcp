@@ -1,0 +1,8 @@
+(in-package :quiz)
+
+(define-object vocab-reader ()
+  :input-slots ((csv-pathname (merge-pathnames "asanas.csv" *vocab-pathname*)))
+  :computed-slots ((pairs (remove nil (fare-csv:read-csv-file (the csv-pathname))))))
+
+			       
+

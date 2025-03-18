@@ -1,0 +1,35 @@
+<html><head><title>Function: CL-LITE</title></head><body><p><a href="../../../index.html">&lt;-Back</a></p><h2>Function: Cl-Lite</h2><p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td ALIGN="LEFT"><b>CL-LITE</b></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>Traverses pathname in an alphabetical depth-first order, compiling
+and loading any lisp files found in source/ subdirectories. A lisp
+source file will only be compiled if it is newer than the
+corresponding compiled fasl binary file, or if the corresponding
+compiled fasl binary file does not exist. A bin/source/ will be
+created, as a sibling to each source/ subdirectory, to contain the
+compiled fasl files.
+If the :create-fasl? keyword argument is specified as non-nil, a
+concatenated fasl file, named after the last directory component of
+pathname, will be created in the (glisp:temporary-directory).
+[Note: this new documentation still needs proper formatting]
+If the :create-asd-file? keyword argument is specified as non-nil,
+a .asd file suitable for use with ASDF will be emitted into the
+directory indicated by the pathname argument. Note that
+</p><dl><dt><i>asdf:</i></dt><dd>(Another System Definition Utility), possibly with help of 
+Quicklisp, is (as of 2013-03-12) the recommended way for handling
+Common Lisp system modules. As of version 2.31.9, ASDF is also
+capable of generating fasl "bundle" files as with
+the :create-fasl? argument to cl-lite.
+For the :author, :version, and :license arguments in the generated
+.asd file, the files author.isc, version.isc, and license.isc,
+respectively, are consulted, if they exist. They are searched for
+first in the codebase toplevel directory (the pathname argument to
+this function), then in the (user-homedir-pathname). The version
+defaults to the current ISO-8601 date without dashes,
+e.g. "20130312".
+Please see the Genworks Documentation for an overview of Quicklisp
+and ASDF, and see the Quicklisp and ASDF project documentation for
+detailed information. The source code for Quicklisp and ASDF should
+also be included with your Gendl distribution, and these are
+typically loaded by default into the development environment.
+For additional inputs to the cl-lite function, please see
+codebase-directory-node object for additional inputs (which can be
+given as keyword args to this function).
+</dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr></table></p><p><a href="../../../index.html">&lt;-Back</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></body></html>

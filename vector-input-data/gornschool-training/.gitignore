@@ -1,0 +1,8 @@
+*.*x64fsl
+*.dx64fsl
+*.fasl
+*~
+out
+README.html
+system-index.txt
+tailwind/node_modules

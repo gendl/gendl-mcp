@@ -1,0 +1,389 @@
+(in-package :cl-user)
+
+(load (compile-file (merge-pathnames "gwl-patches.lisp" (glisp:source-pathname))))
+
+(in-package :gwl-user)
+
+(defvar *t6-home* (merge-pathnames "../" (make-pathname :name nil :type nil :defaults (glisp:source-pathname))))
+(defvar *pages-to-publish* nil)
+(defvar *css-published-path* nil)
+(defvar *images-published-prefix* nil)
+
+(setq *developing?* t)
+
+(define-object sample-page (base-html-page)
+  :computed-slots
+  ((title "sample page")
+   (body "My sample page")))
+(pushnew 'sample-page *pages-to-publish*)
+
+
+(define-object sample-html-page (base-html-page)
+  :computed-slots
+  ((title "sample html page")
+   (body (with-lhtml-string ()
+           "My sample html page"
+           (:table
+               (:tr (:th "Day") (:th "Number"))
+             (:tr (:td "Sunday") (:td "1"))
+             (:tr (:td "Monday") (:td "2"))
+             (:tr (:td "Tuesday") (:td "3"))
+             (:tr (:td "Wednesday") (:td "4"))
+             (:tr (:td "Thursday") (:td "5"))
+             (:tr (:td "Friday") (:td "6"))
+             (:tr (:td "Saturday") (:td "7")))))))
+(pushnew 'sample-html-page *pages-to-publish*)
+
+(define-object sample-inline-styled-html-page (base-html-page)
+  :computed-slots
+  ((title "sample inline styled html page")
+   (body (with-lhtml-string ()
+           "My sample inline styled html page"
+           (:table :style "border-style: solid;"
+               (:tr (:th "Day") (:th "Number"))
+             (:tr (:td "Sunday") (:td "1"))
+             (:tr (:td "Monday") (:td "2"))
+             (:tr (:td "Tuesday") (:td "3"))
+             (:tr (:td "Wednesday") (:td "4"))
+             (:tr (:td "Thursday") (:td "5"))
+             (:tr (:td "Friday") (:td "6"))
+             (:tr (:td "Saturday") (:td "7")))))))
+(pushnew 'sample-inline-styled-html-page *pages-to-publish*)
+
+(define-object sample-external-styled-html-page (base-html-page)
+  :computed-slots
+  ((css-published-path *css-published-path*)
+   (additional-header-content (with-lhtml-string ()
+                                ((:link :rel "stylesheet" :href (the css-published-path)))))
+   (title "sample external styled html page")
+   (body (with-lhtml-string ()
+           "My sample external styled html page"
+           (:table 
+               (:tr (:th "Day") (:th "Number"))
+             (:tr (:td "Sunday") (:td "1"))
+             (:tr (:td "Monday") (:td "2"))
+             (:tr (:td "Tuesday") (:td "3"))
+             (:tr (:td "Wednesday") (:td "4"))
+             (:tr (:td "Thursday") (:td "5"))
+             (:tr (:td "Friday") (:td "6"))
+             (:tr (:td "Saturday") (:td "7")))))))
+(pushnew 'sample-external-styled-html-page *pages-to-publish*)
+
+(define-object sample-image-html-page (base-html-page)
+  :computed-slots
+  ((css-published-path *css-published-path*)
+   (images-published-prefix *images-published-prefix*)
+   (additional-header-content (with-lhtml-string ()
+                                (:link :rel "stylesheet" :href (the css-published-path))))
+   (body (with-lhtml-string ()
+           (:p "Gorn Struggle")
+           (:img :src (string-append (the images-published-prefix) "/star-trek-gorn.webp"))))))
+(pushnew 'sample-image-html-page *pages-to-publish*)
+
+
+(define-object sample-image-development-links (base-html-page)
+
+  :computed-slots
+  ((css-published-path *css-published-path*)
+   (images-published-prefix *images-published-prefix*)
+   (additional-header-content (with-lhtml-string ()
+                                (:link :rel "stylesheet" :href (the css-published-path))))
+   (body (with-lhtml-string ()
+           (when *developing?* (str (the development-links)))
+           (:p "Gorn Struggle")
+           (:img :src (string-append (the images-published-prefix) "/star-trek-gorn.webp"))))))
+(pushnew 'sample-image-development-links *pages-to-publish*)
+
+
+#|
+
+GWL-USER> (with-lhtml-string () 
+            (:table (:tr (:td))))
+            
+"<table><tr><td></td></tr></table>"
+GWL-USER> 
+; No value
+GWL-USER> (with-lhtml-string (:indent t) 
+            (:table (:tr (:td))))
+"
+<table>
+  <tr>
+    <td></td>
+  </tr>
+</table>"
+
+GWL-USER> (with-lhtml-string ()
+            (:br))
+"<br />"
+GWL-USER> (with-lhtml-string ()
+            (:span :class "myclass"))
+"<span class=\"myclass\"></span>"
+GWL-USER> (with-lhtml-string ()
+            (:table :border 1 :cellspacing 3 :cellpadding 5))
+"<table border=\"1\" cellspacing=\"3\" cellpadding=\"5\"></table>"
+GWL-USER> (with-lhtml-string ()
+            (:p "This is content"))
+"<p>This is content</p>"
+GWL-USER> (with-lhtml-string ()
+            (:span :class "myclass" "This is content"))
+"<span class=\"myclass\">This is content</span>"
+GWL-USER> (with-lhtml-string ()
+            ((:span :class "myclass") "This is content"))
+"<span class=\"myclass\">This is content</span>"
+GWL-USER> 
+; No value
+GWL-USER> (with-lhtml-string ()
+            (:table :border 1 (:tr (:td "Cell 1") (:td "Cell 2"))))
+"<table border=\"1\"><tr><td>Cell 1</td><td>Cell 2</td></tr></table>"
+GWL-USER> 
+
+GWL-USER> (let ((cell-1 "Cell 1 content")
+                (cell-2 "Cell 2 content"))
+            (with-lhtml-string () (:table (:tr (:td (str cell-1))))))
+;Compiler warnings :
+;   In an anonymous lambda form: Unused lexical variable CELL-2
+"<table><tr><td>Cell 1 content</td></tr></table>"
+
+GWL-USER> (let ((cell-1 1)(cell-2 2))
+            (with-lhtml-string () 
+              (:table 
+                  (:tr (:td (fmt "Cell ~a content" cell-1)))
+                (:tr (:td (fmt "Cell ~a content" cell-2))))))
+"<table><tr><td>Cell 1 content</td></tr><tr><td>Cell 2 content</td></tr></table>"
+
+GWL-USER> (with-lhtml-string ()
+            (:table :tr
+              (let ((list (list 1 2)))
+                (dolist (cellnum list)
+                  (htm (:td (fmt "Cell ~a" cellnum)))))))
+"<table<td>Cell 1</td><td>Cell 2</td>></table>"
+ 
+
+|#
+
+
+(define-object sample-page-with-section (base-html-page)
+  :computed-slots
+  ((body
+    (with-lhtml-string ()
+      (when gwl:*developing?* (str (the development-links)))
+      (:h2 "Basic Page Sections")
+      (str (the section-1 div)))))
+  :objects
+  ((section-1 :type 'base-html-div
+              :inner-html (with-lhtml-string ()
+                            (:p "Using page sections to provide content")))))
+(pushnew 'sample-page-with-section *pages-to-publish*)
+
+
+(define-object sample-page-with-custom-section (base-html-page)
+  :computed-slots
+  ((input-list (list 1 2 3))
+   (body (with-lhtml-string ()
+           (when gwl:*developing?* (str (the development-links)))
+           (:h2 "Basic Page Sections")
+           (str (the section-1 div)))))
+  :objects
+  ((section-1 :type 'base-html-div-1
+              :input-list (the input-list))))
+(pushnew 'sample-page-with-custom-section *pages-to-publish*)
+
+(define-object base-html-div-1 (base-html-div)
+  :input-slots
+  (input-list)
+  :computed-slots
+  ((inner-html (with-cl-who-string ()
+                 (:table :border 1
+                   (:tr (:th "Content"))
+                   (dolist (c (the input-list))
+                     (htm (:tr (:td (fmt "Cell ~a content" c))))))))))
+
+
+(define-object form-control-layout (base-html-page)
+  :computed-slots ((additional-header-content
+                    (with-cl-who-string()
+                      ((:link :rel "stylesheet" :href *css-published-path*))))
+                   (body
+                    (with-cl-who-string ()
+                      (when gwl:*developing?* (str (the development-links)))
+                      (:h3 "Just using the form-control message")
+                      (str (the fc-1 form-control))
+                      (:h3 "Using :prompt and form-control in my own table layout")
+                      (:table (:tr
+                               (:td (str (the fc-2 prompt)))
+                               (:td (str (the fc-2 form-control)))))
+                      (:h3 "Using html-string (defaulting to :layout-position :as-div)")
+                      (str (the fc-3 html-string))
+                      (:h3 "Using other :layout-position")
+                      (str (the fc-4 html-string))
+                      (:br)
+                      (str (the fc-5 html-string)))))
+  :objects  ((fc-1 :type 'text-form-control
+                   :size 12
+                   :default nil)
+             (fc-2 :type 'text-form-control
+                   :size 12
+                   :prompt "My form control":default nil)
+             (fc-3 :type 'text-form-control
+                   :size 12
+                   :prompt "My form control with html-string":default nil)
+             (fc-4 :type 'text-form-control
+                   :size 12
+                   :prompt "Label display #1 - prepended label"
+                   :default nil
+                   :label-position :prepend)
+             (fc-5 :type 'text-form-control
+                   :size 12
+                   :prompt "Label display #2 - appended label"
+                   :default nil
+                   :label-position :append)))
+(pushnew 'form-control-layout *pages-to-publish*)
+
+(define-object form-control-validation (base-html-page)
+  :computed-slots
+  ((body (with-lhtml-string ()
+	   (when gwl:*developing?* (str (the development-links)))
+	   (:h3 "Form control validation")
+	   (str (the fc-section div)))))
+  :objects
+  ((fc-section :type 'base-html-div
+	       :inner-html (with-lhtml-string ()
+			     (:p (str (the number-fc html-string)))
+			     (when (the number-fc value)
+			       (htm (:p (fmt "the number value is ~a"
+					     (the number-fc value)))))
+			     (when (the number-fc error)
+			       (html (:p (fmt "error is ~a, failed value is ~a"
+					      (the number-fc error)
+					      (the number-fc failed-value)))))))
+   (number-fc :type 'number-form-control
+	      :default nil
+	      :size 12
+	      :ajax-submit-on-change? t
+	      :validation-function #'(lambda(input)
+				       (cond ((or (<= input 50) (>= input 60))
+					      (list :validated-value input
+						    :error :value-out-of-range))
+					     (t t))))))
+(pushnew 'form-control-validation *pages-to-publish*)
+
+;;
+;; Note we publish computed text content here using two different methods:u
+;;
+;;    1. physical file
+;;    2. stream the data directly to the html stream with no physical file.
+;;
+;;   What are the pros/cons of each approach?
+;; 
+(define-object sample-file-output (base-html-page)
+  :computed-slots
+  ((body (with-cl-who-string ()
+           (str (the development-links))
+	   (str (the export-section div))))
+   (file-contents  (with-output-to-string (ss)
+                     (dolist (line (list 1 2 3 4 5 6 7))
+                       (format ss "Line ~a of my file~%" line))))
+   (text-physical-file-url (let ((url (format nil "/output-~a.txt" (get-current-date-time)))
+                                 (file-path (make-pathname :defaults (glisp:temporary-file)
+                                                                    :type "txt")))
+                             (with-open-file (f file-path :direction :output :if-exists :supersede)
+                               (write-string (the file-contents) f))
+                             (publish-file :path url
+                                           :content-type "text/plain"
+                                           :file file-path)
+                             url))
+   (text-file-url (let ((url (format nil "/output-~a.txt" (get-current-date-time))))
+                    (publish :path url
+                             :content-type "text/plain"
+                             :function #'(lambda(req ent)
+                                           (with-http-response (req ent)
+                                             (with-http-body (req ent)
+                                               (write-string (the file-contents) *html-stream*)))))
+                    url)))
+  :objects
+  ((export-section
+    :type 'base-html-div
+    :pass-down (text-file-url text-physical-file-url)
+    :pseudo-inputs (text-file-url text-physical-file-url)
+    :inner-html (with-cl-who-string ()
+                  (:p "Click "
+                      (:a :href (the text-file-url) :download "virtual-text-file.txt" "Here")
+                      " to download a virtual text file.")
+                  (:p "Click "
+                      (:a :href (the text-physical-file-url) :download "physical-text-file.txt" "Here")
+                      " to download a physical text file.")))))
+(pushnew 'sample-file-output *pages-to-publish*)
+
+
+(define-object file-upload-1 (base-html-page)
+  :computed-slots
+  ((uploaded-path "" :settable)
+   (body
+    (with-lhtml-string () (str (the development-links))
+      (str
+       (with-form-string (:enctype "multipart/form-data")
+         (:table (:tr (:td (:input :type "file" :name :uploaded-path :value (the uploaded-path))))
+           (:tr (:td (:input :type "submit" :name "upload" :value "Upload"))
+                (:td (str (the uploaded-path)))))))))))
+(pushnew 'file-upload-1 *pages-to-publish*)
+
+(define-object file-upload-2 (base-html-page)
+  :computed-slots
+  ((uploaded-path "" :settable)
+   (body
+    (string-append
+     (with-lhtml-string () (str (the development-links)))
+     (with-form-string (:enctype "multipart/form-data")
+       (:table (:tr (:td (:input :type "file" :name :uploaded-path :value (the uploaded-path))))
+         (:tr (:td (:input :type "submit" :name "upload" :value "Upload"))
+              (:td (str (the uploaded-path))))))))))
+(pushnew 'file-upload-2 *pages-to-publish*)
+
+;;
+;; Some convenience functions for publishing and date-time:
+;;
+
+(defun publish-statics ()
+  (setq *css-published-path* (publish-relative-file :home *t6-home* :relative "css/sample-style.css")
+        *images-published-prefix* (publish-relative-directory :home *t6-home* :relative "images/")))
+
+(defun publish-pages (&key (pages *pages-to-publish*))
+  (with-all-servers
+      (server)
+      (format t "For server: ~s:~%" server)
+      (dolist (page pages)
+        (let ((path (format nil "/~(~a~)" page)))
+          ;;
+          ;; The following format t is for testing/debugging only, can be removed. 
+          ;;
+          (format t "Publishing ~a to respond with an instance of ~a::~a.~%"
+                  path (package-name (symbol-package page)) page)
+          (publish-gwl-app path page :server server)))))
+
+(defun get-current-date-time ()
+  (let* ((d (multiple-value-bind (s m h d mo y da)
+		(get-decoded-time)
+	      (declare (ignore da))
+	      (list d mo y h m s)))
+	 (day (first d))
+	 (month (second d))
+	 (year (third d))
+	 (hour (fourth d))
+	 (mins (fifth d))
+	 (sec (lastcar d)))
+    (format nil "~2,,,'0@a-~2,,,'0@a-~a-~2,,,'0@a-~2,,,'0@a-~2,,,'0@a" day month year hour mins sec)))
+
+
+;;
+;; FLAG -- below in-line calls to (publish-*) are what actually
+;; publish our supported endpoints.  Just putting them at toplevel in
+;; a file as we're doing below is ok for development, but for
+;; production deployment of a built application, you'd want to arrange
+;; for *t6-home* to be set and for the below publish functions to be
+;; called in the restart-init-script or equivalent, in the runtime
+;; distribution.
+;;
+(publish-statics)
+(publish-pages)
+
+

@@ -1,0 +1,87 @@
+(in-package :email-gateway)
+
+(define-object email-sender ()
+
+  :input-slots (email-address human? opt-in? smtp-host from-address to-address admin-address subject body
+                              (robot-log-path *robot-log-path*))
+
+
+  :computed-slots ((restored-object (retrieve-object (the email-address)))
+                   (new-object (unless (the restored-object)
+                               (gwl::%gwl-make-object% "training-home:assembly"
+                                                       :make-object-args (list :email-address (the email-address)
+                                                                               :opt-in? (the opt-in?))
+                                                       :max-id-value 9999999999999999999999999)))
+                   (session-object (or (the restored-object) (the new-object)))
+                   (new-page-url (the session-object url)))
+  
+  :functions
+  ((register-apparent-robot
+    (address &key
+             (time (get-universal-time))
+             (dotted-ip (socket:ipaddr-to-dotted (socket:remote-host (request-socket *req*)))))
+    (with-open-file (out (the robot-log-path)
+                         :direction :output :if-exists :append
+                         :if-does-not-exist :create)
+      (print (list dotted-ip address time) out)))
+    
+
+   (send! ()
+          (let ((restored-object (the restored-object))
+                (new-object (the new-object))
+                (session-object (the session-object)))
+
+            ;; FLAG pull root-path from the url give url of that node.
+
+            (when restored-object (theo session-object (set-slot! :restored? t :warn-on-non-toplevel? nil)))
+
+            (when new-object
+              (gwl::write-snap new-object :snap-home gwl::*snap-home*)
+              (add-user (the email-address) (theo new-object instance-id)))
+        
+    
+            ;;
+            ;; Below email sending can/maybe should be done on a background thread. 
+            ;;
+            ;; FLAG - parameterize hardcoded strings such as gornschool.com
+            ;;
+
+            (if (the human?)
+                (dolist (pair (remove nil (list (list (the to-address) (the subject))
+                                                (unless (string-equal (the to-address) (the admin-address))
+                                                  (list (the admin-address) (format nil "The School has sent mail to ~a ~a"
+                                                                                    "human" ;;(if (the human?) "human" "robot")
+                                                                                    (the to-address)))))))
+                  (destructuring-bind (to-address subject) pair
+                    (multiple-value-bind (result error)
+	                (ignore-errors
+                         (when (string-equal (uiop:hostname) "gornschool.com")
+                           (if (multiple-value-bind (symbol status)
+				   (find-symbol (symbol-name 'send-letter) :glisp)
+				 (and symbol (eql status :external)))
+			       (funcall (read-from-string "glisp:send-letter")
+                                        (the smtp-host) (the from-address) to-address subject
+                                        (string-append 
+                                         (the body)
+                                         (if restored-object "P.S. We found an existing session for you. Welcome back." "")))
+
+                               (warn "
+ Please Upgrade your Gendl installation to post 2024-02-23 version which includes 
+   glisp:send-email.  Then test carefully.
+
+"))))
+                  
+	              (print-variables result)
+                      (print-variables error)          
+                      (print-variables (the email-address))
+                      (print-variables (the smtp-host))
+                      (print-variables (the from-address))
+                      (print-variables (the to-address))
+                      (print-variables (the subject))
+                      (print-variables (the body))
+                      (print-variables (the restored-object))
+
+                      result)))
+
+                (the (register-apparent-robot (the to-address))))))))
+

@@ -9,11 +9,15 @@
 const http = require('http');
 const readline = require('readline');
 const fs = require('fs');
+const { exec } = require('child_process');
 
 // Configure the Gendl HTTP server details
 const GENDL_HOST = '127.0.0.1';
 const GENDL_PORT = 9081;
 const GENDL_BASE_PATH = '/mcp';
+
+// Path to knowledge base query script
+const GENDL_KB_SCRIPT = '/projects/xfer/gendl-mcp/gendl_kb.py';
 
 // Set up logging to file for debugging
 const LOG_FILE = '/tmp/gendl-mcp-wrapper.log';
@@ -153,6 +157,25 @@ async function fetchAndCacheTools() {
   try {
     const data = await makeGendlRequest(`${GENDL_BASE_PATH}/tools/list`);
     toolsCache = JSON.parse(data);
+    
+    // Add the knowledge base query tool to the tools list if it's not already there
+    if (!toolsCache.tools.some(tool => tool.name === 'query_gendl_kb')) {
+      toolsCache.tools.push({
+        name: 'query_gendl_kb',
+        description: 'Search the Gendl documentation knowledge base for information about Gendl/GDL, a General-purpose Declarative Language',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'The search query about Gendl/GDL'
+            }
+          },
+          required: ['query']
+        }
+      });
+    }
+    
     log(`Successfully cached ${toolsCache.tools ? toolsCache.tools.length : 0} tools`);
     return toolsCache;
   } catch (error) {
@@ -188,6 +211,11 @@ async function handleToolCall(request) {
   }
   
   try {
+    // Special handling for query_gendl_kb tool
+    if (toolName === 'query_gendl_kb') {
+      return handleKnowledgeBaseQuery(request, args);
+    }
+    
     // Ensure we have the tools definition
     const toolsDefinition = await fetchAndCacheTools();
     
@@ -230,6 +258,62 @@ async function handleToolCall(request) {
     log(`Error in tool call: ${error.message}`);
     sendErrorResponse(request, -32603, `Error calling tool: ${error.message}`);
   }
+}
+
+// Handle queries to the Gendl knowledge base
+function handleKnowledgeBaseQuery(request, args) {
+  const query = args.query;
+  
+  if (!query) {
+    sendErrorResponse(request, -32602, "Missing required parameter: query");
+    return;
+  }
+  
+  log(`Querying Gendl knowledge base with: ${query}`);
+  
+  // Verify the Python script exists before executing
+  fs.access(GENDL_KB_SCRIPT, fs.constants.F_OK | fs.constants.R_OK, (err) => {
+    if (err) {
+      log(`Python script access error: ${err.message}`);
+      sendErrorResponse(request, -32603, `Error accessing knowledge base script: ${err.message}`);
+      return;
+    }
+    
+    // Check knowledge base directory
+    const kbPath = '/projects/xfer/gendl-mcp/gendl_knowledge_base';
+    fs.access(kbPath, fs.constants.F_OK | fs.constants.R_OK, (err) => {
+      if (err) {
+        log(`Knowledge base directory access error: ${err.message}`);
+        sendErrorResponse(request, -32603, `Error accessing knowledge base directory: ${err.message}`);
+        return;
+      }
+      
+      log(`Script and KB directory verified, executing Python script`);
+      
+      // Execute the Python script as a child process with full path
+      const command = `python3 ${GENDL_KB_SCRIPT} "${query.replace(/"/g, '\"')}"`;  
+      log(`Executing command: ${command}`);
+      
+      exec(command, (error, stdout, stderr) => {
+        if (error) {
+          log(`Knowledge base query error: ${error.message}`);
+          log(`stderr: ${stderr}`);
+          sendErrorResponse(request, -32603, `Error querying knowledge base: ${error.message}`);
+          return;
+        }
+        
+        if (stderr) {
+          log(`Knowledge base query stderr: ${stderr}`);
+        }
+        
+        log(`Query successful, response length: ${stdout.length} characters`);
+        
+        // Send successful response with the query results
+        sendTextResponse(request, stdout);
+      });
+    });  
+    });
+
 }
 
 // Process tool responses based on tool type

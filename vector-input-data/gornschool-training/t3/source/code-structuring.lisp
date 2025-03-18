@@ -1,0 +1,23 @@
+(in-package :training-3)
+
+(define-object code-structuring (base-training-sheet)
+  :computed-slots
+  ((body-content (with-cl-who-string ()
+		   ((:div :class "main-page-container" :style "grid-template-columns: 500px auto;")
+		    ((:div :class "main-page-item")
+		     (:p "These are just recomendations based on experience and convenience")
+		     (:h3 "Source Code Files")
+		     (:ul (:li "If the code is in a discrete package, ensure there is a separate package.lisp file to define the package")
+			  (:li "Where possible or feasible one object/function per file. ("(:em "Whilst you can open the file containing an object or function code from in emacs by positioning the cursor in the object/function name and using "(:b "Meta-.")", the one object/function per file goal does make life easier)"))))
+		    ((:div :class "main-page-item"))
+		    ((:div :class "main-page-item")
+		     (:h3 "Directory organisation")
+		     (:ul (:li "Where possible and practical arrange the directory structure so that it mirrors the applications object structure")
+			  (:li "Strike a balance between granularity - some logical separation is good, but avoid separating too much")
+			  (:li "For each module create a "(:em (:b "source"))" directory for the source code files")
+			  (:li "In larger projects define a "(:em (:b "common"))" folder for code that is shared between the other modules"))
+		     (:p "In the example on the right, the airplane/source directory would be used for the source code assembling the different modules into an airplane. The common directory would be used for shared objects/functions and the main application code would be stored in the source directories of each module - engine, wing, fuselage. Some considertion ought to be given at this stage to the package design; a single :airplane package may be adequate or the packages could be broken down by module, each of the sub-modules using airplane-common and the top level airplane package using all of the sub-module packages.A bit of time spent at the outset of a project is usuually time well spent, although the result doesn't need to be perfect since it is easy enough to change as the project/application evolves")
+		     (:p "The suggested codebase structure is also compatible with cl-lite, GendL's code loading utility which is discussed in the next topic"))
+		    ((:div :class "main-page-item")
+		     ((:img :src (format nil "/~a-images/codebase.png" *publish-prefix*) :style "width: auto; height: 300px; margin: 1em 0 1em 3% ;"))))))))
+  

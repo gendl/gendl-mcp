@@ -1,0 +1,182 @@
+<!DOCTYPE HTML><html lang="en"><head><title>GendL Application - WEB-DRAWING</title><meta charset="UTF-8" /><link rel="icon" type="image/x-icon" href="../../../../../static/gwl/images/favicon.ico" /><link href="../../../../../static/gwl/style/top.css" rel="stylesheet" type="text/css" /><div id="KDpTVEFOREFSRC1KQVZBU0NSSVBULVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDIwKSA6T0JKRUNULURPQ1MgKDpQQUNLQUdFLURPS1VNRU5UQVRJT05TIDgpKQ">
+<script>
+var gdliid = '/yadd';
+</script>
+<script src="../../../../../static/gwl/js/gdlajax1595.js"></script></div></head><body><div id="KDpNQUlOLVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDIwKSA6T0JKRUNULURPQ1MgKDpQQUNLQUdFLURPS1VNRU5UQVRJT05TIDgpKQ"><p><a href="../../../index.html">Package Documentation</a></p><table BGCOLOR="#eeeeff" WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td><b><font SIZE="+1">Object: WEB-DRAWING<font SIZE=-1><i> (The :GWL Package)</i></font></font></b></td></tr><tr><td><b>Mixins: </b><a HREF="../../../../../master-index-grouped/709/index.html">RENDERER-MIXIN</a>, <a HREF="../../../../../master-index-grouped/157/index.html">BASE-DRAWING</a></td></tr></table><p><h3>Description</h3>Container object for displaying a view of geometric 
+or text-based entities in a web application. This is supposed to be the type of the
+view-object hidden-child of base-html-graphics-sheet. Also, in a GWL application using 
+application-mixin, you can include one object of this type in the ui-display-list-leaves.
+</p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>3D-BOX</b> [<i>from <a href="../../../../../master-index-grouped/709/index.html">RENDERER-MIXIN</a></i>]  <i>list of two 3d points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The left-front-lower and right-rear-upper corners of the axis-aligned bounding
+box of the <tt>object-roots</tt> and <tt>objects</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>3D-BOX-CENTER</b> [<i>from <a href="../../../../../master-index-grouped/709/index.html">RENDERER-MIXIN</a></i>]  <i>3d point</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The effective view center for the scene contained in this view object. Defaults to the center of the bounding sphere of all
+the objects in the scene, consisting of the <tt>object-roots</tt> and the <tt>objects</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BOUNDING-BOX</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>list of two 3d points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The left front bottom and right rear top corners, in global coordinates,
+of the rectangular volume bounding the tree of geometric objects rooted at this object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BOUNDING-SPHERE</b> [<i>from <a href="../../../../../master-index-grouped/709/index.html">RENDERER-MIXIN</a></i>]  <i>plist containing keys: <tt>:center</tt> and <tt>:radius</tt></i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This plist represents the tightest-fitting sphere
+around all the objects listed in the <tt>object-roots</tt> and the <tt>objects</tt>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>FIELD-OF-VIEW-DEFAULT</b> [<i>from <a href="../../../../../master-index-grouped/709/index.html">RENDERER-MIXIN</a></i>]  <i>number in angular degrees</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The maximum angle of the view frustrum for perspective views.
+Defaults to 0.1 (which results in a near parallel projection with virtually no perspective effect).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HEIGHT</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Z-axis dimension of the reference box. Defaults to zero.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HIDDEN?</b> [<i>from <a href="../../../../../master-index-grouped/654/index.html">VANILLA-MIXIN*</a></i>]  <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMMUNE-OBJECTS</b> <i>list of gdl objects</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> These objects are not used in computing the scale or centering for the display list. Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LENGTH</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Y-axis dimension of the reference box. Defaults to zero.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LOCAL-BOX</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>list of two 3d points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The left front bottom and right rear top corners, in global coordinates,
+of the rectangular volume bounding this geometric object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>OBJECT-ROOTS</b> <i>list of gdl objects</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The leaves of each of these objects will be included in the geometry display. Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>OBJECTS</b> <i>list of gdl objects</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> These nodes (not their leaves but the actual objects) will be included in the geometry display. Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>OBLIQUENESS</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>3x3 orthonormal matrix of double-float numbers</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is synonymous with the <tt>orientation</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ONCLICK-FUNCTION</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>lambda function of zero arguments, or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> If non-nil, this
+function gets invoked when the user clicks the object in graphics
+front-ends which support this functionality, e.g. SVG/Raphael and X3DOM.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PAGE-LENGTH</b> [<i>from <a href="../../../../../master-index-grouped/157/index.html">BASE-DRAWING</a></i>]  <i>number in pdf points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Front-to-back (or top-to-bottom) length of the paper being represented
+by this drawing. The default is (* 11 72) points, or 11 inches, corresponding to US standard
+letter-size paper.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PAGE-WIDTH</b> [<i>from <a href="../../../../../master-index-grouped/157/index.html">BASE-DRAWING</a></i>]  <i>number in pdf points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Left-to-right width of the paper being represented by this drawing.
+The default is (* 8.5 72) points, or 8.5 inches, corresponding to US standard letter-size paper.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PROJECTION-VECTOR</b> <i>3d vector</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is the normal vector of the view plane onto which to project the 3D objects. Defaults to (getf *standard-views* :top).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RAPHAEL-CANVAS-ID</b> <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Unique ID on the page for the raphael canvas div. By default this is passed in
+from the base-ajax-graphics-sheet and based on its root-path, but can be specified manually
+if you are making a web-drawing on your own. Defaults (in the standalone case) to "RaphaelCanvas"
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ROOT</b> [<i>from <a href="../../../../../master-index-grouped/654/index.html">VANILLA-MIXIN*</a></i>]  <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The root-level node in this object's ``tree'' (instance hierarchy).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SAFE-CHILDREN</b> [<i>from <a href="../../../../../master-index-grouped/654/index.html">VANILLA-MIXIN*</a></i>]  <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> All objects from the :objects specification, including elements of sequences
+as flat lists. Any children which throw errors come back as a plist with error information
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>STRINGS-FOR-DISPLAY</b> [<i>from <a href="../../../../../master-index-grouped/654/index.html">VANILLA-MIXIN*</a></i>]  <i>string or list of strings</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines how the name of objects of
+this type will be printed in most places.  This defaults to the
+name-for-display (generally the part's name as specified in its
+parent), followed by an index number if the part is an element of a
+sequence.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SVG-CLASS</b> [<i>from <a href="../../../../../master-index-grouped/157/index.html">BASE-DRAWING</a></i>]  <i>string with css classes</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> These classes will be included in any svg tag outputted from this drawing.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEW-VECTORS</b> [<i>from <a href="../../../../../master-index-grouped/709/index.html">RENDERER-MIXIN</a></i>]  <i>plist</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Keys indicate view vector names (e.g. <tt>:trimetric</tt>), and values contain the 3D vectors. Defaults to the
+parameter <tt>*standard-views*</tt>, but with the key corresponding to current <tt>(the view)</tt> ordered
+first in the plist. This list of view-vectors is used to construct the default <tt>viewpoints</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEWPOINTS</b> [<i>from <a href="../../../../../master-index-grouped/709/index.html">RENDERER-MIXIN</a></i>]  <i>list of plists</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Each plist contains, based on each entry in the <tt>view-vectors</tt>, keys:
+<ul>
+<li><tt>:point</tt> (camera location, defaults to the <tt>3d-box-center</tt> translated
+along the corresponding element of <tt>view-vectors</tt>) by the local camera distance.
+The camera distance is computed based on the field-of-view angle and
+the <tt>bounding-sphere</tt></li>
+<li><tt>:orientation</tt> (3d matrix indicating camera orientation)</li>
+<li><tt>field-of-view</tt> Angle in degrees of the view frustrum (i.e. lens angle of the virtual camera).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VISIBLE-CHILDREN</b> [<i>from <a href="../../../../../master-index-grouped/654/index.html">VANILLA-MIXIN*</a></i>]  <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Additional objects to display in Tatu
+tree. Typically this would be a subset of
+hidden-children. Defaults to NIL.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>WIDTH</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> X-axis dimension of the reference box. Defaults to zero.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional, defaulting)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>DISPLAY-CONTROLS</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>plist</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> May contain keywords and values indicating display characteristics for
+this object. The following keywords are recognized currently:
+
+<dl>
+<dt>:color</dt>
+<dd> color keyword from the *color-table* parameter, or an HTML-style hexidecimal
+RGB string value, e.g. "#FFFFFF" for pure white. Defaults to :black.</dd>
+<dt>:line-thickness</dt>
+<dd> an integer, defaulting to 1, indicating relative line thickness for wireframe
+representations of this object.</dd>
+<dt>:dash-pattern</dt>
+<dd>(currently PDF/PNG/JPEG only). This is a list of two or three numbers which indicate the length,
+in pixels, of the dashes and blank spaces in a dashed line. The optional third number
+indicates how far into the line or curve to start the dash pattern.</dd>
+</dl>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ORIENTATION</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>3x3 matrix of double-float numbers</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates the absolute Rotation Matrix used to create
+the coordinate system of this object. This matrix is given in absolute terms (i.e. with
+respect to the root's orientation), and is generally created with the alignment function.
+It should be an <i>orthonormal</i> matrix, meaning each row is a vector with a magnitude
+of one (1.0).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Computed Slots</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>CENTER</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>3d point</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates in global coordinates where the center of the reference
+box of this object should be located.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMAGE-FILE</b> [<i>from <a href="../../../../../master-index-grouped/751/index.html">BASE-OBJECT</a></i>]  <i>pathname or string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Points to a pre-existing image file to be displayed instead of actual geometry for this object. Defaults to nil
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Objects</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>MAIN-VIEW</b> <i>gdl object of type geom-base:base-view</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is the actual drawing view which is used to present the geometry. Defaults to an
+internally-computed object, this should not be overridden in user code.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><p><h3>Examples</h3><pre>
+
+ (in-package :gwl-user)
+
+ (define-object test-html-graphics-sheet (base-html-graphics-sheet)
+    
+   :objects 
+
+   ((b-splines :type 'test-b-spline-curves)
+   
+    (boxed-spline :type 'surf:boxed-curve
+                  :curve-in (the b-splines (curves 0))
+                  :orientation (alignment :top (the (face-normal-vector :rear)))
+                  :show-box? t)
+
+    (view-object :type 'web-drawing
+                 :page-length (the graphics-height value)
+                 :page-width (the graphics-width value)
+                 :projection-vector (getf *standard-views* (the view))
+                 :object-roots (the ui-display-roots))
+   
+    (graphics-height :type 'text-form-control
+                     :default 350)
+   
+    (graphics-width :type 'text-form-control
+                    :default 500)
+   
+    (bg-color :type 'text-form-control
+              :default :black)
+   
+    (fg-color :type 'text-form-control
+              :default :white))
+     
+   :computed-slots
+   ((background-color (lookup-color (the :bg-color value) :format :decimal))
+    (foreground-color (lookup-color (the :fg-color value) :format :decimal))
+     
+    (view :trimetric :settable)
+   
+    ("list of gdl objects. Objects to be displayed in the graphics window."
+     ui-display-roots (list (the b-splines) (the boxed-spline)))))
+
+ (define-lens (html-format test-html-graphics-sheet)()
+   
+   :output-functions
+
+   ((main-sheet
+     ()
+     (with-html-output (*html-stream* nil :indent t)
+       (:html (:head (:title "Test HTML Graphics Sheet"))
+              (:body (when gwl:*developing?* (the write-development-links))
+                     (:h2 (:center "Test HTML Graphics Sheet"))
+                     (with-html-form (:cl-who? t)
+                       (:table (:tr (:td (:ul 
+                                         (:li (str (the graphics-height html-string)))
+                                         (:li (str (the graphics-width html-string)))
+                                              (:li (str (the bg-color html-string)))
+                                              (:li (str (the fg-color html-string))))
+                                         (:p (:input :type :submit :value " OK ")))
+                                    (:td (write-the geometry)))))))))))
+
+ (publish :path "/t-h-g-s"
+          :function #'(lambda(req ent)
+                        (gwl-make-object req ent "gwl-user::test-html-graphics-sheet")))
+
+ (define-object test-b-spline-curves (base-object)
+
+   :input-slots
+
+   ((control-points (list (make-point 0 0 0)
+                          (make-point 2 3.0 0.0) 
+                          (make-point 4 2.0 0.0) 
+                          (make-point 5 0.0 0.0) 
+                          (make-point 4 -2.0 0.0) 
+                          (make-point 2 -3.0 0.0) 
+                          (make-point 0 0 0))))
+  
+   :objects
+
+   ((curves :type 'surf:b-spline-curve
+            :sequence (:size 6)
+            :control-points (the control-points)
+            :degree (1+ (the-child :index))
+            :display-controls (list :line-thickness (* 0.3 (the-child index))
+                                    :color (ecase (the-child index)
+                                             (0 :red) (1 :orange) (2 :yellow) (3 :green)
+                                             (4 :blue) (5 :red-violet))))
+
+    (points :type 'point 
+            :sequence (:size (length (rest (the control-points))))
+            :center (nth (the-child index) (rest (the control-points)))
+            :display-controls (list :color :green))))
+</pre>
+</p><p><a href="../../../index.html">Package Documentation</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></div></body></html>

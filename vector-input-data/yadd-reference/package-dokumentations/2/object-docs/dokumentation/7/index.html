@@ -1,0 +1,140 @@
+<!DOCTYPE HTML><html lang="en"><head><title>GendL Application - VANILLA-MIXIN*</title><meta charset="UTF-8" /><link rel="icon" type="image/x-icon" href="../../../../../static/gwl/images/favicon.ico" /><link href="../../../../../static/gwl/style/top.css" rel="stylesheet" type="text/css" /><div id="KDpTVEFOREFSRC1KQVZBU0NSSVBULVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDcpIDpPQkpFQ1QtRE9DUyAoOlBBQ0tBR0UtRE9LVU1FTlRBVElPTlMgMikp">
+<script>
+var gdliid = '/yadd';
+</script>
+<script src="../../../../../static/gwl/js/gdlajax1595.js"></script></div></head><body><div id="KDpNQUlOLVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDcpIDpPQkpFQ1QtRE9DUyAoOlBBQ0tBR0UtRE9LVU1FTlRBVElPTlMgMikp"><p><a href="../../../index.html">Package Documentation</a></p><table BGCOLOR="#eeeeff" WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td><b><font SIZE="+1">Object: VANILLA-MIXIN*<font SIZE=-1><i> (The :GENDL Package)</i></font></font></b></td></tr><tr><td><b>Mixins: </b><a HREF="http://www-2.cs.cmu.edu/Groups/AI/html/hyperspec/HyperSpec/Body/cla_standard-object.html">STANDARD-OBJECT</a></td></tr></table><p><h3>Description</h3>Vanilla-Mixin is automatically
+inherited by every object created in GDL. It provides basic messages
+which are common to all GDL objects defined with the define-object
+macro, unless <tt>:no-vanilla-mixin t</tt> is specified at the
+toplevel of the define-object form.</p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>HIDDEN?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ROOT</b> <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The root-level node in this object's ``tree'' (instance hierarchy).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SAFE-CHILDREN</b> <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> All objects from the :objects specification, including elements of sequences
+as flat lists. Any children which throw errors come back as a plist with error information
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>STRINGS-FOR-DISPLAY</b> <i>string or list of strings</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines how the name of objects of
+this type will be printed in most places.  This defaults to the
+name-for-display (generally the part's name as specified in its
+parent), followed by an index number if the part is an element of a
+sequence.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VISIBLE-CHILDREN</b> <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Additional objects to display in Tatu
+tree. Typically this would be a subset of
+hidden-children. Defaults to NIL.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Computed Slots</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>AGGREGATE</b> <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> In an element of a sequence, this is the container object which holds all elements.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ALL-MIXINS</b> <i>list of symbols</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Lists all the superclasses of the type of this object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>CHILDREN</b> <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> All objects from the :objects specification, including elements of sequences
+as flat lists.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DIRECT-MIXINS</b> <i>list of symbols</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Lists the direct superclasses of the type of this object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>FIRST?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> For elements of sequences, T iff there is no previous element.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HIDDEN-CHILDREN</b> <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> All objects from the :hidden-objects specification, including elements of sequences
+as flat lists.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>INDEX</b> <i>integer</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Sequential index number for elements of a sequence, NIL for singular objects.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LAST?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> For elements of sequences, T iff there is no next element.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LEAF?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> T if this object has no children, NIL otherwise.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LEAVES</b> <i>list of gdl objects</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> A Collection of the leaf nodes of the given object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>NAME-FOR-DISPLAY</b> <i>keyword symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The part's simple name, derived from its object specification in the parent or from
+the type name if this is the root instance.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>NEXT</b> <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> For elements of sequences, returns the next part in the sequence.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PARENT</b> <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The parent of this object, or NIL if this is the root object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PREVIOUS</b> <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> For elements of sequences, returns the previous part in the sequence.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ROOT-PATH</b> <i>list of symbols or of pairs of symbol and integer</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates the path through
+the instance hierarchy from the root to this object. Can be used in conjunction with
+the <tt>follow-root-path</tt> GDL function to return the actual instance.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ROOT-PATH-LOCAL</b> <i>list of symbols or of pairs of symbol and integer</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates the path through
+the instance hierarchy from the local root to this object. Can be used in conjunction with
+the <tt>follow-root-path</tt> GDL function to return the actual instance.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ROOT?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> T iff this part has NIL as its parent and therefore is the root node.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SAFE-HIDDEN-CHILDREN</b> <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> All objects from the :hidden-objects specification, including elements of sequences
+as flat lists. Any children which throw errors come back as a plist with error information
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TYPE</b> <i>symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The GDL Type of this object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">GDL Functions</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>DOCUMENTATION</b> <i>plist</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Returns the <tt>:documentation</tt> plist which has been specified the
+specific part type of this instance.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>FOLLOW-ROOT-PATH</b> <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Using this instance as the root, follow the reference chain
+represented by the given path.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>path</b> <i>List of Symbols or Pairs of Symbol and Integer</i></dt><dd></dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>MESSAGE-DOCUMENTATION</b> <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is synonymous with <tt>slot-documentation</tt>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>MESSAGE-LIST</b> <i>list of keyword symbols</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Returns the messages (slots, objects, and functions) of this object, according to the filtering criteria as specified by the arguments.
+</p><dl><dt><i>keyword arguments:</i></dt><dd><dl><small><dt><b>category</b> <i>Keyword</i>, Default Value: <tt>:ALL</tt></dt><dd> Either <tt>:all</tt> or the individual category of 
+messages to be returned. This can be one of:
+<tt><ul>
+<li>:computed-slots</li>
+<li>:settable-computed-slots</li>
+<li>:required-input-slots</li>
+<li>:optional-input-slots</li>
+<li>:defaulted-input-slots</li>
+<li>:query-slots</li>
+<li>:functions</li>
+<li>:objects</li>
+<li>:quantified-objects</li>
+<li>:hidden-objects</li>
+<li>:quantified-hidden-objects</li></ul></tt></dd></small><small><dt><b>message-type</b> <i>Keyword Symbol, :local or :global</i>, Default Value: <tt>:GLOBAL</tt></dt><dd> Indicates whether to return messages
+only from the local specific part type, or from all superclasses (mixins) as well</dd></small><small><dt><b>return-category?</b> <i>Boolean</i>, Default Value: <tt>NIL</tt></dt><dd> Indicates whether or not the category of each message should be
+returned before each message in the returned list</dd></small><small><dt><b>base-part-type</b> <i>Symbol naming a GDL Part Type</i>, Default Value: <tt>NIL</tt></dt><dd> Indicates a ``base'' part from which no messages
+should be returned, nor should messages be returned from superclasses (mixins) of this base part. If NIL (the default),
+messages are considered from all superclasses</dd></small><small><dt><b>sort-order</b> <i>Keyword Symbol</i>, Default Value: <tt>:UNSORTED</tt></dt><dd> One of: <tt>:unsorted</tt>, <tt>:by-category</tt>, or
+<tt>:by-name</tt></dd></small><small><dt><b>filter</b> <i>Function Object of two arguments or <tt>:normal</tt></i>, Default Value: <tt>:NORMAL</tt></dt><dd> If a function object,
+applies this function to each returned category and message keyword, and filters out all pairs for which
+the function returns NIL. If <tt>:normal</tt> (the default), then no filtering is done</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>MIXINS</b> <i>list of symbols</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Returns the names of the immediate superclasses of this object.
+</p><dl><dt><i>keyword arguments:</i></dt><dd><dl><small><dt><b>local?</b> <i>Boolean</i>, Default Value: <tt>T</tt></dt><dd> Indicates whether to give only direct mixins 
+or all mixins from the entire inheritance hierarchy</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RESTORE-ALL-DEFAULTS!</b> <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Restores all settable-slots in this instance to their default values.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RESTORE-ROOT!</b></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>Multiple Values: Total root-paths affected and total slots
+affected.  Reverts any "remembered" bashed slots, starting from the
+root, to their default values. Note that any call to `set-slot!` or
+`set-slots!` or any use of web form-controls will result in
+"remembered values". Note that there is a `:remember?` keyword
+argument to `set-slot!` which defaults to `t` but if you specify it as
+`nil`, you can bash values without having them "remembered" and such
+slots would not be affected by this function.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RESTORE-SLOT-DEFAULT!</b> <i>nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Restores the value of the given slot to its default, thus ``undoing'' any forcibly set value
+in the slot. Any dependent slots in the tree will respond accordingly when they are next demanded.
+Note that the slot must be specified as a keyword symbol (i.e. prepended with a colon (``:'')),
+otherwise it will be evaluated as a variable according to normal Lisp functional evaluation rules.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>slot</b> <i>Keyword Symbol</i></dt><dd></dd></small></dl></dd><dt><i>key:</i></dt><dd>(force? "Boolean. Specify as t if you want to force non-settable slots to recompute (e.g. 
+reading from databases or external files). Defaults to nil.")
+</dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RESTORE-SLOT-DEFAULTS!</b> <i>nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Restores the value of the given slots to their defaults, thus ``undoing'' any forcibly set values
+in the slots. Any dependent slots in the tree will respond accordingly when they are next demanded.
+Note that the slots must be specified as keyword symbols (i.e. prepended with colons (``:'')),
+otherwise they will be evaluated as variables according to normal Lisp functional evaluation rules.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>slots</b> <i>List of Keyword Symbols</i></dt><dd></dd></small></dl></dd><dt><i>keyword arguments:</i></dt><dd><dl><small><dt><b>force?</b> <i>Boolean</i>, Default Value: <tt>*FORCE-RESTORE-SLOT-DEFAULT?*</tt></dt><dd> Indicates whether the slot values should be unbound, regardless of whether it had actually been bashed previously</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RESTORE-TREE!</b> <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Restores all settable-slots in this instance, and
+recursively in all descendant instances, to their default values.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SET-SLOT!</b> <i>nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Forcibly sets the value of the given slot to the given value. The slot must be defined
+as <tt>:settable</tt> for this to work properly. Any dependent slots in the tree will
+respond accordingly when they are next demanded. Note that the slot must be specified as a keyword
+symbol (i.e. prepended with a colon (``:'')), otherwise it will be evaluated as a variable according
+to normal Lisp functional evaluation rules.
+<p>
+Note also that this must not be called (either directly or indirectly)
+from within the body of a Gendl computed-slot. The caching and
+dependency tracking mechanism in Gendl will not work properly if this
+is called from the body of a computed-slot, and furthermore a runtime
+error will be generated.
+</p>
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>slot</b> <i>Keyword Symbol</i></dt><dd></dd></small><small><dt><b>value</b> <i>Lisp Object</i></dt><dd> (e.g. Number, String, List, etc.)</dd></small></dl></dd><dt><i>keyword arguments:</i></dt><dd><dl><small><dt><b>remember?</b> <i>Boolean</i>, Default Value: <tt>T</tt></dt><dd> Determines whether to save in current version-tree</dd></small><small><dt><b>warn-on-non-toplevel?</b> <i>Boolean</i>, Default Value: <tt>T</tt></dt><dd> Determines whether to warn if this is called from the body of a cached slot</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SET-SLOTS!</b> <i>nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Forcibly sets the value of the given slots to the given values. The slots must be defined
+as <tt>:settable</tt> for this to work properly. Any dependent slots in the tree will
+respond accordingly when they are next demanded. Note that the slots must be specified as a keyword
+symbols (i.e. prepended with a colon (``:'')), otherwise they will be evaluated as variables according
+to normal Lisp functional evaluation rules.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>slots-and-values</b> <i>Plist</i></dt><dd> Contains alternating slots and values to which they are to be set</dd></small><small><dt><b>warn-on-non-toplevel?</b> <i>Boolean</i></dt><dd> Indicates whether a warning should be issued for calling from inside the body of a cached slot. Default is t</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SLOT-DOCUMENTATION</b> <i>plist of symbols and strings</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Returns the part types and slot documentation which has been
+specified for the given slot, from most specific to least specific in the CLOS inheritance order.
+Note that the slot must be specified as a keyword symbol (i.e. prepended with a colon (``:'')),
+otherwise it will be evaluated as a variable according to normal Lisp functional evaluation rules.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>slot</b> <i>Keyword Symbol</i></dt><dd> Names the slot for which documentation is being requested</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SLOT-SOURCE</b> <i>body of gdl code, in list form</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>slot</b> <i>Keyword Symbol</i></dt><dd> Names the slot for which documentation is being requested</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SLOT-STATUS</b> <i>keyword symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Describes the current status of the requested slot:
+<ol>
+<li><tt>:unbound</tt>: it has not yet been demanded (this could mean either
+it has never been demanded, or something it depends on has been
+modified since the last time it was demanded and eager setting is not enabled).</li>
+<li><tt>:evaluated</tt>: it has been demanded and it is currently bound to the default
+value based on the code.</li>
+<li><tt>:set</tt>: (for :settable slots only, which includes all required :input-slots)
+it has been modified and is currently bound to the value to which it was explicitly set.</li>
+<li><tt>:toplevel</tt>: (for root-level object only) its value was passed into the root-level
+object as a toplevel input at the time of object instantiation.</li></ol>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TOGGLE-SLOT!</b> <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Sets giving slot to its boolean opposite.
+&args (slot "Keyword symbol. Name of the slot as a keyword symbol.")
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>UPDATE!</b> <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Uncaches all cached data in slots and objects throughout the instance
+tree from this node, forcing all code to run again the next time values are
+demanded. This is useful for updating an existing model or part of an existing
+model after making changes and recompiling/reloading the code of the underlying
+definitions.  Any set (modified) slot values will, however, be preserved
+by the update.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>WRITE-SNAPSHOT</b> <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Writes a file containing the toplevel inputs and modified settable-slots starting from the root of the
+current instance. Typically this file can be read back into the system using the <tt>read-snapshot</tt> function.
+</p><dl><dt><i>keyword arguments:</i></dt><dd><dl><small><dt><b>filename</b> <i>String or pathname</i>, Default Value: <tt>"/tmp/snap.gdl"</tt></dt><dd> The target file to be written</dd></small><small><dt><b>root-paths-to-ignore</b> <i>List of root-paths or nil</i>, Default Value: <tt>NIL</tt></dt><dd> Any objects with matching root-path will be ignored for the snapshot write</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><p><a href="../../../index.html">Package Documentation</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></div></body></html>

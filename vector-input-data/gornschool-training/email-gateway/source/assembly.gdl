@@ -1,0 +1,205 @@
+(in-package :email-gateway)
+
+
+(define-object assembly (training-common:base-site-mixin)
+
+
+  :input-slots
+  ((title-string "A Personalized Session with our Tutorial")
+   (sub-title-string "Sign up to access our GendL Tutorial and more.")
+   ;;
+   ;; FLAG -- add an opt-in checkbox to the form
+   ;;
+   (privacy-string "The School will never sell or share your email
+   address. Please Check the Box to receive an occasional email
+   newsletter. Otherwise we retain your email for login purposes
+   only."))
+
+
+
+  :computed-slots
+  ((dont-write-snap t)
+   (respondent (the thank-you))
+   (body-content (with-cl-who-string () (str (the signup-card main-div)))))
+
+
+  :objects
+  ((signup-card :type 'signup-card :pass-down (title-string sub-title-string privacy-string email-entry))
+
+   (thank-you :type 'thank-you-page
+              :opt-in? (the opt-in? value)
+              :human? (let ((human? (and (not (the robot-checkbox value))
+                                         (let ((email (the email-entry value)))
+                                           (and email (string= (string-downcase email) email))))))
+                        (print-variables (the email-entry value) human?)
+                        human?)
+              :email-address (the email-entry value))
+
+   (opt-in? :type 'checkbox-form-control
+            :ajax-submit-on-change? t
+            :default nil)
+
+   (robot-checkbox :type 'checkbox-form-control
+                   :default nil
+                   :prompt "I am a human")
+
+   (email-entry :type 'email-form-control
+                :class "w-full border-white px-5 py-3 placeholder-gray-500 focus:outline-none
+ focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700
+ focus:ring-white rounded-md"
+                :default ""
+                :ajax-submit-on-change? t
+                :placeholder "Enter your email"
+                :required? "required"
+                :autocomplete "email"
+                )))
+
+
+(define-object signup-card (sheet-section)
+
+  :input-slots (title-string sub-title-string privacy-string email-entry)
+
+  :computed-slots
+  (
+
+
+   (inner-html
+    (with-cl-who-string ()
+      (str (the email-form))))
+
+
+   #+nil
+   (inner-html
+    (with-cl-who-string ()
+      ((:nav :class "bg-green-800")
+       ;;((:img :class "h-8 w-8" :src "/gorn.png" :alt "logo"))
+       ((:div :class "sm:hidden md:block")
+        ((:div :class "ml-10 flex items-baseline")
+         ((:a :href "#" :class
+              "px-3 py-2 rounded-md text-sm font-medium leading-5 text-white  focus:outline-none focus:text-white focus:bg-gray-700")
+          "About")
+         ((:a :href "#" :class
+              "px-3 py-2 rounded-md text-sm font-medium leading-5 text-white  focus:outline-none focus:text-white focus:bg-gray-700")
+          "Blog")
+         ((:a :href "#" :class
+              "px-3 py-2 rounded-md text-sm font-medium leading-5 text-white  focus:outline-none focus:text-white focus:bg-gray-700")
+          "Contact"))))
+
+      (str (the email-form))))
+
+   (email-form
+    (with-cl-who-string ()
+
+      ((:div :class
+             "max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:py-16 lg:px-8")
+       ((:div :class
+              "px-6 py-6 bg-indigo-700 rounded-lg md:py-12 md:px-12 lg:py-16 lg:px-16 xl:flex xl:items-center")
+        ((:div :class "xl:w-0 xl:flex-1")
+         ((:h2 :class
+               "text-2xl font-bold tracking-tight text-white sm:text-3xl sm:tracking-tight")
+          (str (the title-string)))
+         ((:p :class "mt-3 max-w-3xl text-lg leading-6 text-indigo-200")
+          (str (the sub-title-string))))
+        ((:div :class "mt-8 sm:w-full sm:max-w-md xl:mt-0 xl:ml-8")
+
+         ;;
+         ;; Next 3 lines should be captured with new with-html-form macro.
+         ;;
+         ((:form :class "sm:flex" :method :post :accept-charset "utf-8" :action "/answer")
+          ((:input :type :hidden :name :|requestor| :value (the respondent url-encoded-root-path)))
+          ((:input :type :hidden :name :|iid| :value (the instance-id)))
+
+          ((:label :for "email-address" :class "sr-only")
+           "Email address")
+          (str (the email-entry form-control-string))
+          :b
+          ((:label :for "robot-checkbox" :class "sr-only")
+           "I am a human")
+          (:span :class "invisible"
+                 (str (the robot-checkbox  form-control-string)))
+
+          ((:button :type "submit" :class
+                    "mt-3 w-full flex items-center justify-center px-5 py-3 border border-transparent shadow text-base font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white sm:mt-0 sm:ml-3 sm:w-auto sm:flex-shrink-0")
+           "Send Link"))
+
+
+         ((:div :class "flex mt-3 text-sm text-indigo-200")
+          ((:div :class "px-1") (str (the opt-in? form-control-string)))
+          ((:div :class "px-1") (str  (the privacy-string))))
+
+         ((:div :class "flex mt-3 text-sm text-indigo-200")
+          ((:div :class "px-1" ) ((:a :class "text-white" :href "/shared") "Or, enter a non-personalized session without signing up."))))))))))
+
+
+
+
+
+
+#+nil
+(define-object signup-card (sheet-section)
+
+  :input-slots (title-string sub-title-string privacy-string email-entry)
+
+  :computed-slots
+  (
+
+   (inner-html
+    (with-cl-who-string ()
+      ((:nav :class "bg-green-800")
+       ;;((:img :class "h-8 w-8" :src "/gorn.png" :alt "logo"))
+       ((:div :class "sm:hidden md:block")
+        ((:div :class "ml-10 flex items-baseline")
+         ((:a :href "#" :class
+              "px-3 py-2 rounded-md text-sm font-medium leading-5 text-white  focus:outline-none focus:text-white focus:bg-gray-700")
+          "About")
+         ((:a :href "#" :class
+              "px-3 py-2 rounded-md text-sm font-medium leading-5 text-white  focus:outline-none focus:text-white focus:bg-gray-700")
+          "Blog")
+         ((:a :href "#" :class
+              "px-3 py-2 rounded-md text-sm font-medium leading-5 text-white  focus:outline-none focus:text-white focus:bg-gray-700")
+          "Contact"))))
+
+      (str (the email-form))))
+
+   (email-form
+    (with-cl-who-string ()
+
+      ((:div :class
+             "max-w-7xl mx-auto px-4 py-12 sm:px-6 lg:py-16 lg:px-8")
+       ((:div :class
+              "px-6 py-6 bg-indigo-700 rounded-lg md:py-12 md:px-12 lg:py-16 lg:px-16 xl:flex xl:items-center")
+        ((:div :class "xl:w-0 xl:flex-1")
+         ((:h2 :class
+               "text-2xl font-bold tracking-tight text-white sm:text-3xl sm:tracking-tight")
+          (str (the title-string)))
+         ((:p :class "mt-3 max-w-3xl text-lg leading-6 text-indigo-200")
+          (str (the sub-title-string))))
+        ((:div :class "mt-8 sm:w-full sm:max-w-md xl:mt-0 xl:ml-8")
+
+         ;;
+         ;; Next 3 lines should be captured with new with-html-form macro.
+         ;;
+         ((:form :class "sm:flex" :method :post :accept-charset "utf-8" :action "/answer")
+          ((:input :type :hidden :name :|requestor| :value (the respondent url-encoded-root-path)))
+          ((:input :type :hidden :name :|iid| :value (the instance-id)))
+
+          ((:label :for "email-address" :class "sr-only")
+           "Email address")
+          (str (the email-entry form-control-string))
+          :b
+          ((:label :for "robot-checkbox" :class "sr-only")
+           "I am a human")
+          (:span :class "invisible"
+                 (str (the robot-checkbox  form-control-string)))
+
+          ((:button :type "submit" :class
+                    "mt-3 w-full flex items-center justify-center px-5 py-3 border border-transparent shadow text-base font-medium rounded-md text-white bg-indigo-500 hover:bg-indigo-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-indigo-700 focus:ring-white sm:mt-0 sm:ml-3 sm:w-auto sm:flex-shrink-0")
+           "Send Link"))
+
+
+         ((:div :class "flex mt-3 text-sm text-indigo-200")
+          ((:div :class "px-1") (str (the opt-in? form-control-string)))
+          ((:div :class "px-1") (str  (the privacy-string))))
+
+         ((:div :class "flex mt-3 text-sm text-indigo-200")
+          ((:div :class "px-1" ) ((:a :class "text-white" :href "/shared") "Or, enter a non-personalized session without signing up."))))))))))

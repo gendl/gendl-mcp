@@ -1,0 +1,65 @@
+(in-package :quiz)
+
+(define-object populator ()
+
+  :input-slots ((set-name "asanas")
+		(vocab-pathname *vocab-pathname*))
+  
+  
+  :computed-slots ((base-pathname (merge-pathnames (the set-name)
+						   (the vocab-pathname)))
+
+		   (csv-pathname (make-pathname :defaults (the base-pathname) :type "csv"))
+
+		   (iast-pathname (let ((pathname
+					  (make-pathname :type "iast" :defaults (the base-pathname))))
+				    (with-open-file (out pathname
+							 :direction :output
+							 :if-exists :supersede)
+				      (dolist (pair (the input-pairs))
+					(destructuring-bind (iast meaning) pair
+					  (declare (ignore meaning))
+					  (format out "~a~%" iast)))) pathname))
+		
+		   (sanscript-command (if (or (glisp:featurep :windows)
+					      (glisp:featurep :mswindows))
+					  "wsl sanscript" "sanscript"))
+
+		   (input-pairs (the reader pairs))
+
+		   (triples-pathname (make-pathname :defaults (the base-pathname) :type "triples"))
+
+		   ;;
+		   ;; FLAG update this to read directly from (the triples-pathname) if
+		   ;; that is determined to be already up to date. 
+		   ;;
+		   (triples (let ((devanagari-strings (the iast-to-devanagari)))
+			      (mapcar #'(lambda(pair devanagari)
+					  (destructuring-bind
+					      (iast meaning) pair
+					    (list iast devanagari meaning)))
+				      (the input-pairs) devanagari-strings))))
+  
+  :objects ((reader :type 'vocab-reader :pass-down (csv-pathname)))
+
+  :functions
+  ((iast-to-devanagari
+    ()
+    (let* ((command
+	     (format nil
+		     "~a --from iast --to devanagari --input-file ~a"
+		     (the sanscript-command)
+		     (glisp:replace-regexp (namestring (the iast-pathname)) "C:" "/mnt/c")))
+	   (devanagari-strings
+	     (glisp:split-regexp (format nil "~%") (uiop:run-program command :output :string))))
+      ;;(delete-file (the iast-pathname))
+
+      devanagari-strings))
+	   
+   (save-triples
+    ()
+    (with-open-file (out (the triples-pathname)
+			 :direction :output :if-exists :supersede)
+      (pprint (the triples) out)))))
+	      
+
