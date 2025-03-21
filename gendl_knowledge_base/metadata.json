@@ -1,12 +1,13 @@
 {
-  "document_count": 1963,
+  "document_count": 11069,
   "content_types": {
-    "usage_guide": 68,
+    "usage_guide": 102,
+    "unknown": 9072,
     "tutorial": 632,
     "reference": 1263
   },
   "topics": {
-    "general": 375,
+    "general": 9481,
     "tutorial_1_object_definition": 10,
     "tutorial_1_package": 1,
     "tutorial_5_object_definition": 55,
@@ -45,6 +46,6 @@
     "package_4": 1,
     "package_4_functions": 3
   },
-  "created_at": "2025-03-17T20:31:19.776854",
-  "source_directory": "/projects/xfer/vector-input-data"
+  "created_at": "2025-03-18T23:43:26.481233",
+  "source_directory": "/projects/xfer/gendl-mcp/vector-input-data"
 }

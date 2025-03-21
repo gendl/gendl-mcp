@@ -242,7 +242,15 @@ async function handleToolCall(request) {
     }
     
     // Convert tool name to endpoint path (convert underscores to hyphens)
-    const endpointPath = `${GENDL_BASE_PATH}/${toolName.replace(/_/g, '-')}`;
+    // Handle special cases for tool names
+    let endpointPath;
+    if (toolName === 'ping_gendl') {
+      endpointPath = `${GENDL_BASE_PATH}/ping-gendl`;
+    } else if (toolName === 'lisp_eval') {
+      endpointPath = `${GENDL_BASE_PATH}/lisp-eval`;
+    } else {
+      endpointPath = `${GENDL_BASE_PATH}/${toolName.replace(/_/g, '-')}`;
+    }
     
     // Choose HTTP method based on whether we have args or not
     const method = Object.keys(args).length > 0 ? 'POST' : 'GET';
@@ -433,7 +441,7 @@ function makeGendlRequest(path, method = 'GET', body = null) {
 
 // Test connection to Gendl server
 function testGendlConnection() {
-  return makeGendlRequest(`${GENDL_BASE_PATH}/claude/ping`);
+  return makeGendlRequest(`${GENDL_BASE_PATH}/ping-gendl`);
 }
 
 // Helper to send MCP responses

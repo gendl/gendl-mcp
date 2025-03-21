@@ -1,0 +1,23 @@
+#!/bin/bash
+
+set -e
+
+cd $(dirname $0)/..  # assume this runs from pipeline in gendl/ parent directory managed by runner..
+# FLAG -- maybe put a check here that we are in currect current directory.
+
+
+export START_HTTP=true
+export HTTP_HOST_PORT=18080
+export START_HTTPS=false
+export START_SWANK=false
+export CI_COMMIT_REF_NAME=${CI_COMMIT_REF_NAME:-"release/1598"}
+
+for impl in ccl sbcl; do 
+    docker run -i --rm -h gendl-pipeline-test --name gendl-pipeline-test \
+           -e START_HTTP -e START_HTTPS -e START_SWANK \
+           --mount type=bind,src="$(pwd)",dst=/src/gendl/ \
+           dcooper8/gendl:${CI_COMMIT_REF_NAME//\//--}-${impl} \
+           /opt/gendl/run-gendl-services < ./docker/pipeline-tests.lisp
+done
+
+

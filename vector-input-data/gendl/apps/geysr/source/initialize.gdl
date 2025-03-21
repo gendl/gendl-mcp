@@ -1,0 +1,75 @@
+;;;; -*- coding: utf-8 -*-
+;;
+;; Copyright 2020 Genworks International
+;;
+;; This source file is part of the General-purpose Declarative
+;; Language project (Gendl).
+;;
+;; This source file contains free software: you can redistribute it
+;; and/or modify it under the terms of the GNU Affero General Public
+;; License as published by the Free Software Foundation, either
+;; version 3 of the License, or (at your option) any later version.
+;; 
+;; This source file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Affero General Public License for more details.
+;; 
+;; You should have received a copy of the GNU Affero General Public
+;; License along with this source file.  If not, see
+;; <http://www.gnu.org/licenses/>.
+;; 
+
+(in-package :geysr)
+
+(define-object geysr-try (assembly)
+  :computed-slots ((root-object-type (read-from-string "gdl-user::try"))))
+
+(define-object geysr-bus (assembly)
+  :computed-slots ((root-object-type (read-from-string "bus::assembly"))))
+
+(define-object geysr-house (assembly)
+  :computed-slots ((root-object-type (read-from-string "gdl-user::house"))))
+
+(define-object geysr-robot (assembly)
+  :computed-slots ((root-object-type (read-from-string "robot:assembly"))))
+
+(define-object geysr-primi-plane (assembly)
+  :computed-slots ((root-object-type (read-from-string "primi-plane"))))
+
+(defun win-pathname-string-to-ux (string)
+  (let ((result (glisp:replace-regexp string "\\" "/")))
+    (subseq result 0 (1- (length result)))))
+
+(defparameter *home* (make-pathname :name nil :type nil :defaults *load-pathname*))
+
+(defparameter *static* nil)
+
+(defvar *settings*
+  (list
+   (list
+    '*static* *static*
+    #'(lambda()
+        (let ((pathname
+                (or (and glisp:*gendl-source-home*
+			 (probe-file (merge-pathnames "apps/geysr/static/" 
+						      glisp:*gendl-source-home*)))
+		    (and glisp:*gdl-home*
+			 (probe-file (merge-pathnames "geysr-static/"
+						      glisp:*gdl-home*)))
+		    (and glisp:*gdl-program-home*
+			 (probe-file (merge-pathnames "geysr-static/"
+						      glisp:*gdl-program-home*)))
+		    (warn  "~%Geysr Static directory not found in source directory or parent of program directory.~%"))))
+          (when pathname (win-pathname-string-to-ux (namestring pathname))))))))
+   
+(defun initialize () (glisp:set-settings *settings*))
+
+(defun publish-geysr (server)
+  (when (and *static* (probe-file *static*))
+    (mapc #'(lambda(prefix file)
+	      (publish-directory :prefix prefix :server server :destination file))
+          `("/geysr-static") `(,*static*)))
+  (publish-gwl-app "/geysr" 'assembly :server server))
+
+(pushnew 'publish-geysr *publishers*)

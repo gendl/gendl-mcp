@@ -1,0 +1,15 @@
+;;;; -*- coding: utf-8 -*-
+
+(asdf:defsystem #:dom :description
+ "The Gendl® dom Subsystem" :author "Genworks International" :license
+ "Affero Gnu Public License (http://www.gnu.org/licenses/)" :serial t
+ :version "20210427" :depends-on (:cl-who :yadd)
+ :defsystem-depends-on nil :components
+ ((:file "base/source/package") (:file "base/source/assembly")
+  (:file "writers/source/package")
+  (:file "writers/source/dom-writer") (:file "writers/source/html")
+  (:file "writers/source/latex") (:file "writers/source/plain-text")
+  (:file "html/source/package") (:file "html/source/lenses")
+  (:file "latex/source/package") (:file "latex/source/lenses")
+  (:file "latex/source/utilities")
+  (:file "test-parts/source/assembly")))

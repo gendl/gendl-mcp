@@ -1,0 +1,50 @@
+#!/bin/bash
+
+set -e
+
+cd $(dirname $0)
+GENDL_DIR=$(pwd)
+
+if ! [[ -z "${HOST_USER_UID}" ]]; then
+    usermod -u ${HOST_USER_UID} gendl-user
+fi
+
+
+#
+# FLAG -- the (gendl::initialize) might not be needed but not sure if -e args below get eval'ed
+#         before or after toplevel-function. (my guess is before). 
+#
+
+export HTTP_PORT=${HTTP_PORT:-9080}
+export HTTPS_PORT=${HTTPS_PORT:-9443}
+export SWANK_PORT=${SWANK_PORT:-4200}
+export TELNET_PORT=${TELNET_PORT:-4023}
+
+export HTTP_HOST_PORT=${HTTP_HOST_PORT:-10080}
+export HTTPS_HOST_PORT=${HTTPS_HOST_PORT:-10443}
+export SWANK_HOST_PORT=${SWANK_HOST_PORT:-5200}
+export TELNET_HOST_PORT=${TELNET_HOST_PORT:-5023}
+
+export START_HTTP=${START_HTTP:-false}
+export START_HTTPS=${START_HTTPS:-false}
+export START_SWANK=${START_SWANK:-true}
+export START_TELNET=${START_TELNET:-false}
+
+cd ${GENDL_DIR}
+
+if [ -f ./gdl/program/gdl-ccl ];
+then
+
+    su - gendl-user -c "cd ${GENDL_DIR}; HTTP_PORT=${HTTP_PORT} HTTPS_PORT=${HTTPS_PORT} SWANK_PORT=${SWANK_PORT} TELNET_PORT=${TELNET_PORT} HTTP_HOST_PORT=${HTTP_HOST_PORT} HTTPS_HOST_PORT=${HTTPS_HOST_PORT} SWANK_HOST_PORT=${SWANK_HOST_PORT} TELNET_HOST_PORT=${TELNET_HOST_PORT} START_SWANK=${START_SWANK} START_HTTP=${START_HTTP} START_HTTPS=${START_HTTPS} START_TELNET=${START_TELNET} ./gdl/program/gdl-ccl -l ./gdl/start-services.lisp"
+
+    
+else
+
+    su - gendl-user -c "cd ${GENDL_DIR}; HTTP_PORT=${HTTP_PORT} HTTPS_PORT=${HTTPS_PORT} SWANK_PORT=${SWANK_PORT} TELNET_PORT=${TELNET_PORT} HTTP_HOST_PORT=${HTTP_HOST_PORT} HTTPS_HOST_PORT=${HTTPS_HOST_PORT} SWANK_HOST_PORT=${SWANK_HOST_PORT} TELNET_HOST_PORT=${TELNET_HOST_PORT} START_SWANK=${START_SWANK} START_HTTP=${START_HTTP} START_HTTPS=${START_HTTPS} START_TELNET=${START_TELNET} ./gdl/program/gdl-sbcl --load ./gdl/start-services.lisp"
+
+fi
+
+
+
+
+

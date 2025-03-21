@@ -1,0 +1,97 @@
+#!/bin/bash
+
+#
+#
+# Don't try running this script at home, kids! This depends on the
+# existence of build output from our legacy build system which is not
+# self-contained in this repo. Hopefully a self-contained docker build
+# will be coming soon.
+#
+#
+
+#
+# FLAG -- this build appears to make the build context way too huge!!
+#
+
+
+set -e
+# export CI_COMMIT_REF_NAME="release/1598"
+echo "CI_COMMIT_REF_NAME is: ${CI_COMMIT_REF_NAME}" 
+
+if [ -z "${CI_COMMIT_REF_NAME}" ];
+then
+    branch="unspecified"
+else
+    branch=${CI_COMMIT_REF_NAME//\//--}
+fi
+
+
+echo "branch is: ${branch}" 
+
+
+cd `dirname $0`/../../
+
+echo "Present Working Directory: " `pwd`
+
+
+CI_PIPELINE_ID=${CI_PIPELINE_ID:="9711"}
+
+for impl in  "ccl" "sbcl"
+#for impl in  "ccl"
+do
+
+    dist_name=gendl-build${CI_PIPELINE_ID}L-linux-${impl}
+    dist_name_release=gendl1598-linux-${impl}
+    dist_name_release_beta=gendl1598-beta-linux-${impl}
+
+    dist_zip_server=/home/builder/genworks/manager/staging/gendl/${CI_PIPELINE_ID}L/distribution/${dist_name}.zip
+    dist_zip_server_release=/home/builder/genworks/manager/staging/gendl/${CI_PIPELINE_ID}L/distribution/${dist_name_release}.zip
+    dist_zip_server_release_beta=/home/builder/genworks/manager/staging/gendl/${CI_PIPELINE_ID}L/distribution/${dist_name_release_beta}.zip
+
+    dist_zip_local=~/genworks/builds/${dist_name}.zip
+
+    dist_zip_release_beta_local=~/genworks/builds/${dist_name_release_beta}.zip
+
+
+
+
+    if [ -f "$dist_zip_server_release_beta" ]; then
+        dist_zip=$dist_zip_server_release_beta
+        dist_name=$dist_name_release_beta
+    elif [ -f "$dist_zip_server_release" ]; then
+        dist_zip=$dist_zip_server_release
+        dist_name=$dist_name_release
+    elif [ -f "$dist_zip_server" ]; then
+        dist_zip=$dist_zip_server
+    elif  [ -f "$dist_zip_local" ]; then
+        dist_zip=$dist_zip_local
+    elif  [ -f "$dist_zip_release_beta_local" ]; then
+        dist_zip=$dist_zip_release_beta_local
+        dist_name=$dist_name_release_beta
+    else
+        echo "Neither $dist_zip_server_release nor $dist_zip_server nor $dist_zip_local was found. Exiting."
+        exit 1
+    fi
+
+
+    cp $dist_zip .
+
+    unzip -q ${dist_name}.zip
+
+    rm ${dist_name}.zip
+
+    rm -rf gendl-build/
+
+    mv ${dist_name} gendl-build/
+
+    docker build --progress=plain -t dcooper8/gendl:${branch}-${impl} -f ./gendl/docker/Dockerfile .
+
+    rm -rf gendl-build/
+
+    if ! [ ${branch} = "unspecified" ];
+    then
+        docker push dcooper8/gendl:${branch}-${impl}
+    fi
+
+
+done

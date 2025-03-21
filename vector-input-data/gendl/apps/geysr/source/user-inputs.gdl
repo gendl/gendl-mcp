@@ -1,0 +1,57 @@
+;;;; -*- coding: utf-8 -*-
+;;
+;; Copyright 2020 Genworks International
+;;
+;; This source file is part of the General-purpose Declarative
+;; Language project (Gendl).
+;;
+;; This source file contains free software: you can redistribute it
+;; and/or modify it under the terms of the GNU Affero General Public
+;; License as published by the Free Software Foundation, either
+;; version 3 of the License, or (at your option) any later version.
+;; 
+;; This source file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Affero General Public License for more details.
+;; 
+;; You should have received a copy of the GNU Affero General Public
+;; License along with this source file.  If not, see
+;; <http://www.gnu.org/licenses/>.
+;; 
+
+(in-package :geysr)
+
+
+(define-object user-inputs (inspector)
+
+  :objects
+  ((settables-form :type 'settables-form
+		   :show-settables? t
+                   :pass-down (node geysr design-mode?))))
+
+
+(define-lens (html-format user-inputs)()
+  :output-functions
+  ((inspector-body
+    ()
+    (with-cl-who ()
+      (:center
+       ((:span :style "font-style: italic; font-weight: bold;")
+        (:p "Inputs for: " 
+	    (fmt "\"~a\"" (the node strings-for-display))
+	    :br 
+	    "root-path: "
+            (esc (format nil "~s" 
+                         (cons 'the (reverse (butlast (the node-root-path))))))
+            (unless (butlast (the node-root-path))
+              (htm " [the root object]")))))
+
+
+      (str (the settables-form inner-html))
+      
+      #+nil
+      ((:table :class "inspector-table" :border 1)
+       (htm (:tr ((:td :colspan 2)
+                  (str (the settables-form inner-html))))))))))
+

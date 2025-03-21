@@ -20,9 +20,9 @@ logger = logging.getLogger(__name__)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Process Gendl documentation into searchable text')
-    parser.add_argument('--input', type=str, default='/projects/xfer/vector-input-data',
+    parser.add_argument('--input', type=str, default='/projects/xfer/gendl-mcp/vector-input-data',
                       help='Input directory containing Gendl documentation')
-    parser.add_argument('--output', type=str, default='/projects/xfer/gendl_knowledge_base',
+    parser.add_argument('--output', type=str, default='/projects/xfer/gendl-mcp/gendl_knowledge_base',
                       help='Output directory for processed documentation')
     parser.add_argument('--chunk-size', type=int, default=1000,
                       help='Maximum size of text chunks')

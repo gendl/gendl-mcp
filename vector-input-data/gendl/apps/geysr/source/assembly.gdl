@@ -1,0 +1,418 @@
+;;;; -*- coding: utf-8 -*-
+;;
+;; Copyright 2020 Genworks International
+;;
+;; This source file is part of the General-purpose Declarative
+;; Language project (Gendl).
+;;
+;; This source file contains free software: you can redistribute it
+;; and/or modify it under the terms of the GNU Affero General Public
+;; License as published by the Free Software Foundation, either
+;; version 3 of the License, or (at your option) any later version.
+;; 
+;; This source file is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+;; Affero General Public License for more details.
+;; 
+;; You should have received a copy of the GNU Affero General Public
+;; License along with this source file.  If not, see
+;; <http://www.gnu.org/licenses/>.
+;; 
+
+
+#|
+
+ToDO:
+
+2. Adjust spacing of tree for empty object to give enough room not to
+   obstruct File->New menu.
+
+|#
+
+(in-package :geysr)
+
+(defvar *developing?* nil)
+
+(defvar *user-mode?* nil)
+
+
+(define-object assembly (base-ajax-sheet)
+
+  :input-slots
+  ((viewport-dimensions (list :width 800 :length 550) :settable)
+
+   (design-mode? nil :settable)
+
+   (user-mode?-default *user-mode?*)
+
+   (additional-css-links nil)
+
+   (empty-display-list-greeting
+    (with-cl-who-string ()
+      (:p (:h2 (fmt "Welcome to Geysr.")))
+      (:p (fmt
+	   "Geysr is for inspecting Genworks GDL models
+		   while you're developing them. You can see your
+		   model structure in the tree at the upper left."))))
+
+   (menu-div-class nil)
+   (menu-div-style nil)
+   (menu-included-children :all))
+
+  
+  :computed-slots
+  (
+   (user-mode? (the menu user-mode?))
+   
+   (click-mode :add-leaves :settable)
+   (expand-mode :remember :settable)
+   
+   (onclick-function
+    #'(lambda(object)
+	(the (gdl-ajax-call :function-key :perform-action!
+			    :arguments (list :root-path (the-object object root-path))))))
+
+
+
+   (local-assets? (not (the design-mode?)) :settable)
+   (use-ajax? (not (the design-mode?)))
+   ;;
+   ;; FLAG -- try toggling this in a sheet-section depending on
+   ;;         viewport image-format.  Seems impossible to evaluate
+   ;;         newly injected <script src=...> with Ajax, though.
+   ;;
+   ;;(use-raphael? (not (the design-mode?)))
+   (use-svgpanzoom? t) ;;(not (the design-mode?))
+   ;;(use-x3dom? (not (the design-mode?)))
+   (use-x3dom? t)
+   (use-fontawesome? t)
+   ;;(use-anyresize? (not (the design-mode?)))
+   (use-anyresize? t)
+ 
+
+   (root-object-type nil :settable)
+
+   (root-object-type-valid? (and (the root-object-type)
+				 (typep (ignore-errors
+					  (find-class
+					   (ignore-errors
+					     (read-safe-string (the root-object-type)))))
+					'gdl-class)))
+
+   (root-object (the root-object-object) :settable)
+
+   (root-object-object
+    (when (the root-object-type-valid?)
+      (make-object (the root-object-type)
+		   :god-parents (list self)
+		   :strings-for-display (format nil "~s" (the root-object-type)))) :settable)
+
+   (ui-object nil :settable)
+
+   (additional-header-content
+    (with-cl-who-string ()
+      (unless (the design-mode?)
+	(htm
+	 ((:meta :name "viewport" :content "width=device-width, initial-scale=1, shrink-to-fit=no"))
+	 ((:meta :name "description" :content "Geysr Object Browser"))
+	 ((:meta :name "author" :content "Genworks"))
+	 ((:meta :name "keywords" :content "KBE, CL"))
+	 ((:meta :name "mobile-web-app-capable" :content "yes"))
+	 ((:meta :name "viewport" :content "width=device-width, initial-scale=1.0"))
+         ((:script :src "/static/3rdpty/aframe/aframe.min.js"))
+	 (unless *developing?*
+	   (htm ((:script :type "text/javascript")
+		 "window.onerror = function(){location.reload()};")))))
+      (str (the local-css-links))))
+
+
+   (body-onpageshow (when (the use-ajax?) "gdlResize();"))
+   (body-onresize (when (the use-ajax?) "gdlResize();"))
+   (body-onpageload (when (the use-ajax?) "gdlResize();"))
+
+   (menu-clear-func #'(lambda()
+			(the (restore-slot-default! :ui-object))
+			(the viewport clear!)))
+   
+   (local-css-links
+    (with-cl-who-string ()
+      (string-append
+       (htm
+	((:link :href "/geysr-static/styles.css" :rel "stylesheet"))
+	((:link :href "/geysr-static/menu.css" :rel "stylesheet")))
+       (if (the additional-css-links)
+	   (dolist (link (ensure-list (the additional-css-links)))
+	     (htm ((:link :href link :rel "stylesheet")))) ""))))
+
+   (main-sheet-body
+    (with-cl-who-string (:indent t)
+      ((:div :class "grid")
+       ((:div :id "menu-cell" :class "cell menu menuToggle")
+	((:input :type "checkbox" :class "dp-none"))
+	((:span :class "dp-none"))((:span :class "dp-none"))((:span :class "dp-none"))
+	(str (the menu main-div)))
+       ((:div :id "tree" :class "cell tree") (str (the tree main-div)))
+       ((:div :id "inspector" :class "cell inspector")
+	(str (if (the user-mode?) (the user-inputs main-div)
+		 (the inspector main-div))))
+       ((:div :id "viewport" :class "cell viewport")
+	(str (the viewport main-div)))
+       ((:div :id "viewport-script") (str (the viewport-script main-div)))
+       ((:div :id "menu-script") (str (the menu-script main-div))))
+      (unless (the design-mode?)
+	(htm
+	 (:script "
+
+const debounceEvent = (callback, time = 250, interval) =>
+ (...args) => 
+   clearTimeout(interval, interval = setTimeout(() => callback(...args), time))
+
+var gdlResize = debounceEvent(() => {
+ gdlAjax(null, 'args=' + encode64('(:|iid| ' + doublequote + gdliid + doublequote + ' :|bashee| (:%rp% nil) :|function| :set-slot! :|arguments| (:viewport-dimensions (:width ' + (document.getElementById('viewport').getBoundingClientRect().width) +  ' :length ' + (document.getElementById('viewport').getBoundingClientRect().height) + ')))'), true );
+}, 250);
+
+
+tree = document.getElementById('tree'); 
+tree.addEventListener('onresize', function(){gdlResize();});
+
+"))))))
+
+  
+  :hidden-objects
+  ((inspector-or-inputs-section
+    :type 'sheet-section
+    :inner-html (with-cl-who-string ()
+		  (str (if (the user-mode?) (the user-inputs main-div)
+			   (the inspector main-div)))))
+   (menu :type 'menu
+	 :div-class (the menu-div-class)
+	 :div-style (the menu-div-style)
+	 :included-children (the menu-included-children)
+   	 :pass-down (design-mode? local-assets? click-mode expand-mode)
+	 :user-mode?    (the user-mode?-default)
+	 :set-click-mode-func #'(lambda(mode) (the (set-slot! :click-mode mode)))
+	 :set-expand-mode-func #'(lambda(mode) (the (set-slot! :expand-mode mode)))
+	 :reset-zoom-func #'(lambda() (the viewport reset-zoom!))
+	 :set-image-format-func #'(lambda(format)
+				    (the viewport image-format-selector (set-slot! :value format)))
+	 :set-view-func #'(lambda(view) (the viewport view-selector (set-slot! :value view)))
+
+	 :clear-func (the menu-clear-func)
+
+	 ;;:clear-func #'(lambda()
+	 ;;(the (restore-slot-default! :ui-object))
+	 ;;(the viewport clear!))
+	 
+	 :update-root-func #'(lambda() (the update-root!))
+	 :set-self-func #'(lambda() (set-self self))
+	 :up-root-func #'(lambda() (let ((parent (the root-object parent)))
+				     (when parent (the (set-slot! :root-object parent)))))
+	 :reset-root-func #'(lambda() (the (set-slot! :root-object (the root-object-object))))
+	 :image-format (the viewport image-format-selector value)
+	 :view (the viewport view-selector value) 
+	 :geysr self
+	 :viewport-js-text (the viewport viewport-js-text)
+	 ;;:image-format-plist (the viewport image-format-plist)
+	 :image-format-plist (list :png "PNG image"
+				   :jpeg "jpeg image"
+				   :x3dom "Shaded"
+                                   :a-frame "VR"
+				   ;;:web3d "VRML/X3D"
+			   :svg "Wireframe")
+
+	 )
+
+
+   (tree :type 'tree 
+	 :pass-down (onclick-function click-mode expand-mode design-mode?)
+	 :display-controls-hash (make-hash-table)
+	 :target-object (the root-object))
+
+
+   (user-inputs :type 'user-inputs
+		:geysr self
+		:node (the inspector node)
+		:pass-down (root-object))
+   
+   (inspector :type 'inspector
+	      :pass-down (root-object onclick-function click-mode design-mode?)
+	      :geysr self
+              :display-controls-hash (the tree display-controls-hash))
+
+   (viewport-section :type 'sheet-section
+		     :div-class "gwl-iframe-section"
+		     :inner-html (if (eql (the click-mode) :user-interface)
+				     (the ui inner-html)
+				     (the viewport inner-html)))
+
+   (ui :type 'sheet-section)
+
+   #+nil
+   (ui :type 'iframe
+       :url (when (the ui-object)
+	      (progn (gwl::register-instance (the ui-object))
+		     (the ui-object url))))
+		
+   
+   (viewport :type 'viewport
+	     :geysr self
+	     :div-class "viewport-wrapper"
+	     :pass-down (root-object root-object-type)
+	     :length (getf (the viewport-dimensions) :length)
+	     :width (getf (the viewport-dimensions) :width)
+	     :onclick-function nil
+	     :background-color "#d3d3d3"
+
+	     :empty-display-list-message
+	     (with-cl-who-string ()
+
+	       (str (the empty-display-list-greeting))
+
+	       (:p "The Display List is currently empty. You may click a node (in the tree at the upper-left) to apply the "
+		   (:i ((:a :class "menu-show" :href "#" :onclick (the (menu-control-js "the__mode")))
+			(fmt "~a" (the click-mode)))) " operation.")
+	       
+	       (:p "The rendering mode is currently "
+		   (:i ((:a :class "menu-show" :href "#"
+			    :onclick (the (menu-control-js
+					   (list "the__view" "the__view__graphics-format-menu"))))
+			(fmt "~a. " (getf (the menu image-format-plist)(the menu image-format)))))
+
+		   (let ((graphics-format-show (the (menu-control-js
+						     (list "the__view" "the__view__graphics-format-menu")))))
+		     (ecase (the menu image-format)
+                       (:a-frame
+                        (htm "You are in VR graphics mode. Look for a [VR] button in the viewport after adding leaves."))
+		       (:svg
+			(htm ". You can try "
+			     
+			     (:i ((:a :class "menu-show" :href "#"
+				      :onclick graphics-format-show)
+				  "x3dom"))
+			     " for a shaded, navigable view, or one of the "
+			     (:i ((:a :class "menu-show" :href "#"
+				      :onclick graphics-format-show)
+				  "raster formats")) " (png or jpeg)."))
+		       (:x3dom
+			(htm ". You can try "
+			     
+			     (:i ((:a :class "menu-show" :href "#"
+				      :onclick graphics-format-show)
+				  "svg"))
+			     " for a wireframe, pannable and zoomable view, or one of the "
+			     (:i ((:a :class "menu-show" :href "#"
+				      :onclick graphics-format-show)
+				  "raster formats")) " (png or jpeg)."))
+
+		       ((:png :jpeg)
+			(htm ". You can try "
+			     
+			     (:i ((:a :class "menu-show" :href "#"
+				      :onclick graphics-format-show)
+				  "svg"))
+			     " for a wireframe, pannable and zoomable view, or "
+			     (:i ((:a :class "menu-show" :href "#"
+				      :onclick graphics-format-show)
+				  "x3dom")) " for a shaded, navigable view.")))))))
+
+
+   (viewport-script :type 'sheet-section
+		    :js-to-eval :parse
+		    :inner-html (the viewport viewport-script))
+				  
+   (menu-script :type 'sheet-section
+		:js-to-eval :parse
+		:inner-html (the menu menu-script)))
+
+
+   :functions
+   (
+    (set-new-geysr-object!
+     (object-type)
+     (let ((type (ignore-errors (read-safe-string object-type))))
+       ;;
+       ;; FLAG -- throw an error (which gets displayed) if an invalid
+       ;; object type is entered.
+       ;;
+       (when (and type (typep (find-class type) 'gdl-class))
+	 (the viewport clear!)
+	 (the (set-slot! :root-object-type type)))))
+
+    (open-instance-from-expression!
+     (instance-expression)
+     (let ((value (ignore-errors (eval (read-safe-string instance-expression)))))
+       ;;
+       ;; FLAG -- throw an error (which gets displayed) if an invalid
+       ;; object instance is entered.
+       ;;
+       (when (and value (typep (class-of value) 'gdl-class))
+	 (the viewport clear!)
+	 (the (set-slot! :root-object-object value))
+         (add-godparent (the root-object) self))))
+
+    
+    (open-instance-from-snapshot!
+     (snapshot-file)
+     (let ((value (read-snapshot :filename snapshot-file)))
+       ;;
+       ;; FLAG -- throw an error (which gets displayed) if an invalid
+       ;; object instance is entered.
+       ;;
+       (when (and value (typep (class-of value) 'gdl-class))
+	 (the viewport clear!)
+	 (the (set-slot! :root-object-object value))
+         (add-godparent (the root-object) self))))
+    
+    ;;
+    ;; FLAG -- change this to accept the actual single menu object in
+    ;; question, then compute a list of it and its parents' ids up
+    ;; through (the menu).
+    ;;
+    (menu-control-js
+     (ids)
+     (format nil "
+  hideMenus(event, true);
+  document.querySelector('#menu').classList.add('hoverable');
+  ~{~a~^~%  ~}"
+	     (mapcar #'(lambda(id)
+			 (format nil "document.querySelector('#~a').classList.add('visible');" id))
+		     (ensure-list ids))))
+
+    (set-root! (object)
+	       (the (set-slot! :root-object object))
+	       (add-godparent (the root-object) self))
+	       
+    
+    (:perform-action!
+     (&key root-path)
+     (let ((object (the root-object (follow-root-path root-path))))
+       (ecase (the click-mode)
+	 (:inspect (the inspector (set-object! object)))
+	 (:set-root (the (set-root! object)))
+	 (:update-node (the-object object update!))
+	 (:draw-leaves (the viewport (draw-leaves! object)))
+	 (:draw-node (the viewport (draw-node! object)))
+	 (:add-leaves (the viewport (add-leaves! object)))
+	 (:add-leaves* (the viewport (add-leaves*! object)))
+	 (:delete-leaves (the viewport (delete-leaves! object)))
+	 (:add-node (the viewport (add-node! object)))
+	 (:user-interface (the (set-slot!
+				:ui-object (the root-object (follow-root-path root-path)))))
+      
+	 (:set-self 
+	  (set-self object)
+	  (let ((*package* (symbol-package (the-object object root type))))
+                
+	    (format t "~&
+~&~%Self is now set to to ~s, you may use command-line interaction....~%~%" 
+		    object))))))))
+
+  
+
+
+
+
+
+
+

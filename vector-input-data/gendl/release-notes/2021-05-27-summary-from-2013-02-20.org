@@ -1,0 +1,167 @@
+
+
+* Support for Gendl container image with docker/Dockerfile
+  and docker/build script triggered in CI. (full system)
+
+* Enhancements to GWL automated url generating and publishing. (:gwl package)
+
+* default to lowercase HTML tags in output from with-cl-who-string(). (:gwl package)
+
+* addition of "geysr" browser-based development environment/inspector.
+  access with http://localhost<port>/geysr (full system)
+
+* Added "glime" emacs-based context-sensitive completion. (emacs IDE)
+
+* Initial port to Clasp common lisp implementation (courtesy Karsten Poeck). (full system)
+
+* Additional arc-and-line constraints (:geom-base package)  
+
+* Improved handling for x3d viewpoints. (:gwl package)
+
+* Add remember-children? switch to keep track of existing children when cardinality of a standard sequence gets modified (:base package)
+
+* Establish automated Continuous Integration pipelines for automating builds of Gendl. (full system)
+
+* Enable option for invert-case mode. (full system)
+
+* Continually port and test with updated Quicklisp third-party open-source libraries. (full system)
+
+* Enhanced web crawler (for outputting static site version of Gendl app). (:gwl package)
+
+* Updated x3dom javascript rendering library.(:gwl package)
+
+* Added "theo" shorthand for "the-object." (:base package)
+
+* Added "bench" tutorial demo, with process-planning branch. (:demos package)
+
+* Fixed vertex-array bug in global-polygon-projection. (:geom-base package)  
+
+* Pruned Gendl repository source tree to reduce space requirements.
+
+* added crease-angle as message of ifs-output-mixin (:geom-base package)
+
+* improved support for email-form-control (:gwl package)
+
+* Fixed brep interference computation (:surf package)
+
+* Support for Genworks License Manager for proprietary/commercially licensed deployments.
+
+* Added support for Python-based child objects through Distributed GDL (courtesy European-sponsored AGILE project).
+
+* Added error messages for cylinder, cone and brep center-of-gravity. (:surf package)
+
+* Upgraded built-in binary-search operator (:base package)
+
+* Added "god-parent" concept. (:base package)
+
+* Changed to built-in color them tango-dark (emacs interface).
+
+* Added cache directives for publishing of gwl static resources (:gwl package)
+
+* Completed basic svg output (still need text-line and point).  
+
+* Removed unneeded fontawesome assets. (:gwl package)
+
+* Fixed resizing of graphics in viewport e.g. in geysr (:gwl, :geysr packages)
+
+* Included sample FontAwesome fonts in Geysr (:geysr)
+
+* Added experimental support for proper twist of view in PDF drawings.
+
+* Replaced legacy PortableAllegroserve with zacl/zaserve (:gwl package)
+
+* Expanded make-weak-hash-table to take more arguments (:glisp package)
+
+* Extensive updates to manual (tutorial) and documentation. (full system)
+
+* Updated drawing strategy for leader-lines. (:geom-base package)
+
+* Added support for JSON protocol (in addition to default S-exp protocol) in Distributed GDL. (:gwl package)
+
+* Updated view-object-cache so it doesn't output redundant DXF splines for arc-curve and linear-curve. (:geom-base package)
+
+* Added inter-line-line function. (:geom-base package)
+
+* Added spline support for DXF output-format. (:geom-base package)
+
+* Fixed match-regexp with proper args to cl-pprc:scan (:glisp package)
+
+* Improvements to HTML formatted generated documentation (:yadd, :gendl-tutorial packages)
+
+* Updated flatten function for efficiency (:base package)
+
+* Added "cardinal-spline" primitive (:surf package)
+
+* Added  normally-projected-curve primitive (:surf package)
+
+* Fixed printing of non-GDL objects (whose printed representation starts with '#<') in geysr inspector (:geysr package)
+
+* Added define-object-macro and define-object-macro-toplevel macros (:base package)
+
+* Added degenerate-curve primitive (:surf package)
+
+* Fixed bug in variable-sequence where inappropriate caching was occuring. (:base package)
+
+* Fixed sort ordering of snapshot and version-tree data in snap files. (:base package)
+
+* Added circular-curve and circular-surface primitives (:surf package)
+
+* Added make-key as lightweight alternative to make-keyword.   
+
+* Fixed point and material-properties for x3d (:geom-base package)
+
+* Added list-of-n-numbers function (:base package)
+
+* Added with-all-servers macro for automated URL publishing (:gwl package)
+
+* Fixed double-submit bug in tasty/geysr inspector (:tasty, :geysr packages)
+  
+* Protect computed-slots from toplevel inputs (:base package)
+
+* Fix message-list to exclude overidden slots in requested category (:base package)
+
+* Starting to add SCAD support (:geom-base, :surf packages)
+
+* Added total-length for arcoid-mixin (:geom-base package)
+
+* Added onclick-function for vector graphics objects (:gwl package)
+
+* Avoid finalizing copied curves going into compatible-curves, to avoid crashes apparently caused by this. (:surf package)
+
+* Added flexible aserve :after method for logging. 
+  
+* Added 4-bar-link demo (:demos)
+
+* Made viewpoint keywords case-sensitive (:geom-base package)
+
+* Removed debug creation of temporary x3d file. (:geom-base package)
+
+* Fixed several memory leaks. (full system)
+
+* Added drag-and-drop capability to browser-based SVG output. (:geom-base package)
+
+* Added fill color  for SVG output.  (:geom-base package)
+
+* Cleaned up ajax response, allowed :parse for js-to-eval to remove redundant data being sent to client. (:gwl package)
+
+* Fixed bugs with annotation dimensions. (:geom-base package)
+  
+* Implemented default generic snap/restore for any GDL instance. (:base system)
+
+* Established standardized initialization procedure for each Gendl/GDL feature for gendl:start-gendl! function. (:base system)
+
+* Added ability to use lambda function for new-value of global settings. (:base system)
+
+* Fix cl-lite to read author, license, version from arguments or .isc files (:cl-lite package).
+  
+* Fixed write-snapshot to include defaulted and settable input-slots. (:base package)
+  
+* Fixed error for Common Lisps on which Gendl is not yet supported. (:base package)
+
+* Added YADD reference docs to tutorial, partial fix for text positioning in SVG/Raphael. (:yadd package)
+
+* Added warning for setting slots from body of cached slots.
+  
+  
+
+  

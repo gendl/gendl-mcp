@@ -1,0 +1,124 @@
+Copy code
+(define-object cube
+  (width 10)
+  (height 20)
+  (depth 30))
+
+
+
+Dave Cooper
+Here is a correct version of the above, in Genworks GDL as well as the GendL language as defined by the Gendl project:
+
+```
+(define-object cube (base-object)
+  :input-slots ((width 10) (height 20) (length 30)))
+```
+
+Can you please repeat the correct version?
+Copy code
+(define-object cube (base-object)
+  :input-slots ((width 10) (height 20) (length 30)))
+
+
+
+Dave Cooper
+Now please make a similar definition, but for a sphere instead of a cube. 
+Copy code
+(define-object sphere (base-object)
+  :input-slots ((radius 10)))
+In this example, the sphere object is defined using the define-object macro. The object is given the name sphere and is derived from the base-object class, which provides basic functionality for GDL objects. The :input-slots keyword is used to define the object's properties, in this case a single property named radius with a value of 10 units. This object can then be manipulated and used in the creation of more complex 3D models.
+
+
+
+Dave Cooper
+Please add a `:computed-slot` to compute the surface area of the cube. 
+Copy code
+(define-object cube (base-object)
+  :input-slots ((width 10) (height 20) (length 30))
+  :computed-slots ((surface-area (* (* width height) 2) (* (* width length) 2) (* (* height length) 2))))
+In this example, the :computed-slots keyword is used to define a new property, surface-area, for the cube object. This property is computed using the values of the width, height, and length properties, which are provided as input slots. The surface area of a cube is equal to the sum of the areas of its six faces, so the surface-area property is computed by multiplying the values of the width, height, and length properties in various combinations and adding the results together. This allows the surface-area property to be automatically computed whenever the values of the width, height, or length properties are changed.
+
+
+
+Dave Cooper
+Please do the same for the sphere definition.
+Copy code
+(define-object sphere (base-object)
+  :input-slots ((radius 10))
+  :computed-slots ((surface-area (* 4 pi radius radius))))
+In this example, the :computed-slots keyword is used to define a new property, surface-area, for the sphere object. This property is computed using the value of the radius property, which is provided as an input slot. The surface area of a sphere is equal to four times pi times the radius of the sphere squared, so the surface-area property is computed by multiplying the value of the radius property by 4 and pi. This allows the surface-area property to be automatically computed whenever the value of the radius property is changed.
+
+
+
+Dave Cooper
+Now please add a slot to compute the interior volume.
+Copy code
+(define-object cube (base-object)
+  :input-slots ((width 10) (height 20) (length 30))
+  :computed-slots ((surface-area (* (* width height) 2) (* (* width length) 2) (* (* height length) 2)))
+  :computed-slots ((volume (* width height length))))
+In this example, an additional :computed-slots keyword is added to the cube object definition. This keyword is used to define a new property, volume, which is computed using the values of the width, height, and length properties. The volume of a cube is equal to the product of its width, height, and length, so the volume property is computed by multiplying the values of the width, height, and length properties together. This allows the volume property to be automatically computed whenever the values of the width, height, or length properties are changed.
+
+Similarly, the sphere object definition could be updated to include a volume property as follows:
+
+Copy code
+(define-object sphere (base-object)
+  :input-slots ((radius 10))
+  :computed-slots ((surface-area (* 4 pi radius radius)))
+  :computed-slots ((volume (/ 4 3) pi radius radius radius)))
+In this case, the volume property is computed using the value of the radius property, which is provided as an input slot. The volume of a sphere is equal to four-thirds times pi times the radius of the sphere cubed, so the volume property is computed by multiplying the value of the radius property by 4/3 and pi. This allows the volume property to be automatically computed whenever the value of the radius property is changed.
+
+
+
+Dave Cooper
+Please note that in GDL and Gendl, the `:computed-slots` keyword can accept multiple slot-expression pairs, such that there is no need to repeat the `:computed-slots` keyword more than once. 
+Yes, you are correct. In GDL and Gendl, the :computed-slots keyword can accept multiple slot-expression pairs, so there is no need to repeat the keyword multiple times.
+
+For example, the cube object definition could be rewritten as follows to include multiple computed slots:
+
+Copy code
+(define-object cube (base-object)
+  :input-slots ((width 10) (height 20) (length 30))
+  :computed-slots
+  ((surface-area (* (* width height) 2) (* (* width length) 2) (* (* height length) 2)))
+   (volume (* width height length))))
+In this case, the :computed-slots keyword is used only once, but it is followed by a list of multiple slot-expression pairs, each of which defines a computed property for the cube object. The first pair defines the surface-area property, and the second pair defines the volume property.
+
+Similarly, the sphere object definition could be rewritten as follows:
+
+Copy code
+(define-object sphere (base-object)
+  :input-slots ((radius 10))
+  :computed-slots
+  ((surface-area (* 4 pi radius radius))
+   (volume (/ 4 3) pi radius radius radius)))
+In this case, the :computed-slots keyword is followed by a list of two slot-expression pairs, each of which defines a computed property for the sphere object. The first pair defines the surface-area property, and the second pair defines the volume property.
+
+
+
+Dave Cooper
+You are missing one needed element, the `the` referencing operator. In Genworks GDL and Gendl, any time you want to reference any other slot within the same "self," you can do it with `(the <slot>)` rather than just `<slot>` are you are doing in your examples above. Please wrap the slot references with `(the ...)` .
+You are correct, in Genworks GDL and Gendl the the referencing operator is used to reference other slots within the same object. This operator is necessary to avoid confusion between the name of a slot and the value of the slot.
+
+For example, the cube object definition could be rewritten as follows to use the the operator:
+
+Copy code
+(define-object cube (base-object)
+  :input-slots ((width 10) (height 20) (length 30))
+  :computed-slots
+  ((surface-area (* (* (the width) (the height)) 2) (* (* (the width) (the length)) 2) (* (* (the height) (the length)) 2)))
+   (volume (* (the width) (the height) (the length)))))
+In this case, the the operator is used to reference the values of the width, height, and length properties within the expressions that define the surface-area and volume computed slots. This ensures that the correct values are used in the computation of these properties.
+
+Similarly, the sphere object definition could be rewritten as follows:
+
+Copy code
+(define-object sphere (base-object)
+  :input-slots ((radius 10))
+  :computed-slots
+  ((surface-area (* 4 pi (the radius) (the radius)))
+   (volume (/ 4 3) pi (the radius) (the radius) (the radius))))
+In this case, the the operator is used to reference the value of the radius property within the expressions that define the surface-area and volume computed slots. This ensures that the correct value is used in the computation of these properties.
+
+
+Try again

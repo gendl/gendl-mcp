@@ -1,0 +1,3 @@
+Doc folder has been removed to save space. To get the doc folder
+please visit https://www.x3dom.org/nodes/, download the latest .zip
+file, unzip it and find the doc/ directory in the result. 
