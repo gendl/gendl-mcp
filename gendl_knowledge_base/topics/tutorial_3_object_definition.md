@@ -1,5 +1,75 @@
 # Gendl Documentation - tutorial_3_object_definition
 
+## assembly.lisp - header
+Source: gornschool-training/t3/source/assembly.lisp
+Type: tutorial
+
+```
+(in-package :training-3)
+
+(defparameter *publish-prefix* "t3")  
+
+
+```
+
+---
+
+## assembly.lisp - assembly
+Source: gornschool-training/t3/source/assembly.lisp
+Type: tutorial
+
+```
+(define-object assembly (base-tutorial-sheet)
+  :input-slots
+  ((getting-started-url nil)
+   (tutorial-name "Organising your code"))
+
+  :computed-slots
+  ((introduction (with-cl-who-string ()
+		   (:p "Now that you have completed the Getting Started with GendL tutorial, its worth giving some thought to the way you may want to organise and load the code you will be writing. This tutorial covers some basic principles and provides a few guidelines that we would consider to be best practice.")
+		   (:p "The best time to get organised is right at the start as it will avoid getting locked in to less then optimal working practices, or needing to go through all your code at a later date to retro-fit it to your chosen organisation structure or methodology"))))
+
+  :objects
+  ((working-with-packages :type 'working-with-packages
+			  :pass-down (page-objects)
+			  :publish-prefix *publish-prefix*
+			  :page 1
+			  :page-title "Working with Packages"
+			  :getting-started-url (the getting-started-url)
+			  :resources (list "packages.lisp"))
+   
+   (package-tips :type 'package-tips
+		 :pass-down (page-objects)
+		 :publish-prefix *publish-prefix*
+		 :page 2
+		 :page-title "Package Tips")
+   
+   (code-structuring :type 'code-structuring
+		     :pass-down (page-objects)
+		     :publish-prefix *publish-prefix*
+		     :page 3
+		     :page-title "Code Structuring")
+   
+   (loading-code :type 'loading-code
+		 :pass-down (page-objects)
+		 :publish-prefix *publish-prefix*
+		 :page 4
+		 :page-title "Loading Code with cl-lite"))
+
+  )
+
+
+
+
+
+
+
+
+
+```
+
+---
+
 ## working-with-packages.lisp - header
 Source: gornschool-training/t3/source/working-with-packages.lisp
 Type: tutorial
@@ -286,6 +356,139 @@ Type: tutorial
 
 ---
 
+## loading-code.lisp - header
+Source: gornschool-training/t3/source/loading-code.lisp
+Type: tutorial
+
+```
+(in-package :training-3)
+
+
+```
+
+---
+
+## loading-code.lisp - loading-code
+Source: gornschool-training/t3/source/loading-code.lisp
+Type: tutorial
+
+```
+(define-object loading-code (base-training-sheet)
+  :computed-slots
+  ((code-1 (list "(cl-lite \"/codebase/airplane\")"))
+   (code-2 (list "(\"common\" \"wing\" \"fuselage\" \"engine\" \"source\")"))
+   (code-3 (list "(\"package\")"))
+   (code-4 (list "(\"engine\")"))
+   (body-content (with-cl-who-string ()
+		   ((:div :class "main-page-container" :style "grid-template-columns: 600px auto;")
+		    ((:div :class "main-page-item")
+		     (:p "In previous topics, we have seen that there is some requirement to manage the load order. With small numbers of source files this is manageable manually, but once the number of source files exceeds maybe 5 or 6, this becomes an onerous and somewhat tedious task")
+		     (:p "GendL has a utility to support this called "
+			 (:span :class "function" "cl-lite")". It can be called from either the REPL or it can be initiated from the init file (gdlinit.cl). "
+			 (:span :class "function" "cl-lite")" supports the following features"
+			 (:ul (:li "It will load any .lisp file found in any "
+				   (:em (:b "source"))" directory below the target directory. So in the example codebase on the right, if "
+				   (:span :class "function" "cl-lite")" was applied to the "
+				   (:em (:b "airplane"))" directory it would load .lisp files from "
+				   (:em (:b "source"))", "
+				   (:em (:b "common/source"))", "
+				   (:em (:b "engine/source"))", "
+				   (:em (:b "fuselage/source"))" and "
+				   (:em (:b "wing/source")))
+			      (:li "The order in which directories are loaded may be specified at any level using a "
+				   (:b "system-ordering.isc")" file")
+			      (:li "The order in which files in a source folder are loaded may be specified for that "
+				   (:em (:b "source"))" directory in a "
+				   (:b "file-ordering.isc")" file")
+			      (:li "Directories or files to be ignored can be specified in an  "
+				   (:b "ignore-list.isc")" file")))
+		     (:p "The structure of the "
+			 (:b "system-ordering.isc")", "
+			 (:b "file-ordering.isc")" and "
+			 (:b "ignore-list.isc")" is identical; it is a literal list of strings identifying target folders or files. Note that "
+			 (:b "ignore-list.isc")" may apply to either directories or files whilst "
+			 (:b "system-ordering.isc")" only applies to directories and "
+			 (:b "file-ordering.isc")" only applies to files"))
+		    ((:div :class "main-page-item")
+		     ((:img :src (format nil "/~a-images/codebase.png" *publish-prefix*) :style "width: auto; height: 300px; margin: 0 0 0 0 ;")))
+		    ((:div :class "main-page-item")
+		     (:h3 "Executing cl-lite")
+		     (:p (:span :class "function" "cl-lite")" takes a pathname argument. The pathname may be a string or a logical pathname")
+		     (str (code-example (the code-1)))
+		     (:p "If we wanted to enforce a "
+			 (:em "load order")" for the directories we would use the "
+			 (:b "system-ordering.isc file")". In this example, assuming multiple packages which mirror the directory structure, we would probably want to load "
+			 (:em (:b "common"))" first, then "
+			 (:em (:b "engine"))", "
+			 (:em (:b "wing"))" and "
+			 (:em (:b "fuselage"))" (since they would "
+			 (:span :class "object-keyword" ":use")" the "
+			 (:span :class "package-name" ":airplane-common")" package) and lastly the "
+			 (:em (:b "source"))" directory since it would "
+			 (:span :class "object-keyword" ":use")" all of the previously defined packages. So "
+			 (:b "system-ordering.isc")" would look like this")
+		     (str (code-example (the code-2)))
+		     (:p "Assuming each of the folders has a package file, we would want to load that as the first file when the directory is loaded, so each "
+			 (:em  (:b"source"))" folder would have a "
+			 (:b "file-ordering.isc")" file like this")
+		     (str (code-example (the code-3)))
+		     (:p "2 things to note here"
+			 (:ul (:li "There is no need to specify the file extension")
+			      (:li "There is only a requirement to specify files which have special load order, any other files in the folder are loaded by default in alphabetical order")))
+		     (:p "Finally, if for some reason we wished to suppress the load of the engine module, we would use the "
+			 (:b "ignore-list.isc")" file in the "
+			 (:em  (:b "airplane"))" directory as shown below")
+		     (str (code-example (the code-4)))))))))
+
+			
+
+```
+
+---
+
+## code-structuring.lisp - header
+Source: gornschool-training/t3/source/code-structuring.lisp
+Type: tutorial
+
+```
+(in-package :training-3)
+
+
+```
+
+---
+
+## code-structuring.lisp - code-structuring
+Source: gornschool-training/t3/source/code-structuring.lisp
+Type: tutorial
+
+```
+(define-object code-structuring (base-training-sheet)
+  :computed-slots
+  ((body-content (with-cl-who-string ()
+		   ((:div :class "main-page-container" :style "grid-template-columns: 500px auto;")
+		    ((:div :class "main-page-item")
+		     (:p "These are just recomendations based on experience and convenience")
+		     (:h3 "Source Code Files")
+		     (:ul (:li "If the code is in a discrete package, ensure there is a separate package.lisp file to define the package")
+			  (:li "Where possible or feasible one object/function per file. ("(:em "Whilst you can open the file containing an object or function code from in emacs by positioning the cursor in the object/function name and using "(:b "Meta-.")", the one object/function per file goal does make life easier)"))))
+		    ((:div :class "main-page-item"))
+		    ((:div :class "main-page-item")
+		     (:h3 "Directory organisation")
+		     (:ul (:li "Where possible and practical arrange the directory structure so that it mirrors the applications object structure")
+			  (:li "Strike a balance between granularity - some logical separation is good, but avoid separating too much")
+			  (:li "For each module create a "(:em (:b "source"))" directory for the source code files")
+			  (:li "In larger projects define a "(:em (:b "common"))" folder for code that is shared between the other modules"))
+		     (:p "In the example on the right, the airplane/source directory would be used for the source code assembling the different modules into an airplane. The common directory would be used for shared objects/functions and the main application code would be stored in the source directories of each module - engine, wing, fuselage. Some considertion ought to be given at this stage to the package design; a single :airplane package may be adequate or the packages could be broken down by module, each of the sub-modules using airplane-common and the top level airplane package using all of the sub-module packages.A bit of time spent at the outset of a project is usuually time well spent, although the result doesn't need to be perfect since it is easy enough to change as the project/application evolves")
+		     (:p "The suggested codebase structure is also compatible with cl-lite, GendL's code loading utility which is discussed in the next topic"))
+		    ((:div :class "main-page-item")
+		     ((:img :src (format nil "/~a-images/codebase.png" *publish-prefix*) :style "width: auto; height: 300px; margin: 1em 0 1em 3% ;"))))))))
+  
+
+```
+
+---
+
 ## package-tips.lisp - header
 Source: gornschool-training/t3/source/package-tips.lisp
 Type: tutorial
@@ -378,209 +581,6 @@ Type: tutorial
 			 ((:span :class "package-name")"my-functions")". In most Lisps you'll get a warning that a symbol is being redefined, but its not classed as an error")
 		     (:p "A final package-related issue is to do with dropping out of Geysr into the REPL to do some debugging. If the debugging is referring to slots defined in a package other than the REPL's current package, when you try to evaluate the slot you'll get an 'undefined function' error. The simple solution to this is to change the REPL's package, using the in-package function, to the package of the code that you're working with and evaluate the expression again"))))))
   )
-
-```
-
----
-
-## assembly.lisp - header
-Source: gornschool-training/t3/source/assembly.lisp
-Type: tutorial
-
-```
-(in-package :training-3)
-
-(defparameter *publish-prefix* "t3")  
-
-
-```
-
----
-
-## assembly.lisp - assembly
-Source: gornschool-training/t3/source/assembly.lisp
-Type: tutorial
-
-```
-(define-object assembly (base-tutorial-sheet)
-  :input-slots
-  ((getting-started-url nil)
-   (tutorial-name "Organising your code"))
-
-  :computed-slots
-  ((introduction (with-cl-who-string ()
-		   (:p "Now that you have completed the Getting Started with GendL tutorial, its worth giving some thought to the way you may want to organise and load the code you will be writing. This tutorial covers some basic principles and provides a few guidelines that we would consider to be best practice.")
-		   (:p "The best time to get organised is right at the start as it will avoid getting locked in to less then optimal working practices, or needing to go through all your code at a later date to retro-fit it to your chosen organisation structure or methodology"))))
-
-  :objects
-  ((working-with-packages :type 'working-with-packages
-			  :pass-down (page-objects)
-			  :publish-prefix *publish-prefix*
-			  :page 1
-			  :page-title "Working with Packages"
-			  :getting-started-url (the getting-started-url)
-			  :resources (list "packages.lisp"))
-   
-   (package-tips :type 'package-tips
-		 :pass-down (page-objects)
-		 :publish-prefix *publish-prefix*
-		 :page 2
-		 :page-title "Package Tips")
-   
-   (code-structuring :type 'code-structuring
-		     :pass-down (page-objects)
-		     :publish-prefix *publish-prefix*
-		     :page 3
-		     :page-title "Code Structuring")
-   
-   (loading-code :type 'loading-code
-		 :pass-down (page-objects)
-		 :publish-prefix *publish-prefix*
-		 :page 4
-		 :page-title "Loading Code with cl-lite"))
-
-  )
-
-
-
-
-
-
-
-
-
-```
-
----
-
-## code-structuring.lisp - header
-Source: gornschool-training/t3/source/code-structuring.lisp
-Type: tutorial
-
-```
-(in-package :training-3)
-
-
-```
-
----
-
-## code-structuring.lisp - code-structuring
-Source: gornschool-training/t3/source/code-structuring.lisp
-Type: tutorial
-
-```
-(define-object code-structuring (base-training-sheet)
-  :computed-slots
-  ((body-content (with-cl-who-string ()
-		   ((:div :class "main-page-container" :style "grid-template-columns: 500px auto;")
-		    ((:div :class "main-page-item")
-		     (:p "These are just recomendations based on experience and convenience")
-		     (:h3 "Source Code Files")
-		     (:ul (:li "If the code is in a discrete package, ensure there is a separate package.lisp file to define the package")
-			  (:li "Where possible or feasible one object/function per file. ("(:em "Whilst you can open the file containing an object or function code from in emacs by positioning the cursor in the object/function name and using "(:b "Meta-.")", the one object/function per file goal does make life easier)"))))
-		    ((:div :class "main-page-item"))
-		    ((:div :class "main-page-item")
-		     (:h3 "Directory organisation")
-		     (:ul (:li "Where possible and practical arrange the directory structure so that it mirrors the applications object structure")
-			  (:li "Strike a balance between granularity - some logical separation is good, but avoid separating too much")
-			  (:li "For each module create a "(:em (:b "source"))" directory for the source code files")
-			  (:li "In larger projects define a "(:em (:b "common"))" folder for code that is shared between the other modules"))
-		     (:p "In the example on the right, the airplane/source directory would be used for the source code assembling the different modules into an airplane. The common directory would be used for shared objects/functions and the main application code would be stored in the source directories of each module - engine, wing, fuselage. Some considertion ought to be given at this stage to the package design; a single :airplane package may be adequate or the packages could be broken down by module, each of the sub-modules using airplane-common and the top level airplane package using all of the sub-module packages.A bit of time spent at the outset of a project is usuually time well spent, although the result doesn't need to be perfect since it is easy enough to change as the project/application evolves")
-		     (:p "The suggested codebase structure is also compatible with cl-lite, GendL's code loading utility which is discussed in the next topic"))
-		    ((:div :class "main-page-item")
-		     ((:img :src (format nil "/~a-images/codebase.png" *publish-prefix*) :style "width: auto; height: 300px; margin: 1em 0 1em 3% ;"))))))))
-  
-
-```
-
----
-
-## loading-code.lisp - header
-Source: gornschool-training/t3/source/loading-code.lisp
-Type: tutorial
-
-```
-(in-package :training-3)
-
-
-```
-
----
-
-## loading-code.lisp - loading-code
-Source: gornschool-training/t3/source/loading-code.lisp
-Type: tutorial
-
-```
-(define-object loading-code (base-training-sheet)
-  :computed-slots
-  ((code-1 (list "(cl-lite \"/codebase/airplane\")"))
-   (code-2 (list "(\"common\" \"wing\" \"fuselage\" \"engine\" \"source\")"))
-   (code-3 (list "(\"package\")"))
-   (code-4 (list "(\"engine\")"))
-   (body-content (with-cl-who-string ()
-		   ((:div :class "main-page-container" :style "grid-template-columns: 600px auto;")
-		    ((:div :class "main-page-item")
-		     (:p "In previous topics, we have seen that there is some requirement to manage the load order. With small numbers of source files this is manageable manually, but once the number of source files exceeds maybe 5 or 6, this becomes an onerous and somewhat tedious task")
-		     (:p "GendL has a utility to support this called "
-			 (:span :class "function" "cl-lite")". It can be called from either the REPL or it can be initiated from the init file (gdlinit.cl). "
-			 (:span :class "function" "cl-lite")" supports the following features"
-			 (:ul (:li "It will load any .lisp file found in any "
-				   (:em (:b "source"))" directory below the target directory. So in the example codebase on the right, if "
-				   (:span :class "function" "cl-lite")" was applied to the "
-				   (:em (:b "airplane"))" directory it would load .lisp files from "
-				   (:em (:b "source"))", "
-				   (:em (:b "common/source"))", "
-				   (:em (:b "engine/source"))", "
-				   (:em (:b "fuselage/source"))" and "
-				   (:em (:b "wing/source")))
-			      (:li "The order in which directories are loaded may be specified at any level using a "
-				   (:b "system-ordering.isc")" file")
-			      (:li "The order in which files in a source folder are loaded may be specified for that "
-				   (:em (:b "source"))" directory in a "
-				   (:b "file-ordering.isc")" file")
-			      (:li "Directories or files to be ignored can be specified in an  "
-				   (:b "ignore-list.isc")" file")))
-		     (:p "The structure of the "
-			 (:b "system-ordering.isc")", "
-			 (:b "file-ordering.isc")" and "
-			 (:b "ignore-list.isc")" is identical; it is a literal list of strings identifying target folders or files. Note that "
-			 (:b "ignore-list.isc")" may apply to either directories or files whilst "
-			 (:b "system-ordering.isc")" only applies to directories and "
-			 (:b "file-ordering.isc")" only applies to files"))
-		    ((:div :class "main-page-item")
-		     ((:img :src (format nil "/~a-images/codebase.png" *publish-prefix*) :style "width: auto; height: 300px; margin: 0 0 0 0 ;")))
-		    ((:div :class "main-page-item")
-		     (:h3 "Executing cl-lite")
-		     (:p (:span :class "function" "cl-lite")" takes a pathname argument. The pathname may be a string or a logical pathname")
-		     (str (code-example (the code-1)))
-		     (:p "If we wanted to enforce a "
-			 (:em "load order")" for the directories we would use the "
-			 (:b "system-ordering.isc file")". In this example, assuming multiple packages which mirror the directory structure, we would probably want to load "
-			 (:em (:b "common"))" first, then "
-			 (:em (:b "engine"))", "
-			 (:em (:b "wing"))" and "
-			 (:em (:b "fuselage"))" (since they would "
-			 (:span :class "object-keyword" ":use")" the "
-			 (:span :class "package-name" ":airplane-common")" package) and lastly the "
-			 (:em (:b "source"))" directory since it would "
-			 (:span :class "object-keyword" ":use")" all of the previously defined packages. So "
-			 (:b "system-ordering.isc")" would look like this")
-		     (str (code-example (the code-2)))
-		     (:p "Assuming each of the folders has a package file, we would want to load that as the first file when the directory is loaded, so each "
-			 (:em  (:b"source"))" folder would have a "
-			 (:b "file-ordering.isc")" file like this")
-		     (str (code-example (the code-3)))
-		     (:p "2 things to note here"
-			 (:ul (:li "There is no need to specify the file extension")
-			      (:li "There is only a requirement to specify files which have special load order, any other files in the folder are loaded by default in alphabetical order")))
-		     (:p "Finally, if for some reason we wished to suppress the load of the engine module, we would use the "
-			 (:b "ignore-list.isc")" file in the "
-			 (:em  (:b "airplane"))" directory as shown below")
-		     (str (code-example (the code-4)))))))))
-
-			
 
 ```
 

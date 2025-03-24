@@ -1,125 +1,5 @@
 # Gendl Documentation - package_2_objects
 
-## index.html (chunk 1/7)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
-Type: reference
-
-```
-GendL Application - GDL-APP Package Documentation Object: GDL-APP (The :GENDL Package) Mixins: GDL-APP-SCRIPTS-MIXIN, VANILLA-MIXIN Author Dave Cooper, Genworks International Description This object serves as the driver for the build process for GDL runtime applications. There is also an undocumented function called make-gdl-app ; in order to perform a runtime build process, simply make an instance of this object with the appropriate input values, and invoke (the make!) on it, or call make-gdl-app with the same arguments as the input-slot you give to this object. Input Slots (optional) APPLICATION-FASLS list of pathnames This list should contain the pre-compiled fasls for your GDL application, in correct load order. These can be produced, for example, by calling genworks:cl-lite with the :create-fasl? keyword argument set to t .
-```
-
----
-
-## index.html (chunk 2/7)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
-Type: reference
-
-```
-create-fasl? keyword argument set to t . If you are using the ASDF build management system, note that ASDF3 is now capable of producing a single fasl file for your application including its ASDF/Quicklisp dependencies, using (asdf:operate 'asdf:monolithic-compile-bundle-op :your-application-system-name) (asdf:output-file 'asdf:monolithic-compile-bundle-op :your-application-system-name) See the ASDF documentation for details. APPLICATION-NAME string The name which will be used for your application's executable and possibly image file. Defaults to "gdl-test-runtime". DESTINATION-DIRECTORY pathname Indicates the directory to be created or overwritten for producing the runtime distribution. Defaults to a directory called (the application-name) in the system temporary directory, returned by (glisp:temporary-folder) . GDLINIT-CONTENT string The contents of this string will be copied to a file gdlinit.cl and placed in the destination-directory. Default is empty string.
-```
-
----
-
-## index.html (chunk 3/7)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
-Type: reference
-
-```
-isp:temporary-folder) . GDLINIT-CONTENT string The contents of this string will be copied to a file gdlinit.cl and placed in the destination-directory. Default is empty string. HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. LISP-HEAP-SIZE number The size of the reserved space which will be requested from the OS when the produced application starts up. Defaults to 800000000 (eight hundred million) bytes. OVERWRITE-VALIDATION-FUNCTION function, t, or nil Validates the target of overwrite? before deleting. T is unconditional "yes" - use at your own risk. OVERWRITE? boolean Indicates whether a build will overwrite a previously existing destination directory. Defaults to nil. POST-LOAD-FORM lisp expression This form will be evaluated in the image being built, after the loading of application-fasls is complete. Defaults to nil. POST-MAKE-FUNCTION lisp function of zero arguments .
-```
-
----
-
-## index.html (chunk 4/7)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
-Type: reference
-
-```
-M lisp expression This form will be evaluated in the image being built, after the loading of application-fasls is complete. Defaults to nil. POST-MAKE-FUNCTION lisp function of zero arguments . This function will be run in the initiating image after the build is complete. PRE-LOAD-FORM lisp expression This form will be evaluated in the image being built, before the loading of application-fasls begins, but after the GDL runtime modules are loaded. Defaults to nil. PRE-MAKE-FUNCTION lisp function of zero arguments . This function will be run in the initiating image before the build is begun. RESTART-APP-FUNCTION Lambda expression with empty argument list or symbol naming a function with no arguments. This will be run when the runtime application starts up. The alternative to using this to achieve initializations is to put expressions in a gdlinit.cl or .gdlinit.cl in the application directory or user home directory. Defaults to nil.
-```
-
----
-
-## index.html (chunk 5/7)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
-Type: reference
-
-```
-hieve initializations is to put expressions in a gdlinit.cl or .gdlinit.cl in the application directory or user home directory. Defaults to nil. RESTART-INIT-FUNCTION Lambda expression with empty argument list or symbol naming a function with no arguments. This will be run when the runtime application starts up. The alternative to using this to achieve initializations is to put expressions in a gdlinit.cl or .gdlinit.cl in the application directory or user home directory. Defaults to nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places.
-```
-
----
-
-## index.html (chunk 6/7)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
-Type: reference
-
-```
-a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. GDL Functions MAKE! void Does the application build and creates or replaces (the destination-directory) . Examples (in-package :gdl-user) (make-gdl-app :application-name "moon-shot" :destination-directory "/tmp/moon-shot/" :overwrite? t :application-fasls (list "/fasl-home/booster-rocket.fasl" "/fasl-home/lunar-module.fasl")) Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
-```
-
----
-
-## index.html (chunk 7/7)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
-Type: reference
-
-```
-ter-rocket.fasl" "/fasl-home/lunar-module.fasl")) Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
-```
-
----
-
-## index.html (chunk 1/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/0/index.html
-Type: reference
-
-```
-GendL Application - BASE-RULE-OBJECT Package Documentation Object: BASE-RULE-OBJECT (The :GENDL Package) Mixins: VANILLA-MIXIN Description Encapsulates a basic computation, usually to be displayed to the user. Typically this would be used as a mixin into a more sophisticated rule-object, but the type can be used to detect objects which should be processed as "rules." Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). RULE-DESCRIPTION string Short description of the rule (generally one line). Defaults to NIL. RULE-DESCRIPTION-HELP string Verbose description of the purpose of the rule. RULE-RESULT string The basic return-value, or result, of evaluating the rule. RULE-RESULT-HELP string Verbose description of how the rule result is computed.
-```
-
----
-
-## index.html (chunk 2/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/0/index.html
-Type: reference
-
-```
-f the purpose of the rule. RULE-RESULT string The basic return-value, or result, of evaluating the rule. RULE-RESULT-HELP string Verbose description of how the rule result is computed. RULE-TITLE string Title to be used with the rule object. Defaults to NIL. SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY string Determines the rule's default name in various internal GDL contexts. Defaults to the rule-title , or "Unnamed Rule" if rule-title is NIL. SUPPRESS-DISPLAY? boolean Determines whether the rule is displayed by default in reports etc. VIOLATED? boolean Indicates whether this rule violates a standard condition. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL.
-```
-
----
-
-## index.html (chunk 3/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/0/index.html
-Type: reference
-
-```
-a standard condition. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
-```
-
----
-
-## index.html (chunk 1/2)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/3/index.html
-Type: reference
-
-```
-GendL Application - NULL-OBJECT Package Documentation Object: NULL-OBJECT (The :GENDL Package) Mixins: VANILLA-MIXIN Description A part with no geometric representation and no children. Use this in a conditional :type expression if you want to turn off a branch of the tree conditionally. Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places.
-```
-
----
-
-## index.html (chunk 2/2)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/3/index.html
-Type: reference
-
-```
-ion STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
-```
-
----
-
 ## index.html (chunk 1/15)
 Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/7/index.html
 Type: reference
@@ -271,6 +151,96 @@ PSHOT void Writes a file containing the toplevel inputs and modified settable-sl
 ---
 
 ## index.html (chunk 1/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/0/index.html
+Type: reference
+
+```
+GendL Application - BASE-RULE-OBJECT Package Documentation Object: BASE-RULE-OBJECT (The :GENDL Package) Mixins: VANILLA-MIXIN Description Encapsulates a basic computation, usually to be displayed to the user. Typically this would be used as a mixin into a more sophisticated rule-object, but the type can be used to detect objects which should be processed as "rules." Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). RULE-DESCRIPTION string Short description of the rule (generally one line). Defaults to NIL. RULE-DESCRIPTION-HELP string Verbose description of the purpose of the rule. RULE-RESULT string The basic return-value, or result, of evaluating the rule. RULE-RESULT-HELP string Verbose description of how the rule result is computed.
+```
+
+---
+
+## index.html (chunk 2/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/0/index.html
+Type: reference
+
+```
+f the purpose of the rule. RULE-RESULT string The basic return-value, or result, of evaluating the rule. RULE-RESULT-HELP string Verbose description of how the rule result is computed. RULE-TITLE string Title to be used with the rule object. Defaults to NIL. SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY string Determines the rule's default name in various internal GDL contexts. Defaults to the rule-title , or "Unnamed Rule" if rule-title is NIL. SUPPRESS-DISPLAY? boolean Determines whether the rule is displayed by default in reports etc. VIOLATED? boolean Indicates whether this rule violates a standard condition. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL.
+```
+
+---
+
+## index.html (chunk 3/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/0/index.html
+Type: reference
+
+```
+a standard condition. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
+```
+
+---
+
+## index.html (chunk 1/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/8/index.html
+Type: reference
+
+```
+GendL Application - VARIABLE-SEQUENCE Package Documentation Object: VARIABLE-SEQUENCE (The :GENDL Package) Mixins: QUANTIFICATION Description A variable-sequence quantification is generated as a result of specifying :sequence (:indices ...)) in an :objects specification. Unlike a normal sequence quantification (specified with :sequence (:size ...)) ), elements can be surgically inserted and deleted from a variable-sequence. Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists.
+```
+
+---
+
+## index.html (chunk 2/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/8/index.html
+Type: reference
+
+```
+ects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Computed Slots FIRST [ from QUANTIFICATION ] gdl object Returns the first element of the aggregate. LAST [ from QUANTIFICATION ] gdl object Returns the last element of the aggregate. GDL Functions DELETE! void Deletes the element identified with the given index.
+```
+
+---
+
+## index.html (chunk 3/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/8/index.html
+Type: reference
+
+```
+the aggregate. GDL Functions DELETE! void Deletes the element identified with the given index. arguments: index Integer, Symbol, or other object matching with eql The identifier used when the element was initialized or inserted INSERT! void Inserts a new element identified with the given index. arguments: index Integer, Symbol, or other object matching with eql The identifier to be used to access this element RESET! void Resets the variable sequence to its default list of indices (i.e. clears out any inserted or deleted elements and re-evaluates the expression to compute the original list of indices) Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
+```
+
+---
+
+## index.html (chunk 1/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/4/index.html
+Type: reference
+
+```
+GendL Application - QUANTIFICATION Package Documentation Object: QUANTIFICATION (The :GENDL Package) Mixins: VANILLA-MIXIN Description A quantification is an aggregate created as a result of specifying :sequence (:size ...)) or :sequence (:indices ...)) in an :objects specification. Usually, the elements of a quantified set are referenced by using extra parentheses around the message in the reference chain and using the index number. But the aggregate itself also supports certain messages, documented here. One message, number-of-elements , is not listed in the normal messages section because it is internal. It can be used, and returns an integer representing the cardinality of the aggregate. Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy).
+```
+
+---
+
+## index.html (chunk 2/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/4/index.html
+Type: reference
+
+```
+effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Computed Slots FIRST gdl object Returns the first element of the aggregate.
+```
+
+---
+
+## index.html (chunk 3/3)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/4/index.html
+Type: reference
+
+```
+al objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Computed Slots FIRST gdl object Returns the first element of the aggregate. INDEX [ from VANILLA-MIXIN* ] integer Sequential index number for elements of a sequence, NIL for singular objects. LAST gdl object Returns the last element of the aggregate. Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
+```
+
+---
+
+## index.html (chunk 1/3)
 Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/2/index.html
 Type: reference
 
@@ -320,32 +290,92 @@ or information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of str
 
 ---
 
-## index.html (chunk 1/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/8/index.html
+## index.html (chunk 1/7)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
 Type: reference
 
 ```
-GendL Application - VARIABLE-SEQUENCE Package Documentation Object: VARIABLE-SEQUENCE (The :GENDL Package) Mixins: QUANTIFICATION Description A variable-sequence quantification is generated as a result of specifying :sequence (:indices ...)) in an :objects specification. Unlike a normal sequence quantification (specified with :sequence (:size ...)) ), elements can be surgically inserted and deleted from a variable-sequence. Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists.
+GendL Application - GDL-APP Package Documentation Object: GDL-APP (The :GENDL Package) Mixins: GDL-APP-SCRIPTS-MIXIN, VANILLA-MIXIN Author Dave Cooper, Genworks International Description This object serves as the driver for the build process for GDL runtime applications. There is also an undocumented function called make-gdl-app ; in order to perform a runtime build process, simply make an instance of this object with the appropriate input values, and invoke (the make!) on it, or call make-gdl-app with the same arguments as the input-slot you give to this object. Input Slots (optional) APPLICATION-FASLS list of pathnames This list should contain the pre-compiled fasls for your GDL application, in correct load order. These can be produced, for example, by calling genworks:cl-lite with the :create-fasl? keyword argument set to t .
 ```
 
 ---
 
-## index.html (chunk 2/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/8/index.html
+## index.html (chunk 2/7)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
 Type: reference
 
 ```
-ects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Computed Slots FIRST [ from QUANTIFICATION ] gdl object Returns the first element of the aggregate. LAST [ from QUANTIFICATION ] gdl object Returns the last element of the aggregate. GDL Functions DELETE! void Deletes the element identified with the given index.
+create-fasl? keyword argument set to t . If you are using the ASDF build management system, note that ASDF3 is now capable of producing a single fasl file for your application including its ASDF/Quicklisp dependencies, using (asdf:operate 'asdf:monolithic-compile-bundle-op :your-application-system-name) (asdf:output-file 'asdf:monolithic-compile-bundle-op :your-application-system-name) See the ASDF documentation for details. APPLICATION-NAME string The name which will be used for your application's executable and possibly image file. Defaults to "gdl-test-runtime". DESTINATION-DIRECTORY pathname Indicates the directory to be created or overwritten for producing the runtime distribution. Defaults to a directory called (the application-name) in the system temporary directory, returned by (glisp:temporary-folder) . GDLINIT-CONTENT string The contents of this string will be copied to a file gdlinit.cl and placed in the destination-directory. Default is empty string.
 ```
 
 ---
 
-## index.html (chunk 3/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/8/index.html
+## index.html (chunk 3/7)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
 Type: reference
 
 ```
-the aggregate. GDL Functions DELETE! void Deletes the element identified with the given index. arguments: index Integer, Symbol, or other object matching with eql The identifier used when the element was initialized or inserted INSERT! void Inserts a new element identified with the given index. arguments: index Integer, Symbol, or other object matching with eql The identifier to be used to access this element RESET! void Resets the variable sequence to its default list of indices (i.e. clears out any inserted or deleted elements and re-evaluates the expression to compute the original list of indices) Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
+isp:temporary-folder) . GDLINIT-CONTENT string The contents of this string will be copied to a file gdlinit.cl and placed in the destination-directory. Default is empty string. HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. LISP-HEAP-SIZE number The size of the reserved space which will be requested from the OS when the produced application starts up. Defaults to 800000000 (eight hundred million) bytes. OVERWRITE-VALIDATION-FUNCTION function, t, or nil Validates the target of overwrite? before deleting. T is unconditional "yes" - use at your own risk. OVERWRITE? boolean Indicates whether a build will overwrite a previously existing destination directory. Defaults to nil. POST-LOAD-FORM lisp expression This form will be evaluated in the image being built, after the loading of application-fasls is complete. Defaults to nil. POST-MAKE-FUNCTION lisp function of zero arguments .
+```
+
+---
+
+## index.html (chunk 4/7)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
+Type: reference
+
+```
+M lisp expression This form will be evaluated in the image being built, after the loading of application-fasls is complete. Defaults to nil. POST-MAKE-FUNCTION lisp function of zero arguments . This function will be run in the initiating image after the build is complete. PRE-LOAD-FORM lisp expression This form will be evaluated in the image being built, before the loading of application-fasls begins, but after the GDL runtime modules are loaded. Defaults to nil. PRE-MAKE-FUNCTION lisp function of zero arguments . This function will be run in the initiating image before the build is begun. RESTART-APP-FUNCTION Lambda expression with empty argument list or symbol naming a function with no arguments. This will be run when the runtime application starts up. The alternative to using this to achieve initializations is to put expressions in a gdlinit.cl or .gdlinit.cl in the application directory or user home directory. Defaults to nil.
+```
+
+---
+
+## index.html (chunk 5/7)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
+Type: reference
+
+```
+hieve initializations is to put expressions in a gdlinit.cl or .gdlinit.cl in the application directory or user home directory. Defaults to nil. RESTART-INIT-FUNCTION Lambda expression with empty argument list or symbol naming a function with no arguments. This will be run when the runtime application starts up. The alternative to using this to achieve initializations is to put expressions in a gdlinit.cl or .gdlinit.cl in the application directory or user home directory. Defaults to nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places.
+```
+
+---
+
+## index.html (chunk 6/7)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
+Type: reference
+
+```
+a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. GDL Functions MAKE! void Does the application build and creates or replaces (the destination-directory) . Examples (in-package :gdl-user) (make-gdl-app :application-name "moon-shot" :destination-directory "/tmp/moon-shot/" :overwrite? t :application-fasls (list "/fasl-home/booster-rocket.fasl" "/fasl-home/lunar-module.fasl")) Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
+```
+
+---
+
+## index.html (chunk 7/7)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/1/index.html
+Type: reference
+
+```
+ter-rocket.fasl" "/fasl-home/lunar-module.fasl")) Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
+```
+
+---
+
+## index.html (chunk 1/2)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/3/index.html
+Type: reference
+
+```
+GendL Application - NULL-OBJECT Package Documentation Object: NULL-OBJECT (The :GENDL Package) Mixins: VANILLA-MIXIN Description A part with no geometric representation and no children. Use this in a conditional :type expression if you want to turn off a branch of the tree conditionally. Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places.
+```
+
+---
+
+## index.html (chunk 2/2)
+Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/3/index.html
+Type: reference
+
+```
+ion STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
 ```
 
 ---
@@ -376,36 +406,6 @@ Type: reference
 
 ```
 ted Slots FIRST [ from QUANTIFICATION ] gdl object Returns the first element of the aggregate. LAST [ from QUANTIFICATION ] gdl object Returns the last element of the aggregate. Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
-```
-
----
-
-## index.html (chunk 1/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/4/index.html
-Type: reference
-
-```
-GendL Application - QUANTIFICATION Package Documentation Object: QUANTIFICATION (The :GENDL Package) Mixins: VANILLA-MIXIN Description A quantification is an aggregate created as a result of specifying :sequence (:size ...)) or :sequence (:indices ...)) in an :objects specification. Usually, the elements of a quantified set are referenced by using extra parentheses around the message in the reference chain and using the index number. But the aggregate itself also supports certain messages, documented here. One message, number-of-elements , is not listed in the normal messages section because it is internal. It can be used, and returns an integer representing the cardinality of the aggregate. Input Slots (optional) HIDDEN? [ from VANILLA-MIXIN* ] boolean Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy).
-```
-
----
-
-## index.html (chunk 2/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/4/index.html
-Type: reference
-
-```
-effectively be a hidden-object even if specified in :objects. Default is nil. ROOT [ from VANILLA-MIXIN* ] gdl instance The root-level node in this object's ``tree'' (instance hierarchy). SAFE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances All objects from the :objects specification, including elements of sequences as flat lists. Any children which throw errors come back as a plist with error information STRINGS-FOR-DISPLAY [ from VANILLA-MIXIN* ] string or list of strings Determines how the name of objects of this type will be printed in most places. This defaults to the name-for-display (generally the part's name as specified in its parent), followed by an index number if the part is an element of a sequence. VISIBLE-CHILDREN [ from VANILLA-MIXIN* ] list of gdl instances Additional objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Computed Slots FIRST gdl object Returns the first element of the aggregate.
-```
-
----
-
-## index.html (chunk 3/3)
-Source: yadd-reference/package-dokumentations/2/object-docs/dokumentation/4/index.html
-Type: reference
-
-```
-al objects to display in Tatu tree. Typically this would be a subset of hidden-children. Defaults to NIL. Computed Slots FIRST gdl object Returns the first element of the aggregate. INDEX [ from VANILLA-MIXIN* ] integer Sequential index number for elements of a sequence, NIL for singular objects. LAST gdl object Returns the last element of the aggregate. Package Documentation Copyright © 2025 Genworks ® International . All rights reserved. Genworks Build: 1598p001
 ```
 
 ---

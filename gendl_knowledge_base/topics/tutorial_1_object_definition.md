@@ -1,5 +1,105 @@
 # Gendl Documentation - tutorial_1_object_definition
 
+## web-based-ide.lisp - header
+Source: gornschool-training/t1/source/web-based-ide.lisp
+Type: tutorial
+
+```
+(in-package :training-1)
+
+
+```
+
+---
+
+## web-based-ide.lisp - web-based-ide
+Source: gornschool-training/t1/source/web-based-ide.lisp
+Type: tutorial
+
+```
+(define-object web-based-ide (base-training-sheet)
+  :input-slots
+  (index-url)
+
+  :computed-slots
+  ((main-sheet-body (with-cl-who-string ()
+                      (:h2 (str (the page-header)))
+                      (:p "Genworks or one of its parters/VARs will be offering a no-install
+option to develop with GendL and Genworks GDL based on running emacs
+inside a web terminal. Please check this space for links once the service is live.")))))
+
+                          
+
+
+
+```
+
+---
+
+## assembly.lisp - header
+Source: gornschool-training/t1/source/assembly.lisp
+Type: tutorial
+
+```
+(in-package :training-1)
+
+(defparameter *publish-prefix* "t1")
+
+
+```
+
+---
+
+## assembly.lisp - assembly
+Source: gornschool-training/t1/source/assembly.lisp
+Type: tutorial
+
+```
+(define-object assembly (base-tutorial-sheet)
+  :input-slots
+  (tutorial-index
+  (tutorial-name "Installation and Setup"))
+
+
+
+
+  :objects
+  ((installation :type 'installation
+                 :pass-down (page-objects)
+                 :page 1
+                 :page-title "Installation of your GendL-based System"
+                 :publish-prefix *publish-prefix*
+                 :index-url (the index-page url))
+   
+   (learning-emacs :type 'learning-emacs
+                   :pass-down (page-objects)
+                   :page 2
+                   :page-title "Learning Emacs"
+                   :publish-prefix *publish-prefix*
+                   :index-url (the index-page url))
+   
+   (learning-slime :type 'learning-slime
+                   :pass-down (page-objects)
+                   :page 3
+                   :page-title "Learning Slime"
+                   :publish-prefix *publish-prefix*
+                   :index-url (the index-page url))
+   
+   ))
+
+  
+
+
+
+
+
+
+
+
+```
+
+---
+
 ## installation.lisp - header
 Source: gornschool-training/t1/source/installation.lisp
 Type: tutorial
@@ -212,8 +312,8 @@ Genworks GDL, then please contact Genworks at "
 
 ---
 
-## web-based-ide.lisp - header
-Source: gornschool-training/t1/source/web-based-ide.lisp
+## learning-slime.lisp - header
+Source: gornschool-training/t1/source/learning-slime.lisp
 Type: tutorial
 
 ```
@@ -224,86 +324,40 @@ Type: tutorial
 
 ---
 
-## web-based-ide.lisp - web-based-ide
-Source: gornschool-training/t1/source/web-based-ide.lisp
+## learning-slime.lisp - learning-slime
+Source: gornschool-training/t1/source/learning-slime.lisp
 Type: tutorial
 
 ```
-(define-object web-based-ide (base-training-sheet)
+(define-object learning-slime (base-training-sheet)
   :input-slots
   (index-url)
 
   :computed-slots
-  ((main-sheet-body (with-cl-who-string ()
-                      (:h2 (str (the page-header)))
-                      (:p "Genworks or one of its parters/VARs will be offering a no-install
-option to develop with GendL and Genworks GDL based on running emacs
-inside a web terminal. Please check this space for links once the service is live.")))))
+  ((body-content (with-cl-who-string ()
+                   (:p
+                    (:a :href "https://slime.common-lisp.dev" "Slime")
+                    " is the Superior Lisp Interaction Mode for Emacs. If you've successfully installed
+Gendl or Genworks GDL according to the "
+                    (:a :href (the installation url) "Installation")
+                    " section, you will be presented with a Slime REPL prompt where you
+can type Common Lisp and GendL commands. Although we don't teach all
+of Slime in this tutorial, we do provide examples of working at the REPL.")
+
+                      (:p "An excellent video overview of Slime can be found  "
+                          (:a :href "https://www.youtube.com/watch?v=_B_4vhsmRRI" "here") ". (you can skip the beginning about installation).")
+                      (:p "And you don't need to know much to get started. Here are a few tips to get started:"
+                          (:ul (:li "If you get thrown into the debugger, type "
+                                    (:span :class "general-keyword" "a") " to get out of it.")
+                               (:li "At the REPL you can type "
+                                    (:span :class "general-keyword" "M-p") " to bring back previous command from history.")
+                               (:li "At the REPL you can type "
+                                    (:span :class "general-keyword" "M-n") " to bring up the next command from history.")))))))
+
+
+                      
 
                           
-
-
-
-```
-
----
-
-## assembly.lisp - header
-Source: gornschool-training/t1/source/assembly.lisp
-Type: tutorial
-
-```
-(in-package :training-1)
-
-(defparameter *publish-prefix* "t1")
-
-
-```
-
----
-
-## assembly.lisp - assembly
-Source: gornschool-training/t1/source/assembly.lisp
-Type: tutorial
-
-```
-(define-object assembly (base-tutorial-sheet)
-  :input-slots
-  (tutorial-index
-  (tutorial-name "Installation and Setup"))
-
-
-
-
-  :objects
-  ((installation :type 'installation
-                 :pass-down (page-objects)
-                 :page 1
-                 :page-title "Installation of your GendL-based System"
-                 :publish-prefix *publish-prefix*
-                 :index-url (the index-page url))
-   
-   (learning-emacs :type 'learning-emacs
-                   :pass-down (page-objects)
-                   :page 2
-                   :page-title "Learning Emacs"
-                   :publish-prefix *publish-prefix*
-                   :index-url (the index-page url))
-   
-   (learning-slime :type 'learning-slime
-                   :pass-down (page-objects)
-                   :page 3
-                   :page-title "Learning Slime"
-                   :publish-prefix *publish-prefix*
-                   :index-url (the index-page url))
-   
-   ))
-
-  
-
-
-
-
 
 
 
@@ -354,60 +408,6 @@ CapsLock key to the Control key using the Settings or Preferences app.")))))
                       
 
                           
-
-
-
-```
-
----
-
-## learning-slime.lisp - header
-Source: gornschool-training/t1/source/learning-slime.lisp
-Type: tutorial
-
-```
-(in-package :training-1)
-
-
-```
-
----
-
-## learning-slime.lisp - learning-slime
-Source: gornschool-training/t1/source/learning-slime.lisp
-Type: tutorial
-
-```
-(define-object learning-slime (base-training-sheet)
-  :input-slots
-  (index-url)
-
-  :computed-slots
-  ((body-content (with-cl-who-string ()
-                   (:p
-                    (:a :href "https://slime.common-lisp.dev" "Slime")
-                    " is the Superior Lisp Interaction Mode for Emacs. If you've successfully installed
-Gendl or Genworks GDL according to the "
-                    (:a :href (the installation url) "Installation")
-                    " section, you will be presented with a Slime REPL prompt where you
-can type Common Lisp and GendL commands. Although we don't teach all
-of Slime in this tutorial, we do provide examples of working at the REPL.")
-
-                      (:p "An excellent video overview of Slime can be found  "
-                          (:a :href "https://www.youtube.com/watch?v=_B_4vhsmRRI" "here") ". (you can skip the beginning about installation).")
-                      (:p "And you don't need to know much to get started. Here are a few tips to get started:"
-                          (:ul (:li "If you get thrown into the debugger, type "
-                                    (:span :class "general-keyword" "a") " to get out of it.")
-                               (:li "At the REPL you can type "
-                                    (:span :class "general-keyword" "M-p") " to bring back previous command from history.")
-                               (:li "At the REPL you can type "
-                                    (:span :class "general-keyword" "M-n") " to bring up the next command from history.")))))))
-
-
-                      
-
-                          
-
 
 
 
