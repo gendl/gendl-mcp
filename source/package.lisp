@@ -2,4 +2,9 @@
 
 (gwl:define-package :gendl-mcp
     (:export 
-     #:initialize-standard-endpoints))
+     #:initialize-standard-endpoints
+
+     #:ping-gendl
+     #:lisp-eval
+     #:http-request))
+

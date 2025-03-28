@@ -10,7 +10,13 @@
   
   (with-all-servers
       (server)
-   
+
+      ;; toplevel mcp handler. 
+      (net.aserve:publish :path "/mcp"
+			  :server server
+			  :content-type "application/json"
+			  :function 'setup-mcp-handler)
+      
       ;; Basic ping endpoint for alive test
       (publish
        :path "/mcp/ping-gendl"
@@ -41,15 +47,21 @@
 	       
                #'(lambda (req ent)
 		   (format t "At 1~%")
-		   (let* ((json-input (when (plusp (length (get-request-body req)))
-					(with-input-from-string (stream (get-request-body req))
+		   (let* ((body-string (get-request-body req))
+			  (json-input (when (plusp (length body-string))
+					(with-input-from-string (stream body-string)
 					  (json:decode-json stream))))
 			  (code (rest (assoc :code json-input)))
 			  result
-			  (error (unless json-input "Malformed or missing input.
-This endpoint needs a json object with {code: <lisp-expression>}"))
+			  (error (unless json-input
+				   (format nil "Malformed or missing input.
+This endpoint needs a json object with {code: <lisp-expression>}. What we got was:
+
+  ~s
+
+" body-string)))
 			  success)
-		     (when code
+		     (when (and (null error) code)
 		       (handler-case
 			   (progn
 			     (setq result (eval (read-safe-string code)))

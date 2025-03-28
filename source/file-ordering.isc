@@ -1,2 +1,2 @@
-("package" "mcp-endpoints")
+("package" "mcp-server-wrapper" "mcp-endpoints")
 
