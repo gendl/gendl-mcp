@@ -1,0 +1,96 @@
+<!DOCTYPE HTML><html lang="en"><head><title>GendL Application - LABEL</title><meta charset="UTF-8" /><link rel="icon" type="image/x-icon" href="/static/gwl/images/favicon.ico" /><link href="/static/gwl/style/top.css" rel="stylesheet" type="text/css" /><div id="KDpTVEFOREFSRC1KQVZBU0NSSVBULVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDI2KSA6T0JKRUNULURPQ1MgKDpQQUNLQUdFLURPS1VNRU5UQVRJT05TIDYpKQ">
+<script>
+var gdliid = '/yadd';
+</script>
+<script src="/static/gwl/js/gdlajax1595.js"></script></div></head><body><div id="KDpNQUlOLVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDI2KSA6T0JKRUNULURPQ1MgKDpQQUNLQUdFLURPS1VNRU5UQVRJT05TIDYpKQ"><p><a href="/package-dokumentations/6/index.html">Package Documentation</a></p><table BGCOLOR="#eeeeff" WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td><b><font SIZE="+1">Object: LABEL<font SIZE=-1><i> (The :GEOM-BASE Package)</i></font></font></b></td></tr><tr><td><b>Mixins: </b>OUTLINE-SPECIALIZATION-MIXIN, <a HREF="/master-index-grouped/685/index.html">BASE-OBJECT</a></td></tr></table><p><h3>Description</h3>Produces a text label for graphical output</p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (required)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>LEADER-PATH</b> <i>list of 3d points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> List making up leader line, starting from where the arrowhead normally is.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>ARROWHEAD-LENGTH</b> <i>length (from tip to tail) of arrowhead glyph</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Defaults to twice the <tt>arrowhead-width</tt>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ARROWHEAD-STYLE</b> <i>keyword symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Style for arrowhead at start of <tt>leader-path</tt>. Currently supported values
+are <tt>:none</tt>, <tt>:wedge</tt>  (the Default), and <tt>:double-wedge</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ARROWHEAD-STYLE-2</b> <i>keyword symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Style for arrowhead on end of <tt>leader-path</tt>. Currently supported values
+are <tt>:none</tt> (the Default), <tt>:wedge</tt>, and <tt>:double-wedge</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ARROWHEAD-WIDTH</b> <i>width of arrowhead glyph</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Defaults to five times the line thickness (2.5)
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BOUNDING-BOX</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>list of two 3d points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The left front bottom and right rear top corners, in global coordinates,
+of the rectangular volume bounding the tree of geometric objects rooted at this object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>CHARACTER-SIZE</b> <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Size (glyph height) of the label text, in model units. Defaults to 10.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DXF-FONT</b> <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This names the DXF font for this general-note. Defaults to <tt>(the font)</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DXF-OFFSET</b> <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The start of text will be offset by this amount for DXF output. Default is 2.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DXF-SIZE-RATIO</b> <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The scale factor for DXF character size vs PDF character size. Default is 0.8
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DXF-TEXT-X-SCALE</b> <i>number in percentage</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Adjusts the character width for DXF output. Defaults to the text-x-scale.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>FONT</b> <i>string naming a standard pdf font</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Font for the label text. Defaults to "Helvetica"
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HIDDEN?</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMAGE-FILE</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>pathname or string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Points to a pre-existing image file to be displayed instead of actual geometry for this object. Defaults to nil
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>OBLIQUENESS</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>3x3 orthonormal matrix of double-float numbers</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is synonymous with the <tt>orientation</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ONCLICK-FUNCTION</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>lambda function of zero arguments, or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> If non-nil, this
+function gets invoked when the user clicks the object in graphics
+front-ends which support this functionality, e.g. SVG/Raphael and X3DOM.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>OUTLINE-SHAPE-TYPE</b> <i>keyword symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates shape of outline enclosing the text. Currently <tt>:none</tt>, <tt>:bubble</tt>, <tt>:rectangle</tt>,
+and <tt>nil</tt> are supported. The default is nil
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ROOT</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The root-level node in this object's ``tree'' (instance hierarchy).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SAFE-CHILDREN</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> All objects from the :objects specification, including elements of sequences
+as flat lists. Any children which throw errors come back as a plist with error information
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>STRINGS</b> <i>list of strings</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Text lines to be displayed as the label. Specify this or text, not both.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>STRINGS-FOR-DISPLAY</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>string or list of strings</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines how the name of objects of
+this type will be printed in most places.  This defaults to the
+name-for-display (generally the part's name as specified in its
+parent), followed by an index number if the part is an element of a
+sequence.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TEXT</b> <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Text to be displayed as the label
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TEXT-GAP</b> <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Amount of space between last point in leader-path and beginning of the label text. Defaults to the
+width of the letter "A" in the specified <tt>font</tt> and <tt>character-size</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TEXT-SIDE</b> <i>keyword symbol, either <tt>:left</tt> or <tt>:right</tt></i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines whether the label text sits to
+the right or the left of the last point in the <tt>leader-path</tt>. The default is computed based on
+the direction of the last segment of the leader-path.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEW-REFERENCE-OBJECT</b> <i>gdl object or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> View object which will use this dimension. Defaults to NIL.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VISIBLE-CHILDREN</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Additional objects to display in Tatu
+tree. Typically this would be a subset of
+hidden-children. Defaults to NIL.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional, defaulting)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>CENTER</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>3d point</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates in global coordinates where the center of the reference
+box of this object should be located.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DISPLAY-CONTROLS</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>plist</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> May contain keywords and values indicating display characteristics for
+this object. The following keywords are recognized currently:
+
+<dl>
+<dt>:color</dt>
+<dd> color keyword from the *color-table* parameter, or an HTML-style hexidecimal
+RGB string value, e.g. "#FFFFFF" for pure white. Defaults to :black.</dd>
+<dt>:line-thickness</dt>
+<dd> an integer, defaulting to 1, indicating relative line thickness for wireframe
+representations of this object.</dd>
+<dt>:dash-pattern</dt>
+<dd>(currently PDF/PNG/JPEG only). This is a list of two or three numbers which indicate the length,
+in pixels, of the dashes and blank spaces in a dashed line. The optional third number
+indicates how far into the line or curve to start the dash pattern.</dd>
+</dl>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HEIGHT</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Z-axis dimension of the reference box. Defaults to zero.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LENGTH</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Y-axis dimension of the reference box. Defaults to zero.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>WIDTH</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> X-axis dimension of the reference box. Defaults to zero.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Computed Slots</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>ORIENTATION</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>3x3 matrix of double-float numbers</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates the absolute Rotation Matrix used to create
+the coordinate system of this object. This matrix is given in absolute terms (i.e. with
+respect to the root's orientation), and is generally created with the alignment function.
+It should be an <i>orthonormal</i> matrix, meaning each row is a vector with a magnitude
+of one (1.0).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><p><h3>Examples</h3><pre>        
+
+ (in-package :gdl-user)
+                   
+ (define-object  label-sample (base-object)
+  
+   :objects
+   ((box :type 'box
+         :length 10 :width (* (the-child length) +phi+)
+         :height (* (the-child :width) +phi+))
+   
+    (corner-label :type 'label
+                  :leader-path (let ((start (the box (vertex :top :right :rear))))
+                                (list start
+                                      (translate start :right (/ (the box width) 10)
+                                                       :rear (/ (the box width) 10))
+                                      (translate start :right (/ (the box width) 7)
+                                                       :rear (/ (the box width) 10))))
+                  :text "The Corner"
+                  :character-size (/ (the box width) 15))))
+
+
+ (generate-sample-drawing :object-roots (make-object 'label-sample))
+
+</pre></p><table CELLPADDING=1><tr BGCOLOR="#cccccc"><td><img SRC="/images/G241933.png"></td></tr></table><p><a href="/package-dokumentations/6/index.html">Package Documentation</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></div></body></html>

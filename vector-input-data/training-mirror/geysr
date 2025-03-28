@@ -1,0 +1,356 @@
+<!DOCTYPE HTML><html lang="en"><head><title>GendL Application - ASSEMBLY</title><meta charset="UTF-8" /><link rel="icon" type="image/x-icon" href="/static/gwl/images/favicon.ico" /><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /><meta name="description" content="Geysr Object Browser" /><meta name="author" content="Genworks" /><meta name="keywords" content="KBE, CL" /><meta name="mobile-web-app-capable" content="yes" /><meta name="viewport" content="width=device-width, initial-scale=1.0" /><script src="/static/3rdpty/aframe/aframe.min.js"></script><script type="text/javascript">window.onerror = function(){location.reload()};</script><link href="/geysr-static/styles.css" rel="stylesheet" /><link href="/geysr-static/menu.css" rel="stylesheet" /><div id="KDpTVEFOREFSRC1KQVZBU0NSSVBULVNFQ1RJT04p">
+<script src="/static/3rdpty/x3dom/x3dom.js" id="x3dom_script"></script>
+<script id="svg-panzoom" src="/static/3rdpty/svgpanzoom/svg-pan-zoom.min.js"></script>
+<link id="fontawesome-css" rel="stylesheet" href="/static/3rdpty/fa/css/all.min.css" crossorigin="anonymous" />
+<script id="anyresize-script" src="/static/3rdpty/resize/any-resize-event.js"></script>
+<script>
+var gdliid = '3BEEB8EB9AC';
+</script>
+<script src="/static/gwl/js/gdlajax1595.js"></script></div></head><body onpageshow="gdlResize();" onresize="gdlResize();">
+<div class="grid">
+  <div id="menu-cell" class="cell menu menuToggle">
+    <input type="checkbox" class="dp-none" />
+    <span class="dp-none"></span>
+    <span class="dp-none"></span>
+    <span class="dp-none"></span><div id="KDpNRU5VKQ">
+<nav id="menu">
+<ul id="menu">
+<li id="THE__LOGO" tabindex="0" onmouseover="hideMenus(event);" onclick="makeMenuBarHoverable(event);">
+  <a href="#" id="a THE__LOGO"><img class="menu-image" src="/static/gwl/images/logo.png" alt="G" />
+  </a>
+<ul id="THE__LOGO" onmouseover="addVisible(event, 1);"><li onmouseover="hideMenus(event);"><a href="#" title="Toggle the DEVELOPMENT-MODE? property" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtU0xPVCEgOnxhcmd1bWVudHN8ICg6REVWRUxPUE1FTlQtTU9ERT8gVCkp', true);"> Development</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Toggle the USER-MODE? property" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtU0xPVCEgOnxhcmd1bWVudHN8ICg6VVNFUi1NT0RFPyBUKSk', true);"> User Mode</a></li>
+</ul>
+</li>
+<li id="THE__FILE" tabindex="0" onmouseover="hideMenus(event);" onclick="makeMenuBarHoverable(event);">
+  <a href="#" id="a THE__FILE">File
+  </a>
+<ul id="THE__FILE" onmouseover="addVisible(event, 1);">
+<li id="THE__FILE__FILE-NEW-MENU" tabindex="0" onmouseover="hideMenus(event);">
+  <a href="#" id="a THE__FILE__FILE-NEW-MENU">New
+<span class="menu-right-icon">
+  <i class="fas fa-caret-right"></i>
+</span>
+  </a>
+<ul id="THE__FILE__FILE-NEW-MENU" onmouseover="addVisible(event, 2);">
+<li onmouseover="hideMenus(event);">
+  <a href="#" class="inactive" title="Make a new instance of a certain type. Give as a symbol package:name (double colon for 
+non-exported symbols) ">
+<input type="TEXT" value="" name="KDpGSUxFLU5FVy1UWVBFSU4tQ09OVFJPTCA6RklMRS1ORVctVFlQRUlOIDpGSUxFLU5FVy1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp" id="KDpGSUxFLU5FVy1UWVBFSU4tQ09OVFJPTCA6RklMRS1ORVctVFlQRUlOIDpGSUxFLU5FVy1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp" placeholder="package:type" onchange="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwKICg6JVJQJSAoOkZJTEUtTkVXLVRZUEVJTiA6RklMRS1ORVctTUVOVSA6RklMRSA6TkFWIDpNRU5VKSkgOnxyZXNwb25kZW50fAogKDolUlAlIE5JTCkgOnxmdW5jdGlvbnwgOlNFVC1ORVctR0VZU1ItT0JKRUNUISk&fields=' + encode64('(' + ':|KDpGSUxFLU5FVy1UWVBFSU4tQ09OVFJPTCA6RklMRS1ORVctVFlQRUlOIDpGSUxFLU5FVy1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp| ' + doublequote + encode64(document.getElementById('KDpGSUxFLU5FVy1UWVBFSU4tQ09OVFJPTCA6RklMRS1ORVctVFlQRUlOIDpGSUxFLU5FVy1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp').value).replace(/=/g,'') + doublequote + ')').replace(/=/g,''), true);" />
+  </a>
+</li>
+</ul>
+</li>
+<li id="THE__FILE__FILE-OPEN-MENU" tabindex="0" onmouseover="hideMenus(event);">
+  <a href="#" id="a THE__FILE__FILE-OPEN-MENU">Open
+<span class="menu-right-icon">
+  <i class="fas fa-caret-right"></i>
+</span>
+  </a>
+<ul id="THE__FILE__FILE-OPEN-MENU" onmouseover="addVisible(event, 2);">
+<li onmouseover="hideMenus(event);">
+  <a href="#" class="inactive" title="Specify an existing instance using an expression (e.g. a global variable or self). ">
+<input type="TEXT" value="" name="KDpPUEVOLUlOU1RBTkNFLUZST00tRVhQUkVTU0lPTi1UWVBFSU4tQ09OVFJPTCA6RlJPTS1FWFBSRVNTSU9OIDpGSUxFLU9QRU4tTUVOVSA6RklMRSA6TkFWIDpNRU5VKQ" id="KDpPUEVOLUlOU1RBTkNFLUZST00tRVhQUkVTU0lPTi1UWVBFSU4tQ09OVFJPTCA6RlJPTS1FWFBSRVNTSU9OIDpGSUxFLU9QRU4tTUVOVSA6RklMRSA6TkFWIDpNRU5VKQ" placeholder="<instance-expression>" onchange="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwKICg6JVJQJSAoOkZST00tRVhQUkVTU0lPTiA6RklMRS1PUEVOLU1FTlUgOkZJTEUgOk5BViA6TUVOVSkpIDp8cmVzcG9uZGVudHwKICg6JVJQJSBOSUwpIDp8ZnVuY3Rpb258IDpHRVlTUi1PUEVOLUlOU1RBTkNFLUZST00tRVhQUkVTU0lPTiEp&fields=' + encode64('(' + ':|KDpPUEVOLUlOU1RBTkNFLUZST00tRVhQUkVTU0lPTi1UWVBFSU4tQ09OVFJPTCA6RlJPTS1FWFBSRVNTSU9OIDpGSUxFLU9QRU4tTUVOVSA6RklMRSA6TkFWIDpNRU5VKQ| ' + doublequote + encode64(document.getElementById('KDpPUEVOLUlOU1RBTkNFLUZST00tRVhQUkVTU0lPTi1UWVBFSU4tQ09OVFJPTCA6RlJPTS1FWFBSRVNTSU9OIDpGSUxFLU9QRU4tTUVOVSA6RklMRSA6TkFWIDpNRU5VKQ').value).replace(/=/g,'') + doublequote + ')').replace(/=/g,''), true);" />
+  </a>
+</li>
+<li onmouseover="hideMenus(event);">
+  <a href="#" class="inactive" title="Specify an existing instance using an expression (e.g. a global variable or self). ">
+<input type="TEXT" value="" name="KDpPUEVOLUlOU1RBTkNFLUZST00tU05BUFNIT1QtVFlQRUlOLUNPTlRST0wgOkZST00tU05BUFNIT1QgOkZJTEUtT1BFTi1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp" id="KDpPUEVOLUlOU1RBTkNFLUZST00tU05BUFNIT1QtVFlQRUlOLUNPTlRST0wgOkZST00tU05BUFNIT1QgOkZJTEUtT1BFTi1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp" placeholder="<snapsot-file>" onchange="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwKICg6JVJQJSAoOkZST00tU05BUFNIT1QgOkZJTEUtT1BFTi1NRU5VIDpGSUxFIDpOQVYgOk1FTlUpKSA6fHJlc3BvbmRlbnR8CiAoOiVSUCUgTklMKSA6fGZ1bmN0aW9ufCA6R0VZU1ItT1BFTi1JTlNUQU5DRS1GUk9NLVNOQVBTSE9UISk&fields=' + encode64('(' + ':|KDpPUEVOLUlOU1RBTkNFLUZST00tU05BUFNIT1QtVFlQRUlOLUNPTlRST0wgOkZST00tU05BUFNIT1QgOkZJTEUtT1BFTi1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp| ' + doublequote + encode64(document.getElementById('KDpPUEVOLUlOU1RBTkNFLUZST00tU05BUFNIT1QtVFlQRUlOLUNPTlRST0wgOkZST00tU05BUFNIT1QgOkZJTEUtT1BFTi1NRU5VIDpGSUxFIDpOQVYgOk1FTlUp').value).replace(/=/g,'') + doublequote + ')').replace(/=/g,''), true);" />
+  </a>
+</li>
+</ul>
+</li>
+<li onmouseover="hideMenus(event);">
+  <a href="#" class="inactive" title="This operation is not implemented yet...">Save
+  </a>
+</li>
+</ul>
+</li>
+<li id="THE__EDIT" tabindex="0" onmouseover="hideMenus(event);" onclick="makeMenuBarHoverable(event);">
+  <a href="#" id="a THE__EDIT">Edit
+  </a>
+<ul id="THE__EDIT" onmouseover="addVisible(event, 1);">
+<li onmouseover="hideMenus(event);">
+  <a href="#" class="inactive" title="This operation is not implemented yet...">Color
+  </a>
+</li>
+<li onmouseover="hideMenus(event);">
+  <a href="#" class="inactive" title="This operation is not implemented yet...">Line Thickness
+  </a>
+</li>
+</ul>
+</li>
+<li id="THE__TREE" tabindex="0" onmouseover="hideMenus(event);" onclick="makeMenuBarHoverable(event);">
+  <a href="#" id="a THE__TREE" title="Select Tree behavior options">Tree
+  </a>
+<ul id="THE__TREE" onmouseover="addVisible(event, 1);"><li onmouseover="hideMenus(event);"><a href="#" title="Set Root to selected Node." onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6U0VULVJPT1QpKQ', true);"> Set Root...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Set the parent of current root to be the new root." onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpVUC1ST09UISk', true);"> Up Root!</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Reset original root node to be root of the tree." onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpSRVNFVC1ST09UISk', true);"> Reset Root!</a></li>
+<li id="THE__TREE__EXPAND-MODE-MENU" tabindex="0" onmouseover="hideMenus(event);">
+  <a href="#" id="a THE__TREE__EXPAND-MODE-MENU" title="Choose how far Tree expands">Expand Mode
+<span class="menu-right-icon">
+  <i class="fas fa-caret-right"></i>
+</span>
+  </a>
+<ul id="THE__TREE__EXPAND-MODE-MENU" onmouseover="addVisible(event, 2);"><li onmouseover="hideMenus(event);"><a href="#" title="Remember previous expansion state" class="li-selected" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtRVhQQU5ELU1PREUhIDp8YXJndW1lbnRzfCAoOlJFTUVNQkVSKSk', true);"><i class="fas fa-check"></i> Remember</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Expand one level down at a time" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtRVhQQU5ELU1PREUhIDp8YXJndW1lbnRzfCAoOkNISUxEUkVOKSk', true);"> Children</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Expand all the way to the Leaves (if possible)" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtRVhQQU5ELU1PREUhIDp8YXJndW1lbnRzfCAoOkxFQVZFUykp', true);"> Leaves</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Collapse all siblings when expanding" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtRVhQQU5ELU1PREUhIDp8YXJndW1lbnRzfCAoOkFVVE8tQ0xPU0UpKQ', true);"> Auto-close</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li id="THE__MODE" tabindex="0" onmouseover="hideMenus(event);" onclick="makeMenuBarHoverable(event);">
+  <a href="#" id="a THE__MODE" title="Select action (Mode) to be applied to objects clicked in Tree or Inspector">Mode
+  </a>
+<ul id="THE__MODE" onmouseover="addVisible(event, 1);"><li onmouseover="hideMenus(event);"><a href="#" title="Add Leaves to Graphics Viewport as a unit (so they cannot be hidden individually)" class="li-selected" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6QURELUxFQVZFUykp', true);"><i class="fas fa-check"></i> Add Leaves...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Load the Node into the Inspector" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6SU5TUEVDVCkp', true);"> Inspect...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Set `self' to the Node." onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6U0VULVNFTEYpKQ', true);"> Set Self...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Update the node to reflect any changed code definitions" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6VVBEQVRFLU5PREUpKQ', true);"> Update...</a></li>
+<li id="THE__MODE__OTHER-VIEWPORT-MENU" tabindex="0" onmouseover="hideMenus(event);">
+  <a href="#" id="a THE__MODE__OTHER-VIEWPORT-MENU" title="Other Viewport operations such as adding non-leaf nodes">Other Viewport Ops
+<span class="menu-right-icon">
+  <i class="fas fa-caret-right"></i>
+</span>
+  </a>
+<ul id="THE__MODE__OTHER-VIEWPORT-MENU" onmouseover="addVisible(event, 2);"><li onmouseover="hideMenus(event);"><a href="#" title="Add Leaves Individually to Graphics Viewport (so they can be hidden individually)" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6QURELUxFQVZFUyopKQ', true);"> Add Leaves*...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Clear graphics and add Leaves to Graphics Viewport as a unit." onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6RFJBVy1MRUFWRVMpKQ', true);"> Draw Leaves...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Remove leaves from display list (must have been added in same way)" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6REVMRVRFLUxFQVZFUykp', true);"> Hide Leaves...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Clear graphics and add the Node to Graphics Viewport (not any children or leaves)." onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6QURELU5PREUpKQ', true);"> Add Node...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Clear graphics and add the Node to Graphics Viewport (not any children or leaves)." onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6RFJBVy1OT0RFKSk', true);"> Draw Node...</a></li><li onmouseover="hideMenus(event);"><a href="#" title="Render the User Interface inside the Viewport area as an HTML iframe" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtQ0xJQ0stTU9ERSEgOnxhcmd1bWVudHN8ICg6VVNFUi1JTlRFUkZBQ0UpKQ', true);"> User Interface...</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li id="THE__VIEW" tabindex="0" onmouseover="hideMenus(event);" onclick="makeMenuBarHoverable(event);">
+  <a href="#" id="a THE__VIEW">View
+  </a>
+<ul id="THE__VIEW" onmouseover="addVisible(event, 1);">
+<li id="THE__VIEW__CAMERA-POINT-MENU" tabindex="0" onmouseover="hideMenus(event);">
+  <a href="#" id="a THE__VIEW__CAMERA-POINT-MENU">Perspective
+<span class="menu-right-icon">
+  <i class="fas fa-caret-right"></i>
+</span>
+  </a>
+<ul id="THE__VIEW__CAMERA-POINT-MENU" onmouseover="addVisible(event, 2);"><li onmouseover="hideMenus(event);"><a href="#" class="li-selected" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtVklFVyEgOnxhcmd1bWVudHN8ICg6VFJJTUVUUklDKSk', true);"><i class="fas fa-check"></i> Trimetric</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtVklFVyEgOnxhcmd1bWVudHN8ICg6VE9QKSk', true);"> Top</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtVklFVyEgOnxhcmd1bWVudHN8ICg6RlJPTlQpKQ', true);"> Front</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtVklFVyEgOnxhcmd1bWVudHN8ICg6TEVGVCkp', true);"> Left</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtVklFVyEgOnxhcmd1bWVudHN8ICg6Qk9UVE9NKSk', true);"> Bottom</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtVklFVyEgOnxhcmd1bWVudHN8ICg6UkVBUikp', true);"> Rear</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtVklFVyEgOnxhcmd1bWVudHN8ICg6UklHSFQpKQ', true);"> Right</a></li>
+</ul>
+</li><li onmouseover="hideMenus(event);"><hr /></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpDTEVBUiEp', true);"> Clear!</a></li><li onmouseover="hideMenus(event);"><hr /></li>
+<li id="THE__VIEW__GRAPHICS-FORMAT-MENU" tabindex="0" onmouseover="hideMenus(event);">
+  <a href="#" id="a THE__VIEW__GRAPHICS-FORMAT-MENU">Graphics Format 
+<span class="menu-right-icon">
+  <i class="fas fa-caret-right"></i>
+</span>
+  </a>
+<ul id="THE__VIEW__GRAPHICS-FORMAT-MENU" onmouseover="addVisible(event, 2);"><li onmouseover="hideMenus(event);"><a href="#" class="li-selected" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtSU1BR0UtRk9STUFUISA6fGFyZ3VtZW50c3wgKDpTVkcpKQ', true);"><i class="fas fa-check"></i> Wireframe</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtSU1BR0UtRk9STUFUISA6fGFyZ3VtZW50c3wgKDpYM0RPTSkp', true);"> Shaded</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtSU1BR0UtRk9STUFUISA6fGFyZ3VtZW50c3wgKDpQTkcpKQ', true);"> PNG image</a></li><li onmouseover="hideMenus(event);"><a href="#" onclick="gdlAjax(event, 'args=Cig6fGlpZHwgIjNCRUVCOEVCOUFDIiA6fGJhc2hlZXwgKDolUlAlICg6TUVOVSkpIDp8cmVzcG9uZGVudHwgKDolUlAlIE5JTCkKIDp8ZnVuY3Rpb258IDpTRVQtSU1BR0UtRk9STUFUISA6fGFyZ3VtZW50c3wgKDpKUEVHKSk', true);"> jpeg image</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav></div>
+  </div>
+  <div id="tree" class="cell tree"><div id="KDpUUkVFKQ"><span class="geysr-tree">No Object Instantiated</span></div>
+  </div>
+  <div id="inspector" class="cell inspector"><div id="KDpJTlNQRUNUT1Ip">No Object Instantiated</div>
+  </div>
+  <div id="viewport" class="cell viewport"><div id="KDpWSUVXUE9SVCk" class="viewport-wrapper"><div id="empty-viewport" class="empty-viewport"><p><h2>Welcome to Geysr.</h2></p><p>Geysr is for inspecting Genworks GDL models
+		   while you're developing them. You can see your
+		   model structure in the tree at the upper left.</p><p>The Display List is currently empty. You may click a node (in the tree at the upper-left) to apply the <i><a class="menu-show" href="#" onclick="
+  hideMenus(event, true);
+  document.querySelector('#menu').classList.add('hoverable');
+  document.querySelector('#the__mode').classList.add('visible');">ADD-LEAVES</a></i> operation.</p><p>The rendering mode is currently <i><a class="menu-show" href="#" onclick="
+  hideMenus(event, true);
+  document.querySelector('#menu').classList.add('hoverable');
+  document.querySelector('#the__view').classList.add('visible');
+  document.querySelector('#the__view__graphics-format-menu').classList.add('visible');">Wireframe. </a></i>. You can try <i><a class="menu-show" href="#" onclick="
+  hideMenus(event, true);
+  document.querySelector('#menu').classList.add('hoverable');
+  document.querySelector('#the__view').classList.add('visible');
+  document.querySelector('#the__view__graphics-format-menu').classList.add('visible');">x3dom</a></i> for a shaded, navigable view, or one of the <i><a class="menu-show" href="#" onclick="
+  hideMenus(event, true);
+  document.querySelector('#menu').classList.add('hoverable');
+  document.querySelector('#the__view').classList.add('visible');
+  document.querySelector('#the__view__graphics-format-menu').classList.add('visible');">raster formats</a></i> (png or jpeg).</p></div></div>
+  </div>
+  <div id="viewport-script"><div id="KDpWSUVXUE9SVC1TQ1JJUFQp"><div><script type="text/javascript">
+ if (document.getElementById('svg-1'))
+{
+ panZoomSVG1 = svgPanZoom('#svg-1', {
+ zoomEnabled: true,
+ controlIconsEnabled: true,
+ preventMouseEventsDefault: false,
+ fit: true,
+ minZoom: 0.01,
+ maxZoom: 100,
+ center: true});
+};
+console.log ('running popup-menu-text...');     
+
+function getPosition(e) {
+var posx = 0;
+var posy = 0;
+
+if (!e) var e = window.event;
+
+if (e.pageX || e.pageY) {
+   posx = e.pageX;
+   posy = e.pageY;
+ } 
+  else if (e.clientX || e.clientY) {
+    posx = e.clientX + document.body.scrollLeft + 
+                       document.documentElement.scrollLeft;
+    posy = e.clientY + document.body.scrollTop + 
+                       document.documentElement.scrollTop;
+  }
+
+  return {
+    x: posx,
+    y: posy
+  }
+}
+
+
+var menuPosition;
+var menuPositionX;
+var menuPositionY;
+
+
+var can = document.getElementById('x3dom-x3dom-1-canvas');
+var  domid = document.getElementById('KDpWSUVXUE9SVCk');
+
+var obj = can || domid;
+
+
+var menuState = 0;
+var active = 'popup-menu-visible';
+var vmenu = document.getElementById('KDpNRU5VKQ');
+
+
+function positionMenu(e) {
+ 
+  let popup = document.querySelector('.popup-menu');
+  popup.classList.remove('mode-left');
+  popup.classList.remove('mode-top');
+  menuPosition = getPosition(e);
+  let windowWidth = window.innerWidth;
+  let windowHeight = window.innerHeight;
+  let positionX = menuPosition.x;
+  let positionY = menuPosition.y;
+  const menuWidth = 170;
+  const subMenuWidth = 200;
+  const menuHeight = 120;
+  const subMenuHeight = 84;
+
+  if( positionX + menuWidth >= windowWidth ) {
+    positionX -= menuWidth;
+  }
+  if( positionX + menuWidth + subMenuWidth >= windowWidth ) {
+    popup.classList.add('mode-left');
+  }
+
+  if(positionY + menuHeight > windowHeight) {
+     positionY -= menuHeight;
+  }
+  if(positionY + menuHeight + subMenuHeight > windowHeight) {
+     popup.classList.add('mode-top');
+  }
+   
+  menuPositionX = positionX + 'px';
+  menuPositionY = positionY + 'px';
+   
+  console.log('position-x: ' + menuPosition.x + 'position-y: ' + menuPosition.y);
+  console.log('vmenu is: ' + vmenu);
+   
+  vmenu.style.left = menuPositionX;
+  vmenu.style.top = menuPositionY;
+}
+
+var mouse_pos;
+
+
+// DJC
+
+function inactivateMenu ()
+{
+    menuState = 0;
+    vmenu.classList.remove(active);
+
+}
+
+
+inactivateMenu ();
+
+// document.addEventListener('click', inactivateMenu);
+
+console.log ('Done running popup-menu-text...');     
+
+</script></div></div>
+  </div>
+  <div id="menu-script"><div id="KDpNRU5VLVNDUklQVCk"><script>
+
+function makeMenuBarHoverable (event)
+{
+ document.querySelector('#menu').classList.add('hoverable');
+}
+
+
+function hideMenus(event, force=null)
+{ 
+
+  var lis;
+  var obj = (event && event.target);
+  var menu = document.querySelector('#menu');
+
+  if ((!force) && (obj && (obj.classList.contains('menu-show')))) return;  
+
+  if (obj && menu.contains(obj))
+  {
+    while (obj && (!(obj.tagName == 'LI'))) obj = obj.parentNode;
+    var ul = obj.parentNode;
+    lis = ul.querySelectorAll('li');
+  }
+  
+  else
+  {
+    lis = menu.querySelectorAll('ul li');   
+    menu.classList.remove('hoverable');
+  }
+
+  for (var i=0;i<lis.length;i++)
+   {
+    var li = lis[i];
+    if /* ((! (li == obj)) && (li.classList.contains('visible'))) */ 
+       (! (li == obj))
+       li.classList.remove('visible');
+   }
+
+// if (typeof inactivateMenu === 'function') { inactivateMenu(); }
+}
+
+setTimeout(hideMenus, 10);
+
+document.addEventListener('click', hideMenus);
+
+//document.querySelector('#menu').addEventListener('keypress', function (e) {
+//    if (e.key === 'Enter') {hideMenus();}})
+
+document.addEventListener('keypress', function (e) {
+    if (e.key === 'Enter') {hideMenus();}})
+
+function addVisible(event, level)
+{
+  var obj = event.target;
+
+  while (obj && (obj.tagName != 'UL')) obj = obj.parentNode;
+  if (obj.tagName == 'UL') obj = obj.parentNode;
+  if ((obj.tagName == 'LI') && (! (obj.classList.contains('visible'))))
+    obj.classList.add('visible');
+}
+
+
+</script></div>
+  </div>
+</div>
+<script>
+
+const debounceEvent = (callback, time = 250, interval) =>
+ (...args) => 
+   clearTimeout(interval, interval = setTimeout(() => callback(...args), time))
+
+var gdlResize = debounceEvent(() => {
+ gdlAjax(null, 'args=' + encode64('(:|iid| ' + doublequote + gdliid + doublequote + ' :|bashee| (:%rp% nil) :|function| :set-slot! :|arguments| (:viewport-dimensions (:width ' + (document.getElementById('viewport').getBoundingClientRect().width) +  ' :length ' + (document.getElementById('viewport').getBoundingClientRect().height) + ')))'), true );
+}, 250);
+
+
+tree = document.getElementById('tree'); 
+tree.addEventListener('onresize', function(){gdlResize();});
+
+
+</script></body></html>

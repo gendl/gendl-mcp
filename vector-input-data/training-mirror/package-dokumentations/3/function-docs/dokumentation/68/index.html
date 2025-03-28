@@ -1,0 +1,13 @@
+<html><head><title>Macro: THE</title></head><body><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><h2>Macro: The</h2><p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td ALIGN="LEFT"><b>THE</b> <i>lisp object</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Sends the <tt>reference-chain</tt> to <tt>self</tt>, which typically means it is
+used within the context of a define-object where self is automatically lexically bound.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>reference-chain</b> <i>(&rest)</i></dt><dd> A spliced-in list of symbols naming messages, which can 
+be slots or objects starting from <tt>self</tt>. For referring to elements of a quantified set,
+or for passing arguments to GDL functions which take arguments, use parentheses around the
+message name and enclose the quantified element index or function arguments after the message
+name</dd></small></dl></dd><dt><i>example:</i></dt><dd>
+This example sends the <tt>length</tt> message to the ``zeroth'' element of the quantified
+set of arms contained in the body which is contained in the robot which is contained in self:
+<pre>
+ (the robot body (arms 0) length)
+</pre>
+</dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr></table></p><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></body></html>

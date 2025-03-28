@@ -1,0 +1,9 @@
+<html><head><title>Function: GWL:GWL-MAKE-OBJECT</title></head><body><p><a href="/package-dokumentations/9/index.html">&lt;-Back</a></p><h2>Function: Gwl:Gwl-Make-Object</h2><p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td ALIGN="LEFT"><b>GWL-MAKE-OBJECT</b> <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Used within the context of the body of a :function argument to Allegroserve's
+publish function, makes an instance of the specified part and responds to the request
+with a redirect to a URI representing the instance.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>req</b> <i>Allegroserve request object, as used in the function of a publish</i></dt><dd></dd></small><small><dt><b>ent</b> <i>Allegroserve entity object, as used in the function of a publish</i></dt><dd></dd></small><small><dt><b>package-and-part</b> <i>String</i></dt><dd> Should name the colon- (or double-colon)-separated
+package-qualified object name</dd></small></dl></dd><dt><i>keyword arguments:</i></dt><dd><dl><small><dt><b>make-object-args</b> <i>Plist of keys and values</i>, Default Value: <tt>NIL</tt></dt><dd> These are passed to the object upon instantiation</dd></small><small><dt><b>share?</b> <i>Boolean</i>, Default Value: <tt>NIL</tt></dt><dd> If non-nil, the instance ID will be the constant string ``share'' rather than a real instance id</dd></small></dl></dd><dt><i>example:</i></dt><dd><pre> 
+  (publish :path "/calendar"
+           :function #'(lambda(req ent) (gwl-make-object req ent "calendar:assembly")))
+</pre>
+</dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr></table></p><p><a href="/package-dokumentations/9/index.html">&lt;-Back</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></body></html>

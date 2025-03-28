@@ -1,0 +1,9 @@
+<html><head><title>Macro: WRITE-ENV</title></head><body><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><h2>Macro: Write-Env</h2><p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td ALIGN="LEFT"><b>WRITE-ENV</b> <i>void [macro] (usually used just for outputting)</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Within the context of a <tt>with-format</tt>, calls functions of
+the format object, optionally with arguments. Typically these functions will output data to the
+<tt>stream</tt> established by the <tt>with-format</tt>.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>function-calls</b> <i>(&rest)</i></dt><dd> Functions on the named output-format to be called</dd></small></dl></dd><dt><i>example:</i></dt><dd>
+<pre>
+ (with-format (base-format my-object) (write-env (:a "Hello World, my object's length is: ")
+                                                 (:a (the length))))
+</pre>
+</dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr></table></p><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></body></html>

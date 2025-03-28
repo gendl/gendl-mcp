@@ -1,0 +1,8 @@
+<html><head><title>Macro: WITH-FORMAT</title></head><body><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><h2>Macro: With-Format</h2><p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td ALIGN="LEFT"><b>WITH-FORMAT</b> <i>void [macro]</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Used to establish an output format and a stream to which data is to be sent. This
+supports a full range of output options such as page dimensions, view transforms, view scales, etc.
+</p><dl><dt><i>example:</i></dt><dd>
+<pre>
+ (gdl::with-format (pdf "/tmp/box.pdf" :view-transform (getf *standard-views* :trimetric)) 
+    (write-the-object (make-instance 'box :length 100 :width 100 :height 100) cad-output))
+</pre>
+</dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr></table></p><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></body></html>

@@ -1,3 +1,0 @@
-nominal-width 5000
-truss-angle 40
-wall-thickness 4

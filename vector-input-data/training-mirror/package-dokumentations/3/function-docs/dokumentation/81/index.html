@@ -1,0 +1,12 @@
+<html><head><title>Macro: WRITE-THE-OBJECT</title></head><body><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><h2>Macro: Write-The-Object</h2><p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td ALIGN="LEFT"><b>WRITE-THE-OBJECT</b> <i>lisp object [macro]</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Typcially used only to send output, not for the return value. This macro
+is used within the body of a <tt>with-format</tt>. It sends the <tt>reference-chain</tt> to
+<tt>object</tt>, which must be specified as a Lisp expression (e.g. a variable) which
+evaluates to a GDL object.
+The reference-chain must terminate with an output-function defined for the combination of
+the output-format specified in the enclosing <tt>with-format</tt>, and the object
+identified by <tt>object</tt>.
+</p><dl><dt><i>arguments:</i></dt><dd><dl><small><dt><b>reference-chain</b> <i>(&rest)</i></dt><dd> A spliced-in list of symbols naming messages, which can 
+be slots or objects starting from <tt>object</tt>, terminating with the name of an output-function.
+For referring to elements of a quantified set, or for passing arguments to GDL functions which
+take arguments, use parentheses around the message name and enclose the quantified element index
+or function arguments after the message name</dd></small></dl></dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr></table></p><p><a href="/package-dokumentations/3/index.html">&lt;-Back</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></body></html>

@@ -1,0 +1,257 @@
+<!DOCTYPE HTML><html lang="en"><head><title>GendL Application - BASE-AJAX-GRAPHICS-SHEET</title><meta charset="UTF-8" /><link rel="icon" type="image/x-icon" href="/static/gwl/images/favicon.ico" /><link href="/static/gwl/style/top.css" rel="stylesheet" type="text/css" /><div id="KDpTVEFOREFSRC1KQVZBU0NSSVBULVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDEpIDpPQkpFQ1QtRE9DUyAoOlBBQ0tBR0UtRE9LVU1FTlRBVElPTlMgOSkp">
+<script>
+var gdliid = '/yadd';
+</script>
+<script src="/static/gwl/js/gdlajax1595.js"></script></div></head><body><div id="KDpNQUlOLVNFQ1RJT04gKDpET0tVTUVOVEFUSU9OIDEpIDpPQkpFQ1QtRE9DUyAoOlBBQ0tBR0UtRE9LVU1FTlRBVElPTlMgOSkp"><p><a href="/package-dokumentations/9/index.html">Package Documentation</a></p><table BGCOLOR="#eeeeff" WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr><td><b><font SIZE="+1">Object: BASE-AJAX-GRAPHICS-SHEET<font SIZE=-1><i> (The :GWL Package)</i></font></font></b></td></tr><tr><td><b>Mixins: </b><a HREF="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a>, <a HREF="/master-index-grouped/66/index.html">BASE-HTML-GRAPHICS-SHEET</a></td></tr></table><p><h3>Description</h3>This mixes together base-ajax-sheet 
+with base-html-graphics-sheet, and adds html-format output-functions 
+for several of the new formats such as ajax-enabled png/jpeg and 
+Raphael vector graphics.</p><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>AFTER-PRESENT!</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is an empty function by default, but can be overridden in
+the respondent of a form, to do some processing after the respondent's
+<tt>write-html-sheet</tt> function runs to present the object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>AFTER-SET!</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is an empty function by default, but can be overridden in
+the requestor of a form, to do some processing after the requestor's form
+values are set into the specified bashee.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BACKGROUND-COLOR</b> <i>array of three numbers between 0 and 1</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> RGB Color in decimal
+format. Color to be used for the background of the viewport.
+Defaults to the
+<tt>:background</tt> from the global <tt>*colors-default*</tt> parameter.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BASHEE</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>gdl object</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Object to have its settable computed-slots and/or query-plist set
+from the fields on the form upon submission. Defaults to self.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BEFORE-PRESENT!</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is an empty function by default, but can be overridden in
+the respondent of a form, to do some processing before the respondent's
+<tt>write-html-sheet</tt> function runs to present the object. This can be
+useful especially for objects which are subclasses of higher-level mixins such as
+<tt>application-mixin</tt> and <tt>node-mixin</tt>, where you do not have
+direct access to the <tt>write-html-sheet</tt> function and typically only define
+the <tt>model-inputs</tt> function. It is not always reliable to do processing
+in the <tt>model-inputs</tt> function, since some slots which depend on your
+intended modifications may already have been evaluated by the time the
+<tt>model-inputs</tt> function runs.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BEFORE-RESPONSE!</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is an empty function by default, but can be overridden in
+a user specialization of base-html-sheet, to do some processing before the
+header-plist is evaluated and before the HTTP response is actually initiated.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BEFORE-SET!</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is an empty function by default, but can be overridden in
+the requestor of a form, to do some processing before the requestor's form
+values are set into the specified bashee.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BODY-CLASS</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Names the value of class attribute for the body tag. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BODY-ONLOAD</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string of javascript or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This Javascript will go into the :onload event of the body.
+Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BODY-ONPAGESHOW</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string of javascript or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This Javascript will go into the :onpageshow event of the body.
+Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BODY-ONRESIZE</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string of javascript or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This Javascript will go into the :onresize event of the body.
+Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>BOUNDING-BOX</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>list of two 3d points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The left front bottom and right rear top corners, in global coordinates,
+of the rectangular volume bounding the tree of geometric objects rooted at this object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>CENTER</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>3d point</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates in global coordinates where the center of the reference
+box of this object should be located.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>CHECK-SANITY?</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines whether a a sanity check is done (with the <tt>check-sanity</tt> function) before
+presenting the response page if this page is a respondent. Default is NIL.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DISPLAY-LIST-OBJECT-ROOTS</b> <i>list of gdl objects</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The leaves of each of these objects will
+be included in the geometry display. Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DISPLAY-LIST-OBJECTS</b> <i>list of gdl objects containing geometry</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> These are the
+actual objects themselves, not nodes which have children or
+other descendants that you want to display. If you want to
+display the leaves of certain nodes, include the objects for
+those nodes in the display-list-object-roots, not here.
+Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DOCTYPE-STRING</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Contains the string for the doctype at the top of the document.
+Default is the standard doctype for HTML5 and later.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DOM-ID</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is the auto-computed dom-id which should be used for rendering
+this section. If you use the main-div HTML string for rendering this object as a
+page section, then you do not have to generate the :div tag yourself - the main-div
+will be a string of HTML which is wrapped in the correct :div tag already.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>FIELD-OF-VIEW-DEFAULT</b> <i>number in angular degrees</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The maximum angle of the view frustrum
+for perspective views. Defaults to 45 which is natural human eye field of view.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>FORCE-VALIDATION-FOR</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>list of gdl objects of type form-control</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The validation-function will be forced
+on these objects when a form is submitted, even if the object's html form-control does
+not happen to be included in the values submitted with the form. Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HEAD-CLASS</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Names the value of class attribute for the head tag. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HIDDEN?</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates whether the object should effectively be a hidden-object even if specified in :objects. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HTML-CLASS</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Names the value of class attribute for the html tag. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HTML-SECTIONS</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>] </td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>List of HTML sections to be scanned and possibly replaced in response to
+GDL Ajax calls. Override this slot at your own risk. The default is all
+sections who are most recently laid out on the respondent sheet, and
+this is set programmatically every time the sheet section's main-div
+is demanded.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HTML-SECTIONS-VALID</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>] </td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>List of valid HTML sections to be scanned and possibly replaced in response to
+GDL Ajax calls. Override this slot at your own risk. The default is all
+sections who are most recently laid out on the respondent sheet, and
+this is set programmatically every time the sheet section's main-div
+is demanded.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMAGE-FILE</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>pathname or string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Points to a pre-existing image file to be displayed instead of actual geometry for this object. Defaults to nil
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMAGE-FORMAT</b> <i>keyword symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines the default image format. Defaults to the currently selected
+value of the image-format-selector, which itself defaults to :raphael.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMAGE-FORMAT-DEFAULT</b> <i>keyword symbol, one of the keys from (the image-format-plist)</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>.
+Default for the image-format-selector. Defaults to :png.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMAGE-FORMAT-PLIST</b> <i>plist of keys and strings</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The default formats for graphics display. Defaults to:
+ <pre>
+ (list :png "PNG image"
+       :jpeg "jpeg image"
+       :raphael "SVG/VML")
+</pre>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>IMMUNE-OBJECTS</b> <i>list of gdl objects</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> These objects are not used in
+computing the scale or centering for the display list.
+Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>INCLUDE-VIEW-CONTROLS?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates whether standard view-controls panel should be included with the graphics.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>INNER-HTML</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This can be used with (str .) [in cl-who] or (:princ .) [in htmlGen]
+to output this section of the page, without the wrapping :div tag [so if you use this,
+your code would be responsible for wrapping the :div tag with :id (the dom-id).]
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LENGTH</b> [<i>from <a href="/master-index-grouped/543/index.html">GEOMETRY-VIEW-MIXIN</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Length ("height" of screen window) of the graphics viewport. Default is 300.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>LOCAL-BOX</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>list of two 3d points</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The left front bottom and right rear top corners, in global coordinates,
+of the rectangular volume bounding this geometric object.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>MAIN-SHEET-BODY</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string of html</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The main body of the page.
+This can be specified as input or overridden in subclass, otherwise it defaults
+to the content produced by the :output-function of the same name
+in the applicable lens for  html-format.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>OBLIQUENESS</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>3x3 orthonormal matrix of double-float numbers</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is synonymous with the <tt>orientation</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ONCLICK-FUNCTION</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>lambda function of zero arguments, or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> If non-nil, this
+function gets invoked when the user clicks the object in graphics
+front-ends which support this functionality, e.g. SVG/Raphael and X3DOM.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ORDERED-FORM-CONTROLS</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>list of gdl objects, which should be of type 'base-form-control</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>.
+<p>
+[Note -- this slot is not really necessary for protecting out-of-bounds sequence references
+anymore, the form-control processor protects against this by itself now].
+</p>
+These objects are validated and bashed first, in the order given. If the cardinality
+of one form-control depends on another as in the example below, then you should list
+those dependent objects first. Default is nil.
+</p><dl><dt><i>examples:</i></dt><dd>
+<pre>
+ 
+...
+  
+  :computed-slots ((number-of-nozzles (the number-of-nozzles-form value))
+	    (ordered-form-controls 
+	     (append (list-elements (the inner-flange-form))
+		     (list (the number-of-nozzles-form)))))
+  
+  :objects
+  ((inner-flange-form
+    :type 'menu-form-control 
+    :choice-plist (list :hey "hey" :now "now")
+    :default :hey
+    :sequence (:size (the number-of-nozzles)))
+   (number-of-nozzles-form
+    :type 'text-form-control 
+    :prompt "Number of Shell Nozzles Required: "
+    :domain :number     
+    :default 0)
+</pre>
+</dd></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ORIENTATION</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>3x3 matrix of double-float numbers</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Indicates the absolute Rotation Matrix used to create
+the coordinate system of this object. This matrix is given in absolute terms (i.e. with
+respect to the root's orientation), and is generally created with the alignment function.
+It should be an <i>orthonormal</i> matrix, meaning each row is a vector with a magnitude
+of one (1.0).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>POSSIBLE-NILS</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>list of keyword symbols</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Messages corresponding to form fields which could
+be missing from form submission (e.g. checkbox fields). Defaults to the names
+of any children or hidden-children of type  menu-form-control or
+checkbox-form-control.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PRESET-ALL?</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This switch determines whether all form-controls should be preset
+before the final setting, in order to allow any interdependencies to be detected
+for validation or detecting changed values. If this is specified as a non-nil
+value, then any nil values of (the preset?) on individual form controls will be
+ignored. If this is specified as nil, then (the preset?) of individual
+form-controls (default of these is also nil) will be respected. Default is nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PROCESS-COOKIES!</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is an empty function by default, but can be overridden in
+a user specialization of base-html-sheet, to do some processing before the
+header-plist is evaluated and before the HTTP response is actually initiated, but after
+the cookies-received have been set.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>PROJECTION-VECTOR</b> <i>3d vector</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is the normal vector of the view plane onto
+which to project the 3D objects. Defaults to
+(getf *standard-views* (the view-selector value)),
+and (the view-selector value) defaults to :top.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RETURN-OBJECT</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>gdl object</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Default object to which control will return with the write-back-link method
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ROOT</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>gdl instance</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The root-level node in this object's ``tree'' (instance hierarchy).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SAFE-CHILDREN</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> All objects from the :objects specification, including elements of sequences
+as flat lists. Any children which throw errors come back as a plist with error information
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>STANDARD-VIEWS</b> [<i>from <a href="/master-index-grouped/66/index.html">BASE-HTML-GRAPHICS-SHEET</a></i>]  <i>plist of keywords and 3d vectors</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>.
+Indicates the views to show in the graphics controls.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>STRINGS-FOR-DISPLAY</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>string or list of strings</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines how the name of objects of
+this type will be printed in most places.  This defaults to the
+name-for-display (generally the part's name as specified in its
+parent), followed by an index number if the part is an element of a
+sequence.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>SVG-CLASS</b> <i>string with css classes</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> These classes will be included in any svg tag outputted from this drawing.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TARGET</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Name of a browser frame or window to display this page. Default of NIL indicates to use the same window.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TITLE</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The title of the web page. Defaults to "GendL Application -"
+.followed by the strings-for-display.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>TRANSITORY-SLOTS</b> [<i>from <a href="/master-index-grouped/254/index.html">BASE-HTML-SHEET</a></i>]  <i>list of keyword symbols</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Messages corresponding to form fields which should not be retained
+against Updates to the model (e.g. calls to the update! function or hitting the Update button or link in
+the browser in development mode). Defaults to NIL (the empty list).
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>USE-BSPLINES?</b> [<i>from <a href="/master-index-grouped/66/index.html">BASE-HTML-GRAPHICS-SHEET</a></i>]  <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines whether to use native bspline data in the vrml
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>USE-RAPHAEL-GRAF?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Include raphael graphing library in the page header?
+Default nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>USE-RAPHAEL?</b> <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Include raphael javascript library in the page header?
+Default nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEW-DIRECTION-DEFAULT</b></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>Default view initially in the view-selector which is
+automatically included in the view-controls.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEWPORT-BORDER-DEFAULT</b> <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Thickness of default border around graphics viewport.
+Default is 1.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VISIBLE-CHILDREN</b> [<i>from <a href="/master-index-grouped/662/index.html">VANILLA-MIXIN*</a></i>]  <i>list of gdl instances</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Additional objects to display in Tatu
+tree. Typically this would be a subset of
+hidden-children. Defaults to NIL.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>WIDTH</b> [<i>from <a href="/master-index-grouped/543/index.html">GEOMETRY-VIEW-MIXIN</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Width of the graphics viewport. Default is 300.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional, settable)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>ADDITIONAL-HEADER-CONTENT</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>string of valid html</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Additional tag content to go into the page header,
+if you use the default main-sheet message and just fill in your own main-sheet-body, as
+is the intended use of the base-ajax-sheet primitive.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ADDITIONAL-HEADER-JS-CONTENT</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>valid javascript</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This javascript is added to the head of the page, just before the body.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DIGITATION-MODE</b> [<i>from <a href="/master-index-grouped/66/index.html">BASE-HTML-GRAPHICS-SHEET</a></i>]  <i>keyword symbol, one of <tt>:zoom-and-center</tt>, <tt>:report-point</tt>, or <tt>:measure-distance</tt></i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>.
+<ul>
+<li>If <tt>:zoom-and-center</tt>, sets the user-center and user-scale accordingly when graphics
+area is clicked.</li>
+<li>If <tt>:report-point</tt>, the slot <tt>digitized-point</tt> is set with the x y value. </li>
+<li>If <tt>measure-distance</tt>, the slot <tt>:digitized-distance</tt> is set with the resultant distance.</li>
+</ul>
+Default is <tt>:zoom-and-center</tt>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>UI-SPECIFIC-LAYOUT-JS</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>absolute uri in the browser</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p>.
+This is additional JavaScript that needs to be loaded in order to initiate the layout of a user
+interface. Defaults to nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>USE-JQUERY?</b> [<i>from <a href="/master-index-grouped/402/index.html">BASE-AJAX-SHEET</a></i>]  <i>boolean</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Include jquery javascript libraries in the page header?
+Default nil.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEW</b> [<i>from <a href="/master-index-grouped/66/index.html">BASE-HTML-GRAPHICS-SHEET</a></i>]  <i>keyword symbol</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Determines the default view from the <tt>standard-views</tt>. Defaults to :trimetric.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ZOOM-FACTOR</b> [<i>from <a href="/master-index-grouped/66/index.html">BASE-HTML-GRAPHICS-SHEET</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The factor used for zooming in or out.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>ZOOM-MODE</b> [<i>from <a href="/master-index-grouped/66/index.html">BASE-HTML-GRAPHICS-SHEET</a></i>]  <i>keyword symbol, one of :in, :out, or :none, or nil</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> If :in, then clicks
+in the graphics area will increase the zoom factor by (the zoom-factor). If :out,
+then clicks will decrease the factor by that amount. If :none or nil, then clicks
+will have no effect.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Input Slots (optional, defaulting)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>DISPLAY-CONTROLS</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>plist</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> May contain keywords and values indicating display characteristics for
+this object. The following keywords are recognized currently:
+
+<dl>
+<dt>:color</dt>
+<dd> color keyword from the *color-table* parameter, or an HTML-style hexidecimal
+RGB string value, e.g. "#FFFFFF" for pure white. Defaults to :black.</dd>
+<dt>:line-thickness</dt>
+<dd> an integer, defaulting to 1, indicating relative line thickness for wireframe
+representations of this object.</dd>
+<dt>:dash-pattern</dt>
+<dd>(currently PDF/PNG/JPEG only). This is a list of two or three numbers which indicate the length,
+in pixels, of the dashes and blank spaces in a dashed line. The optional third number
+indicates how far into the line or curve to start the dash pattern.</dd>
+</dl>
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>HEIGHT</b> [<i>from <a href="/master-index-grouped/685/index.html">BASE-OBJECT</a></i>]  <i>number</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Z-axis dimension of the reference box. Defaults to zero.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RESPONDENT</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>gdl object</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Object to respond to the form submission. Defaults to self.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Computed Slots (settable)</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>DROPPED-HEIGHT-WIDTH</b> <i>plist with :width and :height</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> The dimensions of the bounding-box of the dragged and/or dropped element.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DROPPED-OBJECT</b> <i>list representing gdl root-path</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is the root path of the dragged and/or dropped object.
+This is not tested to see if it is part of the same object tree as current self.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>DROPPED-X-Y</b> <i>3d point</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This is the upper-right corner of the bounding box of the dragged and/or dropped element.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>JS-TO-EVAL</b> [<i>from <a href="/master-index-grouped/52/index.html">SKELETON-UI-ELEMENT</a></i>]  <i>string of valid javascript</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This Javascript will be send with the Ajax response,
+and evaluated after the innerHTML for this section has been replaced.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Computed Slots</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>GRAPHICS</b> <i>string of valid html</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This can be used to
+include the geometry, in the format currently selected by the image-format-selector.
+If the include-view-controls? is non-nil, the view-controls will be appended at the
+bottom of the graphics inside a table.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>RASTER-GRAPHICS</b> <i>string of valid html</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This can be used to
+include the PNG or JPG raster-graphics of the geometry.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VECTOR-GRAPHICS</b> <i>string of valid html</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This can be used to
+include the SVG or VML vector-graphics of the geometry.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEW-CONTROLS</b> <i>string of valid html</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This includes the image-format-selector, the reset-zoom-button,
+and the view-selector, in a simple table layout. You can override this to make the view-controls
+appear any way you want and include different and/or additional form-controls.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>X3DOM-GRAPHICS</b> <i>string of valid html</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This can be used to
+include the x3dom tag content for the geometry.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">Hidden Objects</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>IMAGE-FORMAT-SELECTOR</b> <i>object of type menu-form-control</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Its value slot can be used to determine the format of image displayed.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><td ALIGN="LEFT"><b>VIEW-OBJECT</b> [<i>from <a href="/master-index-grouped/543/index.html">GEOMETRY-VIEW-MIXIN</a></i>]  <i>gdl web-drawing object</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> This must be overridden in the specialized class.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><table WIDTH="100%" BORDER=0 CELLPADDING=1 CELLSPACING=0><tr BGCOLOR="#eeeeff"><td COLSPAN=2><b><font SIZE="+1">GDL Functions</font></b></td></tr><tr><td><br></td></tr><tr><td ALIGN="LEFT"><b>WRITE-EMBEDDED-X3DOM-WORLD</b> <i>void</i></td><td ALIGN="RIGHT"><br></td></tr><tr><td COLSPAN=2><p> Writes an embedded X3D tag with content for the <tt>view-object</tt> child of this object.
+The <tt>view-object</tt> child should exist and be of type <tt>web-drawing</tt>.
+</p><dl></dl></td></tr><tr><td COLSPAN=2><br></td></tr><tr><br></tr></table><p><h3>Examples</h3>FLAG -- Fill in!!!</p><p><a href="/package-dokumentations/9/index.html">Package Documentation</a></p><p><p class="copyrightFooter">Copyright &copy; 2025 <a href="http://www.genworks.com">Genworks</a><sup>&reg;</sup> <a href="http://www.genworks.com">International</a>. All rights reserved. <i><small>Genworks Build: 1598p001</small></i></p></p></div></body></html>
