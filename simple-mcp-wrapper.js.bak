@@ -1,0 +1,355 @@
+#!/usr/bin/env node
+
+/**
+ * simple-mcp-wrapper.js
+ * 
+ * Simplified wrapper script for Gendl MCP integration that always returns text responses
+ * for HTTP requests to avoid "s.content.map is not a function" errors.
+ */
+
+const readline = require('readline');
+const fs = require('fs');
+const { exec } = require('child_process');
+const http = require('http');
+
+// Configure the Gendl server details
+const GENDL_HOST = '127.0.0.1';
+const GENDL_PORT = 9081;
+const GENDL_BASE_PATH = '/mcp';
+
+// Set up logging to file for debugging
+const LOG_FILE = '/tmp/simple-mcp-wrapper.log';
+let logStream;
+
+try {
+  logStream = fs.createWriteStream(LOG_FILE, { flags: 'a' });
+  logStream.write(`\n\n---- STARTING SIMPLE MCP WRAPPER LOG AT ${new Date().toISOString()} ----\n\n`);
+} catch (error) {
+  console.error(`Failed to create log file: ${error.message}`);
+}
+
+// Logger implementation
+const logger = {
+  error: (message) => log('ERROR', message),
+  warn: (message) => log('WARN', message),
+  info: (message) => log('INFO', message)
+};
+
+// Enhanced logging function
+const log = (level, message) => {
+  const timestamp = new Date().toISOString();
+  const logMessage = `[${timestamp}] [${level}] ${message}`;
+  
+  // Log to stderr
+  console.error(`[SIMPLE-MCP-WRAPPER] ${logMessage}`);
+  
+  // Log to file if available
+  if (logStream) {
+    logStream.write(logMessage + '\n');
+  }
+};
+
+logger.info('Starting Simple MCP wrapper');
+
+// Create readline interface for stdin/stdout communication
+let rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+  terminal: false
+});
+
+// Handle MCP requests
+rl.on('line', (line) => {
+  logger.info(`Received: ${line}`);
+  
+  try {
+    const request = JSON.parse(line);
+    
+    switch (request.method) {
+      case 'initialize':
+        handleInitialize(request);
+        break;
+      case 'tools/call':
+        handleToolCall(request);
+        break;
+      case 'tools/list':
+        handleToolsList(request);
+        break;
+      case 'resources/list':
+        sendStandardResponse(request, { resources: [] });
+        break;
+      case 'prompts/list':
+        sendStandardResponse(request, { prompts: [] });
+        break;
+      case 'notifications/initialized':
+        // Just acknowledge notification, no response needed
+        logger.info('Received initialization notification');
+        break;
+      default:
+        // Send method not supported error for any other method
+        logger.warn(`Unsupported method: ${request.method}`);
+        sendErrorResponse(request, -32601, `Method not supported: ${request.method}`);
+    }
+  } catch (error) {
+    logger.error(`Error processing request: ${error.message}`);
+    if (line && line.includes('"id"')) {
+      try {
+        const id = JSON.parse(line).id;
+        sendErrorResponse({ id }, -32603, `Internal error: ${error.message}`);
+      } catch (e) {
+        logger.error(`Could not extract request ID: ${e.message}`);
+      }
+    }
+  }
+});
+
+// Handle MCP initialization
+function handleInitialize(request) {
+  logger.info('Handling initialize request');
+  
+  // Send successful initialization response
+  const response = {
+    jsonrpc: '2.0',
+    id: request.id,
+    result: {
+      protocolVersion: request.params.protocolVersion || '0.1.0',
+      capabilities: {
+        experimental: {},
+        prompts: { listChanged: false },
+        resources: { subscribe: false, listChanged: false },
+        tools: { listChanged: false }
+      },
+      serverInfo: {
+        name: 'simple-gendl-mcp',
+        version: '1.0.0'
+      }
+    }
+  };
+  
+  sendResponse(response);
+  logger.info('Initialization complete');
+}
+
+// Handle tool list requests
+function handleToolsList(request) {
+  logger.info('Handling tools/list request');
+  
+  // Define our tools
+  const toolsData = {
+    tools: [
+      {
+        name: 'http_request',
+        description: 'Make an HTTP request to any endpoint on the Gendl server',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            method: {
+              type: 'string',
+              description: 'HTTP method (GET, POST, PUT, DELETE, etc.)',
+              default: 'GET'
+            },
+            path: {
+              type: 'string',
+              description: 'The path part of the URL (e.g., /color-map)'
+            },
+            rawResponse: {
+              type: 'boolean',
+              description: 'If true, return the raw response instead of parsing it',
+              default: false
+            }
+          },
+          required: ['path']
+        }
+      },
+      {
+        name: 'ping_gendl',
+        description: 'Check if the Gendl server is available',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+          required: []
+        }
+      }
+    ]
+  };
+  
+  sendStandardResponse(request, toolsData);
+}
+
+// Handle tool calls
+async function handleToolCall(request) {
+  const toolName = request.params?.name;
+  const args = request.params?.arguments || {};
+  
+  logger.info(`Handling tool call: ${toolName}`);
+  
+  try {
+    // Special handling for http_request tool
+    if (toolName === 'http_request') {
+      return handleSimpleHttpRequest(request, args);
+    }
+    
+    // Special handling for ping_gendl tool
+    if (toolName === 'ping_gendl') {
+      sendTextResponse(request, "Gendl MCP server is ready for Claude interaction!");
+      return;
+    }
+    
+    // Unknown tool
+    sendErrorResponse(request, -32601, `Unknown tool: ${toolName}`);
+  } catch (error) {
+    logger.error(`Error in tool call: ${error.message}`);
+    sendErrorResponse(request, -32603, `Error calling tool: ${error.message}`);
+  }
+}
+
+// Handle simple HTTP request
+async function handleSimpleHttpRequest(request, args) {
+  logger.info(`Handling http_request: ${JSON.stringify(args)}`);
+  
+  try {
+    // Check for required path parameter
+    if (!args.path) {
+      sendErrorResponse(request, -32602, "Missing required parameter: path");
+      return;
+    }
+    
+    // Make a simple HTTP request with built-in redirect following
+    fetchWithRedirects(args.path, 0, (error, content) => {
+      if (error) {
+        logger.error(`HTTP request error: ${error.message}`);
+        sendErrorResponse(request, -32603, `Error making HTTP request: ${error.message}`);
+        return;
+      }
+      
+      // Always return as text content
+      sendTextResponse(request, content);
+    });
+  } catch (error) {
+    logger.error(`Error in http_request: ${error.message}`);
+    sendErrorResponse(request, -32603, `Error making HTTP request: ${error.message}`);
+  }
+}
+
+// Recursive function to follow redirects
+function fetchWithRedirects(path, redirectCount, callback) {
+  if (redirectCount > 5) {
+    callback(new Error("Maximum redirect count exceeded"));
+    return;
+  }
+  
+  logger.info(`Making request to: ${path} (redirect: ${redirectCount})`);
+  
+  const options = {
+    hostname: GENDL_HOST,
+    port: GENDL_PORT,
+    path: path,
+    method: 'GET',
+    headers: {
+      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'
+    }
+  };
+  
+  const req = http.request(options, (res) => {
+    let data = '';
+    
+    res.on('data', (chunk) => {
+      data += chunk;
+    });
+    
+    res.on('end', () => {
+      logger.info(`Response status: ${res.statusCode}`);
+      
+      // Follow redirects
+      if ([301, 302, 303, 307, 308].includes(res.statusCode)) {
+        const location = res.headers.location;
+        
+        if (location) {
+          logger.info(`Following redirect to: ${location}`);
+          fetchWithRedirects(location, redirectCount + 1, callback);
+          return;
+        }
+      }
+      
+      // Return the final response data
+      callback(null, data);
+    });
+  });
+  
+  req.on('error', (err) => {
+    callback(err);
+  });
+  
+  req.end();
+}
+
+// Standard text response format
+function sendTextResponse(request, text) {
+  const response = {
+    jsonrpc: '2.0',
+    id: request.id,
+    result: {
+      content: [
+        {
+          type: 'text',
+          text: String(text || '')
+        }
+      ]
+    }
+  };
+  sendResponse(response);
+}
+
+// Standard response for simple data
+function sendStandardResponse(request, data) {
+  const response = {
+    jsonrpc: '2.0',
+    id: request.id,
+    result: data
+  };
+  sendResponse(response);
+}
+
+// Helper to send MCP responses
+function sendResponse(response) {
+  const jsonResponse = JSON.stringify(response);
+  logger.info(`Sending response: ${jsonResponse.substring(0, 500)}${jsonResponse.length > 500 ? '...' : ''}`);
+  console.log(jsonResponse);
+}
+
+// Helper to send error responses
+function sendErrorResponse(request, code, message) {
+  const response = {
+    jsonrpc: '2.0',
+    id: request.id,
+    error: {
+      code: code,
+      message: message
+    }
+  };
+  sendResponse(response);
+}
+
+// Handle process events
+process.on('exit', () => {
+  logger.info('Wrapper script exiting');
+  if (logStream) {
+    logStream.end();
+  }
+  if (rl) rl.close();
+});
+
+// Keep the wrapper alive
+process.stdin.resume();
+
+// Handle errors
+process.on('uncaughtException', (error) => {
+  logger.error(`Uncaught exception: ${error.message}`);
+  logger.error(error.stack);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  logger.error(`Unhandled rejection at ${promise}: ${reason}`);
+});
+
+logger.info('Simple MCP wrapper initialized - ready to handle requests');

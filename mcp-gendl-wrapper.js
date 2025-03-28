@@ -444,13 +444,43 @@ async function handleHttpRequest(request, args) {
       // Return raw response as text
       sendTextResponse(request, response.content);
     } else {
-      // Return the full response object with all four values
-      sendStandardResponse(request, {
-        content: response.content,
-        headers: response.headers,
-        statusCode: response.statusCode,
-        redirectUrl: response.redirectUrl
-      });
+      // CRITICAL FIX: Skip the response object entirely and just use text response for HTML
+      try {
+        // Log detailed information about the response for debugging
+        logger.info(`Response content type: ${typeof response.content}`);
+        logger.info(`Response statusCode: ${response.statusCode}`);
+        logger.info(`Response has redirectUrl: ${response.redirectUrl ? 'yes' : 'no'}`);
+        
+        // For HTML content or any string content, simply return it as a text response
+        // instead of trying to use the response object structure
+        if (typeof response.content === 'string') {
+          // Include basic details about the request in the text response
+          const textResponse = `HTTP ${response.statusCode} response from ${args.path}:\n\n${response.content}`;
+          sendTextResponse(request, textResponse);
+          return;
+        }
+        
+        // For non-string content, create a safer response
+        let safeContent;
+        if (response.content === null || response.content === undefined) {
+          safeContent = '';
+        } else if (typeof response.content === 'object') {
+          try {
+            safeContent = JSON.stringify(response.content);
+          } catch (e) {
+            safeContent = `[Object representation failed]`;
+          }
+        } else {
+          safeContent = String(response.content);
+        }
+        
+        // Return this as a text response too
+        sendTextResponse(request, safeContent);
+      } catch (processingError) {
+        // If there's an error processing the response, log it and return a safer response
+        logger.error(`Error processing HTTP response: ${processingError.message}`);
+        sendTextResponse(request, `Error processing HTTP response: ${processingError.message}`);
+      }
     }
   } catch (error) {
     logger.error(`Error in http_request: ${error.message}`);
@@ -520,7 +550,7 @@ function handleToolResponse(request, toolName, response) {
     const content = response.content;
     
     // For tools that return status and result directly
-    if (typeof content === 'object' && 'success' in content) {
+    if (typeof content === 'object' && content !== null && 'success' in content) {
       if (content.success) {
         // Success response
         const responseText = `Result: ${content.result}`;
@@ -535,20 +565,21 @@ function handleToolResponse(request, toolName, response) {
       }
     } else {
       // For other responses, return as formatted text
-      const responseText = typeof content === 'object' 
-        ? JSON.stringify(content, null, 2) 
-        : content.toString();
-      
-      sendTextResponse(request, responseText);
+      try {
+        const responseText = typeof content === 'object' && content !== null
+          ? JSON.stringify(content, null, 2) 
+          : String(content || '');
+        
+        sendTextResponse(request, responseText);
+      } catch (stringifyError) {
+        // If JSON.stringify fails, send a safe fallback
+        sendTextResponse(request, `[Content could not be stringified: ${stringifyError.message}]`);
+      }
     }
   } catch (e) {
     // Handle unexpected response formats
     logger.error(`Error processing response: ${e.message}`);
-    const responseText = typeof response.content === 'object' 
-      ? JSON.stringify(response.content, null, 2) 
-      : response.content.toString();
-    
-    sendTextResponse(request, responseText);
+    sendTextResponse(request, `[Error processing response: ${e.message}]`);
   }
 }
 
@@ -578,7 +609,7 @@ function sendTextResponse(request, text) {
       content: [
         {
           type: 'text',
-          text: text
+          text: String(text || '')
         }
       ]
     }

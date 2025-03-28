@@ -29,20 +29,34 @@
       (publish :path "/mcp/lisp-eval"
 	       :server server
                :content-type "application/json"
-               :function 
+               :function
+	       #+nil
+	       #'(lambda (req ent)
+		   (format t "At 1~%")
+		   (with-http-response (req ent)
+		     (with-http-body (req ent)
+		       (write-string "Body: " (request-reply-stream req))
+		       (write-string (get-request-body req) (request-reply-stream req)))))
+
+	       
                #'(lambda (req ent)
-		   (let* ((json-input (with-input-from-string
-					  (stream (get-request-body req))
-					(json:decode-json stream)))
+		   (format t "At 1~%")
+		   (let* ((json-input (when (plusp (length (get-request-body req)))
+					(with-input-from-string (stream (get-request-body req))
+					  (json:decode-json stream))))
 			  (code (rest (assoc :code json-input)))
-			  result error success)
-		     (handler-case
-			 (progn
-			   (setq result (eval (read-safe-string code)))
-			   (setq success t))
-		       (error (condition)
-			 (setq error (format nil "~a" condition))
-			 (setq success nil)))
+			  result
+			  (error (unless json-input "Malformed or missing input.
+This endpoint needs a json object with {code: <lisp-expression>}"))
+			  success)
+		     (when code
+		       (handler-case
+			   (progn
+			     (setq result (eval (read-safe-string code)))
+			     (setq success t))
+			 (error (condition)
+			   (setq error (format nil "~a" condition))
+			   (setq success nil))))
 		     (with-http-response (req ent)
 		       (with-http-body (req ent)
 			 (json:encode-json-alist 
@@ -77,65 +91,6 @@
 	       (let ((stream (request-reply-stream req)))
 		 (write-string (generate-mcp-openapi-spec) stream))))))))
 
-;; Generic HTTP request handler - allows Claude to interact with any Gendl HTTP endpoint
-(publish :path "/mcp/http-request"
-         :server *default-aserve-server*
-         :content-type "application/json"
-         :function 
-         #'(lambda (req ent)
-             (let* ((json-input (with-input-from-string
-                                   (stream (get-request-body req))
-                                 (json:decode-json stream)))
-                    (method (or (cdr (assoc :method json-input)) "GET"))
-                    (path (cdr (assoc :path json-input)))
-                    (headers (cdr (assoc :headers json-input)))
-                    (query-params (cdr (assoc :query-params json-input)))
-                    (body (cdr (assoc :body json-input)))
-                    result success status headers-out redirect response-error)
-               
-               ;; Validate required parameters
-               (unless path
-                 (with-http-response (req ent)
-                   (with-http-body (req ent)
-                     (json:encode-json-alist
-                      `(("success" . nil)
-                        ("error" . "Missing required parameter: path"))
-                      (request-reply-stream req))))
-                 (return-from nil))
-               
-               ;; Handle the actual HTTP request internally
-               (handler-case
-                   (multiple-value-bind (body-result result-status headers-result redirect-location)
-                       (net.aserve.client:do-http-request 
-                        (format nil "http://127.0.0.1:~A~A" 
-                                net.aserve::*aserve-port* path)
-                        :method method
-                        :query query-params
-                        :headers headers
-                        :content body
-                        :format :text)
-                     (setq result body-result
-                           status result-status
-                           headers-out headers-result
-                           redirect redirect-location
-                           success t))
-                 (error (condition)
-                   (setq response-error (format nil "~a" condition))
-                   (setq success nil)))
-               
-               ;; Return the response with structured data
-               (with-http-response (req ent)
-                 (with-http-body (req ent)
-                   (json:encode-json-alist
-                    `(("success" . ,success)
-                      ("status" . ,status)
-                      ("body" . ,result)
-                      ("headers" . ,(when headers-out 
-                                      (loop for (k . v) in headers-out
-                                            collect (cons (string-downcase k) v))))
-                      ("redirect" . ,redirect)
-                      ,(when response-error `("error" . ,response-error)))
-                    (request-reply-stream req))))))
 
 (initialize-standard-endpoints)
 
