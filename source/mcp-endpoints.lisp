@@ -11,7 +11,8 @@
   (with-all-servers
       (server)
 
-      ;; toplevel mcp handler. 
+      ;; toplevel mcp handler.
+      #+nil ;; moved to standalone mcp-server-final.lisp
       (net.aserve:publish :path "/mcp"
 			  :server server
 			  :content-type "application/json"
@@ -101,9 +102,38 @@ This endpoint needs a json object with {code: <lisp-expression>}. What we got wa
            (with-http-response (req ent)
              (with-http-body (req ent)
 	       (let ((stream (request-reply-stream req)))
-		 (write-string (generate-mcp-openapi-spec) stream))))))))
+		 (write-string (generate-mcp-openapi-spec) stream))))))
 
+      (publish
+       :path "/mcp/kb/search"
+       :server server
+       :content-type "application/json"
+       :function
+       #'(lambda (req ent)
+	   (let* ((body-string (get-request-body req))
+		  (json-input (when (plusp (length body-string))
+				(with-input-from-string (stream body-string)
+				  (json:decode-json stream))))
+		  (query (rest (assoc :query json-input)))
+		  (result (if query
+                              (search-gendl-kb query)
+                              "No query provided"))
+		  (success t))
+             (with-http-response (req ent)
+               (with-http-body (req ent)
+		 (json:encode-json-alist
+		  `(("success" . ,success)
+                    ("result" . ,result))
+		  (request-reply-stream req)))))))))
+
+;; Add a KB search function
+(defun search-gendl-kb (query)
+  "Search the Gendl knowledge base for information."
+  ;; This is a stub implementation - replace with actual KB search
+  (format nil "Results for query: ~a [results not yet implemented]" query))
 
 (initialize-standard-endpoints)
+
+  
 
 

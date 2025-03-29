@@ -20,10 +20,35 @@
                 
                  (make-tool-def
                   :name "lisp_eval"
-                  :description "Evaluate Lisp code in the Gendl environment"
+                  :description "Evaluate Lisp code on the Gendl server"
                   :properties '(("code" . (("type" . "string")
-                                           ("description" . "Lisp code to evaluate"))))
+                                           ("description" . "The Lisp code to evaluate"))))
                   :required '("code"))
+
+                 (make-tool-def
+                  :name "http_request"
+                  :description "Make an HTTP request to any endpoint on the Gendl server"
+                  :properties '(("path" . (("type" . "string")
+                                          ("description" . "The path part of the URL (e.g., /color-map)")))
+                               ("method" . (("type" . "string")
+                                           ("description" . "HTTP method (GET, POST, PUT, DELETE, etc.)")
+                                           ("default" . "GET")))
+                               ("headers" . (("type" . "object")
+                                            ("description" . "HTTP headers as key-value pairs")
+                                            ("additionalProperties" . (("type" . "string")))))
+                               ("body" . (("type" . "string")
+                                        ("description" . "Request body for POST, PUT, etc.")))
+                               ("rawResponse" . (("type" . "boolean")
+                                               ("description" . "If true, return the raw response instead of parsing it")
+                                               ("default" . "false"))))
+                  :required '("path"))
+
+                 (make-tool-def
+                  :name "query_gendl_kb"
+                  :description "Search the Gendl documentation knowledge base for information about Gendl/GDL, a General-purpose Declarative Language"
+                  :properties '(("query" . (("type" . "string")
+                                           ("description" . "The search query about Gendl/GDL"))))
+                  :required '("query"))
                  
                  ))) ss)))
 
@@ -37,19 +62,19 @@
                      ("required" . ,(or required (vector)))))))
 
 ;; Configuration for Claude desktop
-(defun generate-mcp-openapi-spec ()
+(defun generate-mcp-openapi-spec (&key (local? t))
   "Generate an OpenAPI specification for Claude MCP integration."
   ;; Returns string with API spec suitable for inclusion in claude-desktop-json.conf
-  "
+  (let ((local-endpoint "http://127.0.0.1:9081/mcp")
+        (prod-endpoint "https://gornskew.com/mcp"))
+    (format nil "~
 {
-  \"command\": \"wsl\",
-  \"args\": [\"node\", \"/home/dcooper8/gornskew/xfer/gendl-mcp-new-broken/mcp-format-wrapper.js\"],
-  \"env\": {
-      \"NODE_ENV\": \"production\",
-      \"DEBUG\": \"*\"
-  },
-  \"persistent\": true,
-  \"timeout\": 60000
+  \"tools\": {
+    \"gendl\": {
+      \"url\": \"~A\"
+    }
+  }
 }
 "
-)
+            (if local? local-endpoint prod-endpoint))))
+

@@ -46,11 +46,15 @@
 
 (defun generate-json (lisp-object)
   "Generate a JSON string from a Lisp object"
-  (cl-json:encode-json-to-string lisp-object))
+  (if (and (listp lisp-object) 
+           (evenp (length lisp-object))
+           (every #'keywordp (loop for x in lisp-object by #'cddr collect x)))
+      ;; It's a plist, convert to alist first
+      (cl-json:encode-json-to-string (plist-to-alist lisp-object))
+      ;; Otherwise, use the standard encoding
+      (cl-json:encode-json-to-string lisp-object)))
 
-(defun alist-to-json (alist)
-  (with-output-to-string (ss)
-    (json:encode-json-alist alist ss)))
+
 
 
 ;;; JSON-RPC implementation
@@ -61,7 +65,8 @@
     (if error
         (setf (getf response :error) error)
         (setf (getf response :result) result))
-    response))
+    ;; Convert the plist to an alist before returning
+    (plist-to-alist response)))
 
 (defun make-json-rpc-error (id code message &optional data)
   "Create a JSON-RPC error response"
@@ -70,15 +75,34 @@
       (setf (getf error-obj :data) data))
     (make-json-rpc-response id nil error-obj)))
 
+(defun alist-to-json (alist)
+  (with-output-to-string (ss)
+    (json:encode-json-alist alist ss)))
+
+(defun plist-to-alist (plist)
+  "Convert a plist to an alist"
+  (loop for (key value) on plist by #'cddr
+        collect (cons key value)))
+
+(defun alist-to-plist (alist)
+  "Convert an alist to a plist"
+  (loop for (key . value) in alist
+        nconc (list key value)))
+
 (defun handle-json-rpc-request (request-json)
   "Process a JSON-RPC request"
   (debug-log "Received request: ~S" request-json)
   (handler-case
-      (let* ((request (parse-json request-json))
+      (let* ((request-alist (parse-json request-json))
+             ;; Convert alist to plist for easier access with getf
+             (request (alist-to-plist request-alist))
              (jsonrpc (getf request :jsonrpc))
              (method (getf request :method))
              (params (getf request :params))
              (id (getf request :id)))
+        
+        (debug-log "Parsed request: ~S" request)
+        (debug-log "jsonrpc: ~S, method: ~S, id: ~S" jsonrpc method id)
         
         (cond
           ((not (equal jsonrpc "2.0"))
@@ -121,40 +145,111 @@
      (make-json-rpc-error id -32601 (format nil "Method not found: ~A" method)))))
 
 
+
+
 (defun setup-mcp-handler (req ent)
   "Handle incoming MCP requests via HTTP"
-  (let ((content-type (net.aserve:header-slot-value req :content-type))
-        (content-length (let ((value (net.aserve:header-slot-value req :content-length)))
+  (let ((method (make-keyword (request-method req)))
+        (content-type (header-slot-value req :content-type))
+        (content-length (let ((value (header-slot-value req :content-length)))
+                         (when value (parse-integer value))))
+        (request-body (get-request-body req)))
+    
+    (debug-log (format nil "setup-mcp-handler called with method ~s, content-type ~s and content-length ~s...~%"
+                      method content-type content-length))
+    
+    ;; For GET requests, establish the SSE connection
+    (ecase method
+      (:get
+       (with-http-response (req ent :content-type "text/event-stream")
+         (with-http-body (req ent :headers `((:cache-control . "no-cache")
+                                             (:connection . "keep-alive")))
+
+
+	   (flet ((send-heartbeat ()
+		    (format *html-stream* "data: {\"jsonrpc\":\"2.0\",\"method\":\"connected\",\"params\":null}~%~%")
+		    (force-output *html-stream*)))
+	   
+	     ;; Send an initial event to establish the connection
+	     (debug-log "sending first heartbeat..~%")
+	     (send-heartbeat)
+             ;; Keep the connection open - this might need to be handled differently
+             ;; depending on how AllegroServe works with long-lived connections
+	     ;; Allegroserve by default appears to keep alive for 60 seconds. 
+	     (do ((counter 0 (1+ counter)))
+		 ()
+	       (sleep 30)
+	       (debug-log (format nil "sending heartbeat ~a..~%" (incf counter)))
+	       (send-heartbeat))))))
+
+      (:post
+      ;; For POST requests, process the JSON-RPC request
+       (if (and content-type (search "application/json" content-type))
+           (progn
+             (debug-log (format nil "Received POST with raw request: ~S" request-body))
+             (let* ((response (handle-json-rpc-request request-body))
+                    (json-response (generate-json response)))
+               (debug-log (format nil "Sending json-response: ~s...~%" json-response))
+               (with-http-response (req ent :content-type "application/json")
+                 (with-http-body (req ent)
+                   (write-string json-response *html-stream*)))))
+          
+           ;; If not a valid request
+           (with-http-response (req ent :content-type "application/json")
+             (with-http-body (req ent)
+               (write-string 
+		"{\"jsonrpc\":\"2.0\",\"error\":{\"code\":-32700,\"message\":\"Invalid request\"},\"id\":null}" 
+		*html-stream*))))))))
+
+
+#+nil
+(defun setup-mcp-handler (req ent)
+  "Handle incoming MCP requests via HTTP"
+  (let ((content-type (header-slot-value req :content-type))
+        (content-length (let ((value (header-slot-value req :content-length)))
 			  (when value (parse-integer value))))
-	(reply-stream (request-reply-stream req))
 	(request-body (get-request-body req)))
 
     (debug-log (format nil "setup-mcp-handler called with content-type ~s and content-length ~s...
 
 and content-length class: ~a~%"
 		       content-type content-length (class-of content-length)))
+
     (cond
       ((not (and content-type (search "application/json" content-type :test #'char-equal)))
-       (net.aserve:with-http-response (req ent :response *response-bad-request*)
-         (net.aserve:with-http-body (req ent)
-           (format reply-stream "Content-Type must be application/json"))))
+       (with-http-response (req ent :content-type "text/event-stream; charset=utf-8")
+         (with-http-body (req ent :headers `((:connection . "keep-alive")))
+           (write-string "POST request expected with Content-Type of application/json" *html-stream*))))
       
-      ((or (not content-length) (zerop content-length))
-       (net.aserve:with-http-response (req ent :response *response-bad-request*)
-         (net.aserve:with-http-body (req ent)
-           (format reply-stream "Nonzero Content-Length header is required"))))
+      ((or (null content-length) (zerop content-length))
+       (with-http-response (req ent :content-type "text/event-stream; charset=utf-8")
+         (with-http-body (req ent :headers `((:connection . "keep-alive")))
+           (write-string "A Nonzero Content-Length header is required" *html-stream*))))
       
       (t
        (debug-log "Received raw request: ~S" request-body)
          
-       (let ((response (handle-json-rpc-request request-body)))
-         (net.aserve:with-http-response (req ent :content-type "application/json")
-           (net.aserve:with-http-body (req ent)
-             (let ((json-response (generate-json response)))
-               (debug-log "Sending response: ~S" json-response)
-               (format reply-stream "~A" json-response)))))))))
+       (let* ((response (handle-json-rpc-request request-body))
+	      (json-response (generate-json response)))
+
+	 (debug-log "Sending json-response: ~s...~%" json-response)
+	 
+         (with-http-response (req ent :content-type "text/event-stream; charset=utf-8")
+           (with-http-body (req ent :headers `((:connection . "keep-alive")))
+             (debug-log "Sending response: ~S" json-response)
+             (write-string json-response *html-stream*))))))))
 
 
+
+#+nil
+(defun setup-mcp-handler (req ent)
+  "Handle incoming MCP requests via HTTP - stubbed out debug version"
+
+  (with-http-response (req ent :response *response-bad-request*
+                               :content-type "text/plain; charset=utf-8")
+    (with-http-body (req ent)
+      (write-string "A Nonzero Content-Length header is required" (request-reply-stream req)))))
+      
 
 ;;; Implementation of RPC methods
 
