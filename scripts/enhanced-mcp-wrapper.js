@@ -22,7 +22,7 @@
  * 
  * Enhanced wrapper script for Gendl MCP integration with:
  * - Configurable Gendl host and port via environment variables or CLI arguments
- * - Docker container management for local deployments
+ * - Docker container management for local deployments (using -i mode for automatic cleanup)
  * - Support for running inside a container or directly on the host
  * - Support for mounting volumes into the Gendl container
  */
@@ -450,7 +450,7 @@ function execPromise(command) {
   });
 }
 
-// Modify startGendlContainer to handle port-in-use scenarios
+// Modify startGendlContainer to handle port-in-use scenarios and keep stdin open
 function startGendlContainer() {
   return new Promise(async (resolve, reject) => {
     // Final availability check to handle race conditions
@@ -482,78 +482,132 @@ function startGendlContainer() {
       const dockerImage = pullResult.image || GENDL_DOCKER_IMAGE;
       logger.info(`Starting Gendl container using image ${dockerImage}`);
 
-
-	// in debug mode, log the following `-e` environment variables
-	// so we can see what's going on when docker container starts:
-
-	logger.debug(`Environment variables at container start:
-	START_HTTP: ${START_HTTP}
-	HTTP_PORT: ${HTTP_PORT}
-	HTTP_HOST_PORT: ${HTTP_HOST_PORT}
-	START_HTTPS: ${START_HTTPS}
-	HTTPS_PORT: ${HTTPS_PORT}
-	HTTPS_HOST_PORT: ${HTTPS_HOST_PORT}
-	START_SWANK: ${START_SWANK}
-	SWANK_PORT: ${SWANK_PORT}
-	SWANK_HOST_PORT: ${SWANK_HOST_PORT}
-	START_TELNET: ${START_TELNET}
-	TELNET_PORT: ${TELNET_PORT}
-	TELNET_HOST_PORT: ${TELNET_HOST_PORT}
-	`);
-	
-	
-      // Existing docker run command preparation...
-      const args = [
-          '-di',
-          '--rm',
-	  '-e', `START_HTTP=${START_HTTP}`,
-	  '-e', `HTTP_PORT=${HTTP_PORT}`,
-	  '-e', `HTTP_HOST_PORT=${HTTP_HOST_PORT}`,
-	  '-e', `START_HTTPS=${START_HTTPS}`,
-	  '-e', `HTTPS_PORT=${HTTPS_PORT}`,
-	  '-e', `HTTPS_HOST_PORT=${HTTPS_HOST_PORT}`,
-	  '-e', `START_SWANK=${START_SWANK}`,
-	  '-e', `SWANK_PORT=${SWANK_PORT}`,
-	  '-e', `SWANK_HOST_PORT=${SWANK_HOST_PORT}`,
-          '-p', `${SWANK_HOST_PORT}:${SWANK_PORT}`,
-          '-p', `${HTTP_HOST_PORT}:${HTTP_PORT}`,
-          // ... other existing arguments ...
-      ];
-
-	// echo complete docker command to log
-	logger.debug(`Docker command: docker run ${args.join(' ')} ${dockerImage}`);
-	
-      const command = `docker run ${args.join(' ')} ${dockerImage}`;
+      // in debug mode, log the following `-e` environment variables
+      // so we can see what's going on when docker container starts:
+      logger.debug(`Environment variables at container start:
+      START_HTTP: ${START_HTTP}
+      HTTP_PORT: ${HTTP_PORT}
+      HTTP_HOST_PORT: ${HTTP_HOST_PORT}
+      START_HTTPS: ${START_HTTPS}
+      HTTPS_PORT: ${HTTPS_PORT}
+      HTTPS_HOST_PORT: ${HTTPS_HOST_PORT}
+      START_SWANK: ${START_SWANK}
+      SWANK_PORT: ${SWANK_PORT}
+      SWANK_HOST_PORT: ${SWANK_HOST_PORT}
+      START_TELNET: ${START_TELNET}
+      TELNET_PORT: ${TELNET_PORT}
+      TELNET_HOST_PORT: ${TELNET_HOST_PORT}
+      `);
       
-      exec(command, (error, stdout, stderr) => {
-        if (error) {
-          // Check if error is due to port already in use
-          if (error.message.includes('port is already allocated')) {
-            logger.warn('Port already in use. Another process likely started the container.');
-            return resolve(true);
-          }
-          
-          logger.error(`Failed to start Gendl container: ${error.message}`);
-          logger.error(stderr);
-          return reject(error);
-        }
-        
-        gendlContainerId = stdout.trim();
-        logger.info(`Started Gendl container with ID: ${gendlContainerId}`);
-        
-        // Wait for the server to become available
-        waitForGendlServer(30)
-          .then(() => resolve(true))
-          .catch(error => reject(error));
+      // Prepare docker arguments for spawn
+      const dockerArgs = [
+        'run',
+        '-i',
+        '--rm',
+        '-e', `START_HTTP=${START_HTTP}`,
+        '-e', `HTTP_PORT=${HTTP_PORT}`,
+        '-e', `HTTP_HOST_PORT=${HTTP_HOST_PORT}`,
+        '-e', `START_HTTPS=${START_HTTPS}`,
+        '-e', `HTTPS_PORT=${HTTPS_PORT}`,
+        '-e', `HTTPS_HOST_PORT=${HTTPS_HOST_PORT}`,
+        '-e', `START_SWANK=${START_SWANK}`,
+        '-e', `SWANK_PORT=${SWANK_PORT}`,
+        '-e', `SWANK_HOST_PORT=${SWANK_HOST_PORT}`,
+        '-p', `${SWANK_HOST_PORT}:${SWANK_PORT}`,
+        '-p', `${HTTP_HOST_PORT}:${HTTP_PORT}`,
+        // ... other existing arguments ...
+      ];
+      
+      // Add the image name as the last argument
+      dockerArgs.push(dockerImage);
+      
+      // Log the complete docker command
+      logger.debug(`Docker command: docker ${dockerArgs.join(' ')}`);
+      
+      // Use spawn instead of exec to keep stdin open
+      const dockerProcess = spawn('docker', dockerArgs, {
+        stdio: ['pipe', 'pipe', 'pipe'] // Keep stdin open with pipe
       });
+      
+      // Store container ID from stdout
+      let containerId = '';
+      dockerProcess.stdout.on('data', (data) => {
+        containerId += data.toString();
+        logger.debug(`Docker stdout: ${data.toString().trim()}`);
+      });
+      
+      // Log stderr
+      dockerProcess.stderr.on('data', (data) => {
+        const errorMsg = data.toString().trim();
+        logger.error(`Docker stderr: ${errorMsg}`);
+        
+        // Check for port already in use
+        if (errorMsg.includes('port is already allocated')) {
+          logger.warn('Port already in use. Another process likely started the container.');
+          dockerProcess.kill(); // Kill the process
+          return resolve(true);
+        }
+      });
+      
+      // Handle process exit
+      dockerProcess.on('exit', (code, signal) => {
+        if (code !== 0 && !containerId) {
+          logger.error(`Docker process exited with code ${code} and signal ${signal}`);
+          return reject(new Error(`Docker process exited with code ${code}`));
+        }
+      });
+      
+      // Handle process errors
+      dockerProcess.on('error', (error) => {
+        logger.error(`Failed to start Docker container: ${error.message}`);
+        return reject(error);
+      });
+      
+      // Keep the stdin pipe open (critical to prevent container from exiting)
+      dockerProcess.stdin.on('error', (error) => {
+        logger.error(`Docker stdin error: ${error.message}`);
+      });
+      
+      // Store the process globally so it stays alive with the script
+      global.dockerProcess = dockerProcess;
+      
+      // Wait briefly for the container to start before continuing
+      setTimeout(() => {
+        if (containerId) {
+          gendlContainerId = containerId.trim();
+          logger.info(`Started Gendl container with ID: ${gendlContainerId}`);
+          
+          // Wait for the server to become available
+          waitForGendlServer(30)
+            .then(() => resolve(true))
+            .catch(error => reject(error));
+        } else {
+          // If we don't have a container ID yet, wait a bit longer
+          logger.info('No container ID received yet, waiting more time for startup');
+          setTimeout(() => {
+            if (containerId) {
+              gendlContainerId = containerId.trim();
+              logger.info(`Started Gendl container with ID: ${gendlContainerId}`);
+              
+              waitForGendlServer(30)
+                .then(() => resolve(true))
+                .catch(error => reject(error));
+            } else {
+              logger.warn('Still no container ID after extended wait');
+              // Try to continue anyway - the container might still be starting
+              waitForGendlServer(30)
+                .then(() => resolve(true))
+                .catch(error => reject(error));
+            }
+          }, 2000);
+        }
+      }, 1000);
     } catch (error) {
       logger.error(`Container startup error: ${error.message}`);
       reject(error);
     }
   });
 }
-
-
 
 // Wait for the Gendl server to become available
 function waitForGendlServer(maxWaitSeconds) {
@@ -659,24 +713,9 @@ function setupProcessEvents(rl) {
   const cleanup = async () => {
     logger.info('Cleanup started'); // Log when cleanup begins
     
-    // Terminate and remove the Gendl container if we started it
-    if (gendlContainerId) {
-      logger.info(`Found container ID: ${gendlContainerId}`); // Confirm container ID is set
-      try {
-        const fastTerminated = await fastTerminateGendlContainer();
-        
-        if (!fastTerminated) {
-          logger.info(`Stopping Gendl container with ID: ${gendlContainerId} using standard method`);
-          execSync(`docker stop ${gendlContainerId}`, { stdio: 'ignore' });
-        } else {
-          logger.info('Fast termination succeeded'); // Log successful fast termination
-        }
-      } catch (error) {
-        logger.error(`Error stopping Gendl container: ${error.message}`);
-      }
-    } else {
-      logger.info('No container ID found to terminate'); // Log if no container ID
-    }
+    // Local containers with -i flag terminate automatically when stdin closes
+    // We don't need to do anything special for cleanup with the -i flag approach
+    // And we NEVER want to shut down remote servers
     
     if (logStream) {
       logStream.end();
@@ -711,81 +750,23 @@ function setupProcessEvents(rl) {
 }
 
 
+// This function is still useful for remote server connections
+// For local containers with -i flag, stdin closing will terminate automatically
 async function fastTerminateGendlContainer() {
     if (!gendlContainerId) {
-	logger.info('No container to terminate');
-	return false;
+        logger.info('No container to terminate or using remote server');
+        return false;
     }
 
-    try {
-	const containerRunning = await new Promise((resolve) => {
-	    exec(`docker inspect -f '{{.State.Running}}' ${gendlContainerId}`, (error, stdout) => {
-		if (error) {
-		    logger.warn(`Error checking container status: ${error.message}`);
-		    resolve(false);
-		} else {
-		    resolve(stdout.trim() === 'true');
-		}
-	    });
-	});
-
-	if (!containerRunning) {
-	    logger.info('Container is not running');
-	    return false;
-	}
-
-	logger.info(`Attempting fast termination of container ${gendlContainerId}`);
-	
-	logger.info('Sending lisp-eval quit command'); // Add this to confirm endpoint call
-	await new Promise((resolve, reject) => {
-	    const options = {
-		hostname: GENDL_HOST,
-		port: HTTP_HOST_PORT,
-		path: `${GENDL_BASE_PATH}/lisp-eval`,
-		method: 'POST',
-		headers: {
-		    'Content-Type': 'application/json'
-		}
-	    };
-
-	    const payload = JSON.stringify({ code: '(uiop:quit)' });
-
-	    const req = http.request(options, (res) => {
-		let data = '';
-		res.on('data', (chunk) => { data += chunk; });
-		res.on('end', () => {
-		    logger.info('Lisp quit command sent successfully');
-		    resolve();
-		});
-	    });
-
-	    req.on('error', (error) => {
-		logger.warn(`Error sending Lisp quit command: ${error.message}`);
-		reject(error);
-	    });
-
-	    req.write(payload);
-	    req.end();
-	});
-
-	// Wait a short time to allow the container to stop gracefully
-	await new Promise(resolve => setTimeout(resolve, 500));
-
-	// Force stop if still running
-	await new Promise((resolve) => {
-	    exec(`docker stop ${gendlContainerId}`, (error) => {
-		if (error) {
-		    logger.warn(`Error stopping container: ${error.message}`);
-		}
-		resolve();
-	    });
-	});
-
-	return true;
-    } catch (error) {
-	logger.error(`Fast container termination failed: ${error.message}`);
-	return false;
+    // For a local container, check if it's running
+    const isLocalHost = (GENDL_HOST === '127.0.0.1' || GENDL_HOST === 'localhost');
+    if (!isLocalHost) {
+        logger.info('Remote server detected, no need to terminate container');
+        return false;
     }
+
+    logger.info('Using -i mode, container should terminate when script exits');
+    return false;
 }
 
 // Handle MCP initialization
@@ -1053,7 +1034,7 @@ function makeHttpRequest(options, body, callback) {
 
 // Handle simple ping_gendl tool
 function handlePingGendl(request) {
-  logger.info('Handling ping_gendl request');
+  logger.info('[PING-DEBUG] Handling ping_gendl request');
   
   const options = {
     hostname: GENDL_HOST,
@@ -1062,15 +1043,41 @@ function handlePingGendl(request) {
     method: 'GET'
   };
   
-  makeHttpRequest(options, null, (error, response) => {
-    if (error) {
-      logger.error(`Ping Gendl error: ${error.message}`);
-      sendErrorResponse(request, -32603, `Error pinging Gendl server: ${error.message}`);
-      return;
-    }
+  logger.info(`[PING-DEBUG] Request options: ${JSON.stringify(options)}`);
+  
+  // Create the request directly for more control and debugging
+  const req = http.request(options, (res) => {
+    logger.info(`[PING-DEBUG] Response status code: ${res.statusCode}`);
+    logger.info(`[PING-DEBUG] Response headers: ${JSON.stringify(res.headers)}`);
     
-    sendTextResponse(request, response);
+    let responseData = '';
+    
+    res.on('data', (chunk) => {
+      responseData += chunk;
+      logger.info(`[PING-DEBUG] Received chunk: ${chunk.toString()}`);
+    });
+    
+    res.on('end', () => {
+      logger.info(`[PING-DEBUG] Complete raw response: ${responseData}`);
+      // Just return the raw text response
+      sendTextResponse(request, responseData);
+    });
   });
+  
+  req.on('error', (error) => {
+    logger.error(`[PING-DEBUG] Request error: ${error.message}`);
+    sendErrorResponse(request, -32603, `Error pinging Gendl server: ${error.message}`);
+  });
+  
+  // Set timeout to prevent hanging
+  req.setTimeout(5000, () => {
+    logger.error(`[PING-DEBUG] Request timed out after 5 seconds`);
+    req.destroy();
+    sendErrorResponse(request, -32603, "Request timed out while pinging Gendl server");
+  });
+  
+  req.end();
+  logger.info(`[PING-DEBUG] Request sent`);
 }
 
 // Handle lisp_eval tool with direct HTTP request
@@ -1085,7 +1092,7 @@ function handleLispEval(request, args) {
     }
     
     // Create JSON payload for the request
-      const payload = JSON.stringify({ code: args.code,
+    const payload = JSON.stringify({ code: args.code,
 				       ...(args.package && { package: args.package })});
     
     // Direct HTTP POST to lisp-eval endpoint with proper content type
@@ -1100,41 +1107,74 @@ function handleLispEval(request, args) {
       }
     };
     
-    logger.debug(`Sending lisp_eval request with payload: ${payload}`);
+    logger.info(`[LISP-EVAL-DEBUG] Sending lisp_eval request with payload: ${payload}`);
+    logger.info(`[LISP-EVAL-DEBUG] Full options: ${JSON.stringify(options)}`);
     
-    makeHttpRequest(options, payload, (error, response) => {
-      if (error) {
-        logger.error(`lisp_eval error: ${error.message}`);
-        sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
-        return;
-      }
+    // Create the request directly for more control and debugging
+    const req = http.request(options, (res) => {
+      logger.info(`[LISP-EVAL-DEBUG] Response status code: ${res.statusCode}`);
+      logger.info(`[LISP-EVAL-DEBUG] Response headers: ${JSON.stringify(res.headers)}`);
       
-      logger.debug(`Raw lisp_eval response: ${response}`);
+      let responseData = '';
       
-      // Process the response
-      try {
-        // First try to parse as JSON
-        const jsonData = JSON.parse(response);
+      res.on('data', (chunk) => {
+        responseData += chunk;
+        logger.info(`[LISP-EVAL-DEBUG] Received chunk: ${chunk.toString().substring(0, 100)}...`);
+      });
+      
+      res.on('end', () => {
+        logger.info(`[LISP-EVAL-DEBUG] Complete raw response: ${responseData}`);
         
-        // Handle success/error based on the JSON structure
-        if ('success' in jsonData) {
-          if (jsonData.success) {
-            sendTextResponse(request, `Result: ${jsonData.result}`);
+        let result;
+        try {
+          // Try to parse as JSON
+          result = JSON.parse(responseData);
+          logger.info(`[LISP-EVAL-DEBUG] Parsed JSON result: ${JSON.stringify(result)}`);
+          
+          // Handle success/error based on the JSON structure
+          if ('success' in result) {
+            if (result.success) {
+              logger.info(`[LISP-EVAL-DEBUG] Success result: ${result.result}`);
+              sendTextResponse(request, `Result: ${result.result}`);
+            } else {
+              logger.error(`[LISP-EVAL-DEBUG] Error result: ${result.error || "Unknown error"}`);
+              sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${result.error || "Unknown error"}`);
+            }
           } else {
-            sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${jsonData.error || "Unknown error"}`);
+            // Not a standard success/error format, return as-is
+            logger.info(`[LISP-EVAL-DEBUG] Non-standard JSON format, returning as-is`);
+            sendTextResponse(request, JSON.stringify(result, null, 2));
           }
-        } else {
-          // Not a standard success/error format, return as-is
-          sendTextResponse(request, JSON.stringify(jsonData, null, 2));
+        } catch (e) {
+          // Not JSON, treat as text
+          logger.info(`[LISP-EVAL-DEBUG] Response is not JSON: ${e.message}`);
+          sendTextResponse(request, responseData);
         }
-      } catch (e) {
-        // Not JSON, treat as text
-        logger.debug(`Response is not JSON: ${e.message}`);
-        sendTextResponse(request, response);
-      }
+      });
     });
+    
+    req.on('error', (error) => {
+      logger.error(`[LISP-EVAL-DEBUG] Request error: ${error.message}`);
+      sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
+    });
+    
+    // Set timeout to prevent hanging
+    req.setTimeout(10000, () => {
+      logger.error(`[LISP-EVAL-DEBUG] Request timed out after 10 seconds`);
+      req.destroy();
+      sendErrorResponse(request, -32603, "Request timed out while evaluating Lisp code");
+    });
+    
+    // Send the request payload
+    req.write(payload);
+    req.end();
+    logger.info(`[LISP-EVAL-DEBUG] Request sent`);
+    
   } catch (error) {
-    logger.error(`Error in lisp_eval: ${error.message}`);
+    logger.error(`[LISP-EVAL-DEBUG] Error in lisp_eval: ${error.message}`);
+    if (error.stack) {
+      logger.error(`[LISP-EVAL-DEBUG] Error stack: ${error.stack}`);
+    }
     sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
   }
 }
@@ -1196,6 +1236,12 @@ const kbPath = path.join(__dirname, '..', 'gendl-kb');
 
 // Standard text response format
 function sendTextResponse(request, text) {
+  logger.debug(`sendTextResponse called with: ${JSON.stringify(text)}`);
+  // Check if text is an object and not a string
+  if (typeof text === 'object' && text !== null) {
+    logger.debug(`Text is an object, converting to string: ${JSON.stringify(text)}`);
+    text = JSON.stringify(text, null, 2);
+  }
   const response = {
     jsonrpc: '2.0',
     id: request.id,
