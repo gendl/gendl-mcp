@@ -1,5 +1,0 @@
-#!/bin/bash
-
-docker pull dcooper8/gendl:latest
-
-

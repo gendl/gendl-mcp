@@ -19,10 +19,13 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 def parse_arguments():
+    # Get the directory where the script is located
+    script_dir = Path(__file__).parent
+
     parser = argparse.ArgumentParser(description='Process Gendl documentation into searchable text')
-    parser.add_argument('--input', type=str, default='/projects/xfer/gendl-mcp/vector-input-data',
+    parser.add_argument('--input', type=str, default=str(script_dir / '../gendl_kb_data'),
                       help='Input directory containing Gendl documentation')
-    parser.add_argument('--output', type=str, default='/projects/xfer/gendl-mcp/gendl_knowledge_base',
+    parser.add_argument('--output', type=str, default=str(script_dir / '../gendl_kb'),
                       help='Output directory for processed documentation')
     parser.add_argument('--chunk-size', type=int, default=1000,
                       help='Maximum size of text chunks')
