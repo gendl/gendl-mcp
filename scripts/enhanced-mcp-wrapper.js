@@ -52,7 +52,8 @@ program
   .option('--https-port <port>', 'HTTPS port inside container (default: 9443)')
   .option('--swank-port <port>', 'SWANK port inside container (default: 4200)')
   .option('--telnet-port <port>', 'TELNET port inside container (default: 4023)')
-  .option('--docker-image <image>', 'Docker image for Gendl (default: dcooper8/gendl:release--1598-ccl)')
+  .option('--docker-image <image>', 'Docker image for Gendl (default: auto-detected from current branch)')
+  .option('--lisp-impl <impl>', 'Lisp implementation to use, ccl or sbcl (default: ccl)')
   .option('--no-auto-start', 'Do not auto-start Gendl docker container if not running')
   .option('--docker-socket <path>', 'Path to docker socket (default: /var/run/docker.sock)')
   .option('--log-file <path>', 'Path to log file (default: /tmp/enhanced-mcp-wrapper.log)')
@@ -91,7 +92,60 @@ const START_TELNET = options.startTelnet || process.env.START_TELNET === 'true' 
 // Version information
 const VERSION = '1.0.1';
 
-const GENDL_DOCKER_IMAGE = options.dockerImage || process.env.GENDL_DOCKER_IMAGE || 'dcooper8/gendl:release--1598-ccl';
+// Constants for Docker image configuration
+const SUPPORTED_BRANCHES = ['release--1598', 'devo', 'master'];
+const SUPPORTED_IMPLS = ['ccl', 'sbcl'];
+const DEFAULT_IMPL = 'ccl';
+const DEFAULT_BRANCH = 'master';
+
+// Get Lisp implementation from arguments or environment variable
+const LISP_IMPL = (options.lispImpl || process.env.GENDL_LISP_IMPL || DEFAULT_IMPL).toLowerCase();
+
+// Validate Lisp implementation
+if (!SUPPORTED_IMPLS.includes(LISP_IMPL)) {
+  logger.warn(`Unsupported Lisp implementation: ${LISP_IMPL}, defaulting to ${DEFAULT_IMPL}`);
+}
+
+// Function to get the current branch name
+function getCurrentBranch() {
+  try {
+    // Try to read the current branch from git
+    const gitHeadContent = fs.readFileSync(path.join(__dirname, '..', '.git', 'HEAD'), 'utf8').trim();
+    // Check if HEAD points to a branch reference
+    if (gitHeadContent.startsWith('ref: refs/heads/')) {
+      // Extract branch name from ref
+      return gitHeadContent.substring('ref: refs/heads/'.length);
+    }
+    logger.warn('Git HEAD does not point to a branch reference, using default branch');
+    return DEFAULT_BRANCH;
+  } catch (error) {
+    logger.warn(`Could not determine current branch: ${error.message}, using default branch`);
+    return DEFAULT_BRANCH;
+  }
+}
+
+// Get branch name and validate
+function getValidBranchName() {
+  const currentBranch = getCurrentBranch();
+  
+  // If current branch is in supported list, use it
+  if (SUPPORTED_BRANCHES.includes(currentBranch)) {
+    return currentBranch;
+  }
+  
+  // Otherwise, default to master
+  logger.warn(`Branch '${currentBranch}' is not in supported branches list: ${SUPPORTED_BRANCHES.join(', ')}. Using ${DEFAULT_BRANCH}.`);
+  return DEFAULT_BRANCH;
+}
+
+// Construct Docker image name
+function constructDockerImageName() {
+  const branch = getValidBranchName();
+  const impl = SUPPORTED_IMPLS.includes(LISP_IMPL) ? LISP_IMPL : DEFAULT_IMPL;
+  return `dcooper8/gendl:${branch}-${impl}`;
+}
+
+const GENDL_DOCKER_IMAGE = options.dockerImage || process.env.GENDL_DOCKER_IMAGE || constructDockerImageName();
 const AUTO_START = options.autoStart !== false && (process.env.GENDL_AUTO_START !== 'false');
 const DOCKER_SOCKET = options.dockerSocket || process.env.DOCKER_SOCKET || '/var/run/docker.sock';
 const DEBUG_MODE = options.debug || process.env.DEBUG_GENDL === 'true';
@@ -145,18 +199,59 @@ if (ALL_MOUNTS.length > 0) {
 // First check if we can connect to the Gendl server
 checkGendlAvailability()
   .then(available => {
-    if (!available && shouldStartGendlContainer()) {
+    if (available) {
+      logger.info(`Gendl service already available at ${GENDL_HOST}:${HTTP_HOST_PORT}`);
+      
+      // If we have a local service and we could auto-start, warn about all ignored settings
+      const isLocalHost = (GENDL_HOST === '127.0.0.1' || GENDL_HOST === 'localhost');
+      const wouldAutoStart = AUTO_START && isLocalHost;
+      const hasCustomConfig = options.dockerImage || options.lispImpl || 
+                             options.mount?.length > 0 || 
+                             options.startHttp !== undefined || 
+                             options.startHttps !== undefined ||
+                             options.startSwank !== undefined ||
+                             options.startTelnet !== undefined ||
+                             options.autoStart === false ||
+                             options.httpPort || options.httpsPort || 
+                             options.swankPort || options.telnetPort ||
+                             options.dockerSocket;
+      
+      if (wouldAutoStart && hasCustomConfig) {
+        logger.warn(`Using existing service at ${GENDL_HOST}:${HTTP_HOST_PORT}.`);
+        logger.warn('The following settings will be ignored when an existing service is detected:');
+        
+        // List all ignored settings that were provided
+        if (options.dockerImage) logger.warn('- Docker image (--docker-image)');
+        if (options.lispImpl) logger.warn('- Lisp implementation (--lisp-impl)');
+        if (options.mount?.length > 0) logger.warn('- Mount points (--mount)');
+        if (options.startHttp !== undefined) logger.warn('- HTTP service control (--start-http)');
+        if (options.startHttps !== undefined) logger.warn('- HTTPS service control (--start-https)');
+        if (options.startSwank !== undefined) logger.warn('- SWANK service control (--start-swank)');
+        if (options.startTelnet !== undefined) logger.warn('- TELNET service control (--start-telnet)');
+        if (options.autoStart === false) logger.warn('- Auto-start control (--no-auto-start)');
+        if (options.httpPort) logger.warn('- Internal HTTP port (--http-port)');
+        if (options.httpsPort) logger.warn('- Internal HTTPS port (--https-port)');
+        if (options.swankPort) logger.warn('- Internal SWANK port (--swank-port)');
+        if (options.telnetPort) logger.warn('- Internal TELNET port (--telnet-port)');
+        if (options.dockerSocket) logger.warn('- Docker socket path (--docker-socket)');
+      }
+      
+      // Start the MCP wrapper once Gendl is available
+      startMcpWrapper();
+    } else if (shouldStartGendlContainer()) {
       logger.info(`Gendl server not available, attempting to start container`);
       return startGendlContainer();
-    } else if (!available) {
-      logger.error(`Gendl server not available at ${GENDL_HOST}:${SWANK_HOST_PORT} and auto-start is disabled or not a local host`);
+    } else {
+      logger.error(`Gendl server not available at ${GENDL_HOST}:${HTTP_HOST_PORT} and auto-start is disabled or not a local host`);
       process.exit(1);
     }
     return Promise.resolve();
   })
   .then(() => {
-    // Start the MCP wrapper once Gendl is available
-    startMcpWrapper();
+    // If we're here from starting a container, start the MCP wrapper
+    if (!isMcpWrapperStarted) {
+      startMcpWrapper();
+    }
   })
   .catch(error => {
     logger.error(`Failed to start MCP wrapper: ${error.message}`);
@@ -166,7 +261,8 @@ checkGendlAvailability()
 // Check if the Gendl server is available
 function checkGendlAvailability() {
   return new Promise((resolve) => {
-    logger.info(`Checking if Gendl server is available at ${GENDL_HOST}:${SWANK_HOST_PORT}`);
+    // Check HTTP port first as it's the critical service for MCP operation
+    logger.info(`Checking if Gendl HTTP service is available at ${GENDL_HOST}:${HTTP_HOST_PORT}`);
     
     const socket = new net.Socket();
     const timeout = 5000; // 5 second timeout
@@ -175,19 +271,99 @@ function checkGendlAvailability() {
     socket.setTimeout(timeout);
     
     socket.on('connect', () => {
-      logger.info(`Successfully connected to Gendl server at ${GENDL_HOST}:${SWANK_HOST_PORT}`);
+      logger.info(`Successfully connected to Gendl HTTP service at ${GENDL_HOST}:${HTTP_HOST_PORT}`);
       socket.destroy();
+      
+      // If user provided specific options but we're using existing service, warn them about ignored options
+      if ((options.lispImpl || options.dockerImage || 
+           options.mount?.length > 0 || 
+           options.startHttp !== undefined || 
+           options.startHttps !== undefined ||
+           options.startSwank !== undefined ||
+           options.startTelnet !== undefined ||
+           options.autoStart === false ||
+           options.httpPort || options.httpsPort || 
+           options.swankPort || options.telnetPort ||
+           options.dockerSocket) && 
+          (GENDL_HOST !== '127.0.0.1' && GENDL_HOST !== 'localhost')) {
+        logger.warn(`Configuration options are being ignored because an existing service was detected at ${GENDL_HOST}:${HTTP_HOST_PORT}`);
+      }
+      
       resolve(true);
     });
     
     socket.on('timeout', () => {
-      logger.warn(`Connection attempt to Gendl server timed out after ${timeout}ms`);
+      logger.warn(`Connection attempt to Gendl HTTP service timed out after ${timeout}ms`);
+      socket.destroy();
+      
+      // If HTTP service not available, check SWANK as a fallback (for developer usage)
+      checkSwankAvailability().then(swankAvailable => {
+        if (swankAvailable) {
+          logger.warn(`HTTP service not detected, but SWANK is available. MCP may have limited functionality.`);
+        }
+        resolve(swankAvailable);
+      });
+    });
+    
+    socket.on('error', (error) => {
+      logger.warn(`Failed to connect to Gendl HTTP service: ${error.message}`);
+      socket.destroy();
+      
+      // If HTTP service not available, check SWANK as a fallback (for developer usage)
+      checkSwankAvailability().then(swankAvailable => {
+        if (swankAvailable) {
+          logger.warn(`HTTP service not detected, but SWANK is available. MCP may have limited functionality.`);
+        }
+        resolve(swankAvailable);
+      });
+    });
+    
+    // Attempt to connect
+    socket.connect(HTTP_HOST_PORT, GENDL_HOST);
+  });
+}
+
+// Check if SWANK is available (secondary service, mainly for developers)
+function checkSwankAvailability() {
+  return new Promise((resolve) => {
+    logger.info(`Checking if Gendl SWANK service is available at ${GENDL_HOST}:${SWANK_HOST_PORT}`);
+    
+    const socket = new net.Socket();
+    const timeout = 5000; // 5 second timeout
+    
+    // Set a timeout to abort the connection attempt
+    socket.setTimeout(timeout);
+    
+    socket.on('connect', () => {
+      logger.info(`Successfully connected to Gendl SWANK service at ${GENDL_HOST}:${SWANK_HOST_PORT}`);
+      socket.destroy();
+      
+      // If user provided specific options but we're using existing service, warn them about ignored options
+      if ((options.lispImpl || options.dockerImage || 
+           options.mount?.length > 0 || 
+           options.startHttp !== undefined || 
+           options.startHttps !== undefined ||
+           options.startSwank !== undefined ||
+           options.startTelnet !== undefined ||
+           options.autoStart === false ||
+           options.httpPort || options.httpsPort || 
+           options.swankPort || options.telnetPort ||
+           options.dockerSocket) && 
+          (GENDL_HOST !== '127.0.0.1' && GENDL_HOST !== 'localhost')) {
+        logger.warn(`Configuration options are being ignored because an existing service was detected at ${GENDL_HOST}:${SWANK_HOST_PORT}`);
+      }
+      
+      resolve(true);
+    });
+    
+    socket.on('timeout', () => {
+      logger.warn(`Connection attempt to Gendl SWANK service timed out after ${timeout}ms`);
       socket.destroy();
       resolve(false);
     });
     
     socket.on('error', (error) => {
-      logger.warn(`Failed to connect to Gendl server: ${error.message}`);
+      logger.warn(`Failed to connect to Gendl SWANK service: ${error.message}`);
       socket.destroy();
       resolve(false);
     });
@@ -199,8 +375,21 @@ function checkGendlAvailability() {
 
 // Determine if we should start a Gendl container
 function shouldStartGendlContainer() {
-  // Only start a container if auto-start is enabled and host is local
-  return AUTO_START && (GENDL_HOST === '127.0.0.1' || GENDL_HOST === 'localhost');
+  // Only start a container if:
+  // 1. Auto-start is enabled
+  // 2. Host is local (127.0.0.1 or localhost)
+  // 3. User provided custom docker image or lisp implementation, indicating they want a specific configuration
+  const isLocalHost = (GENDL_HOST === '127.0.0.1' || GENDL_HOST === 'localhost');
+  const hasCustomConfig = options.dockerImage || options.lispImpl;
+  
+  if (AUTO_START && isLocalHost) {
+    if (hasCustomConfig) {
+      logger.info('Auto-starting container with custom image/implementation configuration');
+    }
+    return true;
+  }
+  
+  return false;
 }
 
 // Check if docker is available
@@ -227,9 +416,25 @@ function isDockerAvailable() {
 // Check if a Gendl container is already running
 function isGendlContainerRunning() {
   try {
-    const command = getDockerCommand('ps', ['-q', '--filter', `publish=${SWANK_HOST_PORT}`, '--filter', `publish=${HTTP_HOST_PORT}`]);
-    const containerId = execSync(command, { encoding: 'utf8' }).trim();
-    return containerId !== '';
+    // First check HTTP port as it's the critical service for MCP operation
+    const httpCommand = getDockerCommand('ps', ['-q', '--filter', `publish=${HTTP_HOST_PORT}`]);
+    const httpContainerId = execSync(httpCommand, { encoding: 'utf8' }).trim();
+    
+    if (httpContainerId !== '') {
+      logger.info(`Found container ${httpContainerId} running HTTP service on port ${HTTP_HOST_PORT}`);
+      return true;
+    }
+    
+    // If HTTP not found, check SWANK (for developer usage)
+    const swankCommand = getDockerCommand('ps', ['-q', '--filter', `publish=${SWANK_HOST_PORT}`]);
+    const swankContainerId = execSync(swankCommand, { encoding: 'utf8' }).trim();
+    
+    if (swankContainerId !== '') {
+      logger.warn(`Found container ${swankContainerId} running SWANK on port ${SWANK_HOST_PORT}, but no HTTP service detected. MCP may have limited functionality.`);
+      return true;
+    }
+    
+    return false;
   } catch (error) {
     logger.warn(`Failed to check for running Gendl container: ${error.message}`);
     return false;
@@ -242,12 +447,99 @@ function getDockerCommand(subcommand, args = []) {
   return `docker ${subcommand} ${args.join(' ')}`;
 }
 
+// Global variable to track if MCP wrapper is started
+let isMcpWrapperStarted = false;
+
 // Global variable to store the container ID for cleanup on exit
 let gendlContainerId = null;
 
+// Check if Docker login is valid and attempt login if necessary
+async function ensureDockerLogin() {
+  return new Promise((resolve) => {
+    logger.info('Checking Docker Hub authentication status');
+    exec('docker info', (error, stdout, stderr) => {
+      // If docker info works, we have docker access
+      if (error) {
+        logger.warn(`Docker info failed: ${error.message}`);
+        resolve(false);
+        return;
+      }
+      
+      // Check if we can access Docker Hub - try a simple pull of a small public image
+      exec('docker pull hello-world:latest', (error, stdout, stderr) => {
+        if (error) {
+          logger.warn(`Docker authentication check failed: ${error.message}`);
+          logger.info('Attempting Docker Hub login...');
+          
+          // Try to login interactively or with stored credentials
+          exec('docker login', (error, stdout, stderr) => {
+            if (error) {
+              logger.warn(`Docker login failed: ${error.message}`);
+              resolve(false);
+            } else {
+              logger.info('Docker login successful');
+              resolve(true);
+            }
+          });
+        } else {
+          logger.info('Docker authentication is valid');
+          resolve(true);
+        }
+      });
+    });
+  });
+}
+
+// Pull the latest Gendl image or use existing one
+async function pullLatestGendlImage() {
+  return new Promise((resolve) => {
+    let currentImage = GENDL_DOCKER_IMAGE; // Store the current image name
+    logger.info(`Attempting to pull latest Gendl image: ${currentImage}`);
+    
+    exec(`docker pull ${currentImage}`, (error, stdout, stderr) => {
+      if (error) {
+        logger.warn(`Failed to pull latest Gendl image: ${error.message}`);
+        
+        // Check if the image exists locally
+        exec(`docker image inspect ${currentImage}`, (error, stdout, stderr) => {
+          if (error) {
+            logger.warn(`Gendl image ${currentImage} does not exist locally`);
+            // Try to pull the default image as fallback
+            const defaultImage = `dcooper8/gendl:${DEFAULT_BRANCH}-${DEFAULT_IMPL}`;
+            if (currentImage !== defaultImage) {
+              logger.info(`Trying to pull default image: ${defaultImage}`);
+              
+              exec(`docker pull ${defaultImage}`, (error, stdout, stderr) => {
+                if (error) {
+                  logger.error(`Failed to pull default Gendl image: ${error.message}`);
+                  resolve(false);
+                } else {
+                  logger.info(`Successfully pulled default Gendl image`);
+                  // Update the global variable with a new value (avoid direct assignment that could cause issues)
+                  process.env.GENDL_DOCKER_IMAGE = defaultImage;
+                  // Return the new value for the calling code to use
+                  resolve({ success: true, image: defaultImage });
+                }
+              });
+            } else {
+              resolve(false);
+            }
+          } else {
+            logger.info(`Using existing local Gendl image: ${currentImage}`);
+            resolve({ success: true, image: currentImage });
+          }
+        });
+      } else {
+        logger.info(`Successfully pulled latest Gendl image: ${currentImage}`);
+        resolve({ success: true, image: currentImage });
+      }
+    });
+  });
+}
+
 // Start a Gendl container if needed
 function startGendlContainer() {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
 	// First check if Docker is available
 	if (!isDockerAvailable()) {
 	    return reject(new Error('Docker is not available, cannot start Gendl container'));
@@ -259,13 +551,36 @@ function startGendlContainer() {
 	    return resolve();
 	}
 	
-	logger.info(`Starting Gendl container using image ${GENDL_DOCKER_IMAGE}`);
+	// Ensure Docker login and pull latest image
+	const loginStatus = await ensureDockerLogin();
+	if (loginStatus) {
+	    logger.info('Docker login confirmed, proceeding with image pull');
+	} else {
+	    logger.warn('Docker login not confirmed, will try to use local images');
+	}
+	
+	// Try to pull the latest image
+	const pullResult = await pullLatestGendlImage();
+	if (!pullResult || !pullResult.success) {
+	    logger.warn('Could not pull or find a suitable Gendl image');
+	    return reject(new Error('No suitable Gendl image available'));
+	}
+	
+	// Use the image from pullLatestGendlImage result
+	const dockerImage = pullResult.image || GENDL_DOCKER_IMAGE;
+	logger.info(`Starting Gendl container using image ${dockerImage}`);
+
+	// Get the current user's UID and GID
+        const uid = process.getuid ? process.getuid() : 1000; // Fallback to 1000 if not available (e.g., Windows)
+        const gid = process.getgid ? process.getgid() : 1000; // Fallback to 1000 if not available (e.g., Windows)
+
 	
 	// Prepare the docker run command
 	const args = [
 	    '-di', // `d`etached in background but `i`nteractive so
 		   // the lisp toplevel goes to logs and we don't die
 	    '--rm', // Automatically remove the container when it stops
+	    // '-u', `${uid}:${gid}`, // Set user and group ID to match the current user
 	    '-p', `${SWANK_HOST_PORT}:${INTERNAL_SWANK_PORT}`,
 	    '-p', `${HTTP_HOST_PORT}:${INTERNAL_HTTP_PORT}`,
 	    '-e', `START_SWANK=${START_SWANK}`,
@@ -307,7 +622,7 @@ function startGendlContainer() {
 	}
 	
 	// Add the Docker image as the last argument
-	args.push(GENDL_DOCKER_IMAGE);
+	args.push(dockerImage);
 	
 	const command = `docker run ${args.join(' ')}`;  // Fixed command construction
 	logger.debug(`Running command: ${command}`);
@@ -366,6 +681,9 @@ function waitForGendlServer(maxWaitSeconds) {
 
 // Start the MCP wrapper
 function startMcpWrapper() {
+  // Set flag to prevent double-starting
+  isMcpWrapperStarted = true;
+  
   logger.info('Starting MCP wrapper');
   
   // Create readline interface for stdin/stdout communication

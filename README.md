@@ -21,6 +21,9 @@ Gendl is available as open source software under the AGPL license at [https://gi
 - **Environment Detection**: Run directly on host or inside a container with Docker socket
 - **Improved Error Handling**: Better detection and reporting of errors
 - **Enhanced Logging**: Detailed logs with timestamps and optional debug mode
+- **Automatic Docker Image Selection**: Detects current branch and Lisp implementation
+- **Docker Hub Authentication**: Attempts to pull latest images with authentication handling
+- **Existing Service Detection**: Properly uses existing services when available
 
 ## Installation
 
@@ -51,7 +54,8 @@ Options:
   --https-port <port>          HTTPS port inside container (default: 9443)
   --swank-port <port>          SWANK port inside container (default: 4200)
   --telnet-port <port>         TELNET port inside container (default: 4023)
-  --docker-image <image>       Docker image for Gendl (default: dcooper8/gendl:release--1598-ccl)
+  --docker-image <image>       Docker image for Gendl (default: auto-detected from current branch)
+  --lisp-impl <impl>           Lisp implementation to use, ccl or sbcl (default: ccl)
   --no-auto-start              Do not auto-start Gendl docker container if not running
   --docker-socket <path>       Path to docker socket (default: /var/run/docker.sock)
   --log-file <path>            Path to log file (default: /tmp/enhanced-mcp-wrapper.log)
@@ -81,12 +85,65 @@ The script also supports configuration via environment variables:
 - `START_HTTPS`: Set to "true" to enable HTTPS service (default: false)
 - `START_SWANK`: Set to "true" to enable SWANK service (default: true)
 - `START_TELNET`: Set to "true" to enable TELNET service (default: false)
-- `GENDL_DOCKER_IMAGE`: Docker image for Gendl
+- `GENDL_DOCKER_IMAGE`: Docker image for Gendl (if not specified, will match current branch)
+- `GENDL_LISP_IMPL`: Lisp implementation to use (ccl or sbcl, default: ccl)
 - `GENDL_AUTO_START`: Set to "false" to disable auto-starting container
 - `DOCKER_SOCKET`: Path to Docker socket
 - `GENDL_LOG_FILE`: Path to log file
 - `DEBUG_GENDL`: Set to "true" to enable debug logging
 - `GENDL_MOUNTS`: Comma-separated list of mount points in format "src:dst"
+
+## Docker Image Selection
+
+The wrapper now automatically selects the appropriate Docker image based on the current branch in your gendl-mcp repository:
+
+1. The Docker image follows the naming pattern: `dcooper8/gendl:${branch}-${impl}`
+   - `${branch}` is the current git branch (release--1598, devo, or master)
+   - `${impl}` is the Lisp implementation (ccl or sbcl)
+
+2. If the current branch is not one of the supported branches (release--1598, devo, master), it defaults to `master`
+
+3. You can override the automatic selection with:
+   - The `--docker-image` command-line argument
+   - The `GENDL_DOCKER_IMAGE` environment variable
+
+4. For the Lisp implementation:
+   - Specify with `--lisp-impl` (ccl or sbcl)
+   - Or use the `GENDL_LISP_IMPL` environment variable
+   - Defaults to ccl if not specified
+
+### Docker Hub Authentication
+
+The wrapper will attempt to pull the latest version of the appropriate Docker image before starting a container. This behavior includes:
+
+1. Checking for Docker Hub authentication
+2. Attempting to log in if not authenticated (using stored credentials or interactive login)
+3. Pulling the latest image matching your configuration
+4. Falling back to using a local image if pull fails
+5. Attempting to pull the default image (master-ccl) as a last resort if needed
+
+## Existing Service Detection
+
+The wrapper will check if a Gendl service is already running on the specified host and ports before attempting to start a container:
+
+1. HTTP service (HTTP_HOST_PORT) is checked first as the primary service
+2. SWANK service (SWANK_HOST_PORT) is checked as a fallback
+
+### Parameter Behavior with Existing Services
+
+**Important:** When an existing service is detected on the specified host and port:
+
+1. All Docker-related settings will be ignored:
+   - `--docker-image` and `--lisp-impl`
+   - `--mount` volume options
+   - `--start-*` service flags
+   - `--*-port` internal container port settings
+   - `--docker-socket` path
+   - `--no-auto-start` flag
+
+2. The wrapper will display warnings about which settings are being ignored
+
+This ensures the wrapper works properly with external Gendl services while giving clear feedback about ignored configuration options.
 
 ## Usage Examples 
 
@@ -105,6 +162,13 @@ node enhanced-mcp-wrapper.js
 Specify a custom Gendl server:
 ```bash
 node enhanced-mcp-wrapper.js --host 192.168.1.100 --swank-host-port 5200 --http-host-port 10080
+```
+
+### Custom Lisp Implementation
+
+Specify a different Lisp implementation:
+```bash
+node enhanced-mcp-wrapper.js --lisp-impl sbcl
 ```
 
 ### Enabling Services
@@ -258,5 +322,3 @@ However, if you modify this wrapper and host a service based on the modified sof
 For applications that need to keep their source code closed, Genworks offers an "AGPL escape clause" in the form of a 5% self-reported quarterly royalty. More information and a payment gateway are available at [payments.genworks.com](https://payments.genworks.com).
 
 The full text of the license can be found in the COPYING.txt file in this directory.
-
-
