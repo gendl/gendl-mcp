@@ -99,9 +99,9 @@ const MOUNTS = options.mount || []; // Mount points from command line
 const ENV_MOUNTS = process.env.GENDL_MOUNTS ? process.env.GENDL_MOUNTS.split(',') : []; // Mount points from env
 const ALL_MOUNTS = [...MOUNTS, ...ENV_MOUNTS];
 
-// Path to knowledge base query script
-const GENDL_KB_SCRIPT = '/projects/gendl-mcp/scripts/gendl_kb.py';
-const GENDL_BASE_PATH = '/mcp';
+// Path to knowledge base query script - relative to current script
+const GENDL_KB_SCRIPT = path.join(__dirname, 'gendl_kb.py');
+const GENDL_BASE_PATH = process.env.GENDL_BASE_PATH || '/mcp';
 
 // Set up logging to file for debugging
 const LOG_FILE = options.logFile || process.env.GENDL_LOG_FILE || '/tmp/enhanced-mcp-wrapper.log';
@@ -831,8 +831,8 @@ function handleKnowledgeBaseQuery(request, args) {
       return;
     }
     
-    // Check knowledge base directory
-    const kbPath = '/projects/gendl-mcp/gendl-kb';
+    // Check knowledge base directory - relative to script directory
+const kbPath = path.join(__dirname, '..', 'gendl-kb');
     fs.access(kbPath, fs.constants.F_OK | fs.constants.R_OK, (err) => {
       if (err) {
         logger.error(`Knowledge base directory access error: ${err.message}`);
