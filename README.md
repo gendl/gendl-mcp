@@ -203,7 +203,7 @@ Here's an example of how to configure Claude Desktop to use this enhanced wrappe
       "command": "wsl",
       "args": [
         "node",
-        "/home/user/projects/gendl/gwl/mcp/scripts/enhanced-mcp-wrapper.js",
+        "/home/user/projects/gendl-mcp/scripts/enhanced-mcp-wrapper.js",
         "--mount", "/home/user/projects:/projects"
       ],
       "env": {
