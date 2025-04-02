@@ -93,8 +93,6 @@ const START_TELNET = options.startTelnet || process.env.START_TELNET === 'true' 
 const VERSION = '1.0.1';
 
 // Constants for Docker image configuration
-const SUPPORTED_BRANCHES = ['release--1598', 'devo', 'master'];
-const SUPPORTED_IMPLS = ['ccl', 'sbcl'];
 const DEFAULT_IMPL = 'ccl';
 const DEFAULT_BRANCH = 'master';
 
@@ -102,6 +100,7 @@ const DEFAULT_BRANCH = 'master';
 const LISP_IMPL = (options.lispImpl || process.env.GENDL_LISP_IMPL || DEFAULT_IMPL).toLowerCase();
 
 // Validate Lisp implementation
+const SUPPORTED_IMPLS = ['ccl', 'sbcl'];
 if (!SUPPORTED_IMPLS.includes(LISP_IMPL)) {
   logger.warn(`Unsupported Lisp implementation: ${LISP_IMPL}, defaulting to ${DEFAULT_IMPL}`);
 }
@@ -124,25 +123,26 @@ function getCurrentBranch() {
   }
 }
 
-// Get branch name and validate
+// Get branch name and attempt to use corresponding Docker image or fall back to master
 function getValidBranchName() {
-  const currentBranch = getCurrentBranch();
-  
-  // If current branch is in supported list, use it
-  if (SUPPORTED_BRANCHES.includes(currentBranch)) {
+  try {
+    // Try to read the current branch from git
+    const currentBranch = getCurrentBranch();
+    logger.info(`Current git branch detected: ${currentBranch}`);
     return currentBranch;
+  } catch (error) {
+    logger.warn(`Could not determine current branch: ${error.message}, using default branch`);
+    return DEFAULT_BRANCH;
   }
-  
-  // Otherwise, default to master
-  logger.warn(`Branch '${currentBranch}' is not in supported branches list: ${SUPPORTED_BRANCHES.join(', ')}. Using ${DEFAULT_BRANCH}.`);
-  return DEFAULT_BRANCH;
 }
 
 // Construct Docker image name
 function constructDockerImageName() {
-  const branch = getValidBranchName();
+  const branchName = getValidBranchName();
+  // Convert any slashes in branch name to double hyphens for Docker image tag
+  const formattedBranch = branchName.replace(/\//g, '--');
   const impl = SUPPORTED_IMPLS.includes(LISP_IMPL) ? LISP_IMPL : DEFAULT_IMPL;
-  return `dcooper8/gendl:${branch}-${impl}`;
+  return `dcooper8/gendl:${formattedBranch}-${impl}`;
 }
 
 const GENDL_DOCKER_IMAGE = options.dockerImage || process.env.GENDL_DOCKER_IMAGE || constructDockerImageName();
@@ -490,48 +490,74 @@ async function ensureDockerLogin() {
   });
 }
 
-// Pull the latest Gendl image or use existing one
+// First try to use the image matching the current branch
 async function pullLatestGendlImage() {
-  return new Promise((resolve) => {
+  return new Promise(async (resolve) => {
     let currentImage = GENDL_DOCKER_IMAGE; // Store the current image name
     logger.info(`Attempting to pull latest Gendl image: ${currentImage}`);
     
-    exec(`docker pull ${currentImage}`, (error, stdout, stderr) => {
-      if (error) {
-        logger.warn(`Failed to pull latest Gendl image: ${error.message}`);
-        
-        // Check if the image exists locally
-        exec(`docker image inspect ${currentImage}`, (error, stdout, stderr) => {
-          if (error) {
-            logger.warn(`Gendl image ${currentImage} does not exist locally`);
-            // Try to pull the default image as fallback
-            const defaultImage = `dcooper8/gendl:${DEFAULT_BRANCH}-${DEFAULT_IMPL}`;
-            if (currentImage !== defaultImage) {
-              logger.info(`Trying to pull default image: ${defaultImage}`);
-              
-              exec(`docker pull ${defaultImage}`, (error, stdout, stderr) => {
-                if (error) {
-                  logger.error(`Failed to pull default Gendl image: ${error.message}`);
-                  resolve(false);
-                } else {
-                  logger.info(`Successfully pulled default Gendl image`);
-                  // Update the global variable with a new value (avoid direct assignment that could cause issues)
-                  process.env.GENDL_DOCKER_IMAGE = defaultImage;
-                  // Return the new value for the calling code to use
-                  resolve({ success: true, image: defaultImage });
-                }
-              });
-            } else {
-              resolve(false);
-            }
-          } else {
-            logger.info(`Using existing local Gendl image: ${currentImage}`);
-            resolve({ success: true, image: currentImage });
-          }
-        });
-      } else {
-        logger.info(`Successfully pulled latest Gendl image: ${currentImage}`);
+    // Try pulling the image matching the current branch
+    try {
+      await execPromise(`docker pull ${currentImage}`);
+      logger.info(`Successfully pulled latest Gendl image: ${currentImage}`);
+      resolve({ success: true, image: currentImage });
+      return;
+    } catch (pullError) {
+      logger.warn(`Failed to pull latest Gendl image: ${pullError.message}`);
+      
+      // Check if the image exists locally
+      try {
+        await execPromise(`docker image inspect ${currentImage}`);
+        logger.info(`Using existing local Gendl image: ${currentImage}`);
         resolve({ success: true, image: currentImage });
+        return;
+      } catch (inspectError) {
+        logger.warn(`Gendl image ${currentImage} does not exist locally`);
+        
+        // If the current image is already the default, we've run out of options
+        const defaultImage = `dcooper8/gendl:${DEFAULT_BRANCH}-${DEFAULT_IMPL}`;
+        if (currentImage === defaultImage) {
+          logger.error(`No suitable Gendl image available`);
+          resolve(false);
+          return;
+        }
+        
+        // Try to pull the default image as fallback
+        logger.info(`Trying to pull default image: ${defaultImage}`);
+        try {
+          await execPromise(`docker pull ${defaultImage}`);
+          logger.info(`Successfully pulled default Gendl image`);
+          // Update the environment variable with the new value
+          process.env.GENDL_DOCKER_IMAGE = defaultImage;
+          resolve({ success: true, image: defaultImage });
+          return;
+        } catch (defaultPullError) {
+          // Try to check if default image exists locally
+          try {
+            await execPromise(`docker image inspect ${defaultImage}`);
+            logger.info(`Using existing local default Gendl image: ${defaultImage}`);
+            process.env.GENDL_DOCKER_IMAGE = defaultImage;
+            resolve({ success: true, image: defaultImage });
+            return;
+          } catch (defaultInspectError) {
+            logger.error(`Failed to find or pull default Gendl image: ${defaultPullError.message}`);
+            resolve(false);
+            return;
+          }
+        }
+      }
+    }
+  });
+}
+
+// Promise wrapper for exec
+function execPromise(command) {
+  return new Promise((resolve, reject) => {
+    exec(command, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      } else {
+        resolve(stdout.trim());
       }
     });
   });

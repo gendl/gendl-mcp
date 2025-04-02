@@ -98,10 +98,15 @@ The script also supports configuration via environment variables:
 The wrapper now automatically selects the appropriate Docker image based on the current branch in your gendl-mcp repository:
 
 1. The Docker image follows the naming pattern: `dcooper8/gendl:${branch}-${impl}`
-   - `${branch}` is the current git branch (release--1598, devo, or master)
+   - `${branch}` is the current git branch name with any slashes (`/`) converted to double hyphens (`--`)
+     - For example, `release/1598` becomes `release--1598` in the image tag
+     - `devo` branch will use the image tag `devo`
    - `${impl}` is the Lisp implementation (ccl or sbcl)
 
-2. If the current branch is not one of the supported branches (release--1598, devo, master), it defaults to `master`
+2. The script will attempt to pull or use an image matching your current branch:
+   - First tries to pull the image matching your current branch from Docker Hub
+   - If pull fails, checks if the image exists locally
+   - If neither works, falls back to the `master` branch image
 
 3. You can override the automatic selection with:
    - The `--docker-image` command-line argument
@@ -243,7 +248,13 @@ The `query_gendl_kb` tool can be invoked by Claude with a query string, and it w
 
 ## Claude Desktop Configuration
 
-Here's an example of how to configure Claude Desktop to use this enhanced wrapper:
+Here's an example of how to configure Claude Desktop to use this
+enhanced wrapper. Note that a standard filesystem server is included
+in the below example alongside the gendl server, and we suggest to
+make the same `/projects/` directory mount available for the gendl
+server as well, so Lisp can see and manage files in the same directory
+as the LLM can directly through the standard filesystem server served
+by the `mcp/filesystem` docker container image):
 
 ```json
 {
