@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Retrieve relevant Gendl documentation for a query')
-    parser.add_argument('--knowledge-base', type=str, default='/projects/xfer/gendl_knowledge_base', 
+    parser.add_argument('--knowledge-base', type=str, default='/projects/gendl-mcp/gendl-kb', 
                         help='Directory containing the processed knowledge base')
     parser.add_argument('--query', type=str, help='Query to search for')
     parser.add_argument('--interactive', action='store_true', help='Run in interactive mode')

@@ -11,7 +11,7 @@ from pathlib import Path
 
 def query_gendl_kb(query):
     """Query the Gendl knowledge base with the given query."""
-    kb_path = "/projects/xfer/gendl-mcp/gendl_knowledge_base"
+    kb_path = "/projects/gendl-mcp/gendl-kb"
     
     # First check if the knowledge base exists
     if not os.path.exists(kb_path):

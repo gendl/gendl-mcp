@@ -100,7 +100,7 @@ const ENV_MOUNTS = process.env.GENDL_MOUNTS ? process.env.GENDL_MOUNTS.split(','
 const ALL_MOUNTS = [...MOUNTS, ...ENV_MOUNTS];
 
 // Path to knowledge base query script
-const GENDL_KB_SCRIPT = '/opt/gendl-kb/gendl-kb.py';
+const GENDL_KB_SCRIPT = '/projects/gendl-mcp/scripts/gendl_kb.py';
 const GENDL_BASE_PATH = '/mcp';
 
 // Set up logging to file for debugging
@@ -832,7 +832,7 @@ function handleKnowledgeBaseQuery(request, args) {
     }
     
     // Check knowledge base directory
-    const kbPath = '/projects/xfer/gendl-mcp/gendl_knowledge_base';
+    const kbPath = '/projects/gendl-mcp/gendl-kb';
     fs.access(kbPath, fs.constants.F_OK | fs.constants.R_OK, (err) => {
       if (err) {
         logger.error(`Knowledge base directory access error: ${err.message}`);

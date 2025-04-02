@@ -23,9 +23,9 @@ def parse_arguments():
     script_dir = Path(__file__).parent
 
     parser = argparse.ArgumentParser(description='Process Gendl documentation into searchable text')
-    parser.add_argument('--input', type=str, default=str(script_dir / '../gendl_kb_data'),
+    parser.add_argument('--input', type=str, default=str(script_dir / '../gendl-kb-data'),
                       help='Input directory containing Gendl documentation')
-    parser.add_argument('--output', type=str, default=str(script_dir / '../gendl_kb'),
+    parser.add_argument('--output', type=str, default=str(script_dir / '../gendl-kb'),
                       help='Output directory for processed documentation')
     parser.add_argument('--chunk-size', type=int, default=1000,
                       help='Maximum size of text chunks')
