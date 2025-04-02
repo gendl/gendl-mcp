@@ -1,6 +1,17 @@
 # Enhanced MCP Wrapper for Gendl
 
-This is an enhanced MCP wrapper script for Gendl integration with Claude Desktop. It provides several improvements over the original wrapper script:
+This is an enhanced MCP wrapper script for Gendl integration with Claude Desktop. It provides a powerful interface between Claude and Gendl, enabling AI-assisted generative engineering design.
+
+## What is Gendl?
+
+Gendl is a Generative Programming and Knowledge Based Engineering (KBE) framework that implements powerful concepts used by cutting-edge companies for mission-critical engineering applications. With Gendl, you can:
+
+- Define complex engineering problems using a high-level declarative, object-oriented syntax
+- Generate and manipulate 3D geometry programmatically
+- Decompose complex problems into manageable object trees
+- Benefit from automatic dependency tracking and value caching
+
+Gendl is available as open source software under the AGPL license at [https://gitlab.common-lisp.net/gendl/gendl](https://gitlab.common-lisp.net/gendl/gendl).
 
 ## Features
 
@@ -244,10 +255,8 @@ This software is licensed under the GNU Affero General Public License v3.0 (AGPL
 
 However, if you modify this wrapper and host a service based on the modified software, the AGPL would require you to share your modifications with the users of that service. In other words, if you run a modified version of this software as a network service, you must make the modified source code available to the users of that service.
 
-The full text of the license can be found in the COPYING.txt file in this directory.
+For applications that need to keep their source code closed, Genworks offers an "AGPL escape clause" in the form of a 5% self-reported quarterly royalty. More information and a payment gateway are available at [payments.genworks.com](https://payments.genworks.com).
 
-Note that Gendl itself is licensed under AGPL as well, but if you need
-to deliver or host closed-source applications, Genworks offers a
-royalty-based "AGPL escape clause" at payments.genworks.com.
+The full text of the license can be found in the COPYING.txt file in this directory.
 
 
