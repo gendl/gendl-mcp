@@ -139,16 +139,30 @@ If running the wrapper inside a container, make sure to mount the Docker socket:
 docker run -v /var/run/docker.sock:/var/run/docker.sock -v /path/to/scripts:/app node:18 node /app/enhanced-mcp-wrapper.js
 ```
 
-## Knowledge Base Integration
+## Tools for Claude Integration
+
+This wrapper includes several tools that enable Claude to interact with Gendl:
+
+### Lisp Evaluation Tool
+
+The `lisp_eval` tool allows Claude to evaluate Lisp code directly within the Gendl environment. This enables Claude to:
+
+- Create and manipulate GDL objects
+- Perform complex calculations using Gendl's geometric primitives
+- Access and modify Gendl's state
+
+See the [Lisp Evaluation Examples](./lisp-eval-examples.md) file for detailed examples of how to use this tool.
+
+### Knowledge Base Integration
 
 This wrapper includes integration with a Gendl knowledge base through the `query_gendl_kb` tool. This allows Claude to search for information about Gendl/GDL (General-purpose Declarative Language) directly.
 
-The knowledge base is accessed via a Python script located at `/opt/gendl-kb/gendl-kb.py`. When packaging this wrapper, make sure to include:
+The knowledge base is accessed via a Python script located in the same directory as the wrapper script. When packaging this wrapper, make sure to include:
 
-1. The Python script for knowledge base queries
-2. The knowledge base files themselves (typically stored in `/projects/xfer/gendl-mcp/gendl_knowledge_base`)
+1. The Python script for knowledge base queries (`gendl_kb.py`)
+2. The knowledge base files themselves (typically stored in the `gendl-kb` directory relative to the script)
 
-### Knowledge Base Tool Usage
+#### Knowledge Base Tool Usage
 
 The `query_gendl_kb` tool can be invoked by Claude with a query string, and it will return relevant information from the Gendl documentation and knowledge base.
 
