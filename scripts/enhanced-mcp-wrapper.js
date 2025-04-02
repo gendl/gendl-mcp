@@ -652,58 +652,140 @@ function startMcpWrapper() {
   setupProcessEvents(rl);
 }
 
+
 // Set up process event handlers
 function setupProcessEvents(rl) {
   // Function to clean up resources on exit
-  const cleanup = () => {
-    logger.info('Wrapper script exiting');
+  const cleanup = async () => {
+    logger.info('Cleanup started'); // Log when cleanup begins
     
     // Terminate and remove the Gendl container if we started it
     if (gendlContainerId) {
-      logger.info(`Stopping Gendl container with ID: ${gendlContainerId}`);
+      logger.info(`Found container ID: ${gendlContainerId}`); // Confirm container ID is set
       try {
-        execSync(`docker stop ${gendlContainerId}`, { stdio: 'ignore' });
-        logger.info(`Successfully stopped Gendl container`);
+        const fastTerminated = await fastTerminateGendlContainer();
+        
+        if (!fastTerminated) {
+          logger.info(`Stopping Gendl container with ID: ${gendlContainerId} using standard method`);
+          execSync(`docker stop ${gendlContainerId}`, { stdio: 'ignore' });
+        } else {
+          logger.info('Fast termination succeeded'); // Log successful fast termination
+        }
       } catch (error) {
         logger.error(`Error stopping Gendl container: ${error.message}`);
       }
+    } else {
+      logger.info('No container ID found to terminate'); // Log if no container ID
     }
     
     if (logStream) {
       logStream.end();
     }
     if (rl) rl.close();
+    
+    logger.info('Cleanup completed'); // Log when cleanup finishes
   };
-  
-  process.on('exit', cleanup);
-  
-  // Keep the wrapper alive
-  process.stdin.resume();
-  
-  // Handle errors
-  process.on('uncaughtException', (error) => {
-    logger.error(`Uncaught exception: ${error.message}`);
-    logger.error(error.stack);
-  });
-  
-  process.on('unhandledRejection', (reason, promise) => {
-    logger.error(`Unhandled rejection at ${promise}: ${reason}`);
-  });
-  
+
   // Add event handlers to prevent unexpected termination
-  process.on('SIGINT', () => {
+  process.on('SIGINT', async () => {
     logger.info('Received SIGINT signal - cleaning up and exiting');
-    cleanup();
+    await cleanup();
     process.exit(0);
   });
   
-  process.on('SIGTERM', () => {
+  process.on('SIGTERM', async () => {
     logger.info('Received SIGTERM signal - cleaning up and exiting');
-    cleanup();
+    await cleanup();
     process.exit(0);
   });
-  
-  logger.info('Enhanced MCP wrapper initialized - ready to handle requests');
+
+  // Add handler for normal exit (uncaught process exit)
+  process.on('exit', (code) => {
+    logger.info(`Process exiting with code ${code} - cleanup should have run`);
+  });
+
+  // Add handler for unhandled promise rejections to catch async issues
+  process.on('unhandledRejection', (reason, promise) => {
+    logger.error(`Unhandled promise rejection: ${reason}`);
+  });
+}
+
+
+async function fastTerminateGendlContainer() {
+    if (!gendlContainerId) {
+	logger.info('No container to terminate');
+	return false;
+    }
+
+    try {
+	const containerRunning = await new Promise((resolve) => {
+	    exec(`docker inspect -f '{{.State.Running}}' ${gendlContainerId}`, (error, stdout) => {
+		if (error) {
+		    logger.warn(`Error checking container status: ${error.message}`);
+		    resolve(false);
+		} else {
+		    resolve(stdout.trim() === 'true');
+		}
+	    });
+	});
+
+	if (!containerRunning) {
+	    logger.info('Container is not running');
+	    return false;
+	}
+
+	logger.info(`Attempting fast termination of container ${gendlContainerId}`);
+	
+	logger.info('Sending lisp-eval quit command'); // Add this to confirm endpoint call
+	await new Promise((resolve, reject) => {
+	    const options = {
+		hostname: GENDL_HOST,
+		port: HTTP_HOST_PORT,
+		path: `${GENDL_BASE_PATH}/lisp-eval`,
+		method: 'POST',
+		headers: {
+		    'Content-Type': 'application/json'
+		}
+	    };
+
+	    const payload = JSON.stringify({ code: '(uiop:quit)' });
+
+	    const req = http.request(options, (res) => {
+		let data = '';
+		res.on('data', (chunk) => { data += chunk; });
+		res.on('end', () => {
+		    logger.info('Lisp quit command sent successfully');
+		    resolve();
+		});
+	    });
+
+	    req.on('error', (error) => {
+		logger.warn(`Error sending Lisp quit command: ${error.message}`);
+		reject(error);
+	    });
+
+	    req.write(payload);
+	    req.end();
+	});
+
+	// Wait a short time to allow the container to stop gracefully
+	await new Promise(resolve => setTimeout(resolve, 500));
+
+	// Force stop if still running
+	await new Promise((resolve) => {
+	    exec(`docker stop ${gendlContainerId}`, (error) => {
+		if (error) {
+		    logger.warn(`Error stopping container: ${error.message}`);
+		}
+		resolve();
+	    });
+	});
+
+	return true;
+    } catch (error) {
+	logger.error(`Fast container termination failed: ${error.message}`);
+	return false;
+    }
 }
 
 // Handle MCP initialization
@@ -863,7 +945,7 @@ async function handleHttpRequest(request, args) {
     // Prepare the request options
     const options = {
       hostname: GENDL_HOST,
-      port: HTTP_HOST_PORT, // Use HTTP port for HTTP requests
+      port: HTTP_HOST_PORT,
       path: args.path,
       method: args.method || 'GET',
       headers: {
@@ -889,14 +971,20 @@ async function handleHttpRequest(request, args) {
         return;
       }
       
-      // Return the response data
-      sendTextResponse(request, response);
+      // If rawResponse is set, return the full response object
+      if (args.rawResponse) {
+        sendTextResponse(request, JSON.stringify(response, null, 2));
+      } else {
+        // Otherwise, return just the content
+        sendTextResponse(request, response.content);
+      }
     });
   } catch (error) {
     logger.error(`Error in http_request: ${error.message}`);
     sendErrorResponse(request, -32603, `Error making HTTP request: ${error.message}`);
   }
 }
+
 
 // Helper function to make HTTP requests
 function makeHttpRequest(options, body, callback) {
@@ -940,7 +1028,13 @@ function makeHttpRequest(options, body, callback) {
         }
       }
       
-      callback(null, data);
+      // Return a comprehensive response object
+      callback(null, {
+        content: data,
+        statusCode: res.statusCode,
+        headers: res.headers,
+        finalUrl: options.path
+      });
     });
   });
   
