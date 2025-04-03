@@ -41,30 +41,30 @@ function collect(value, previous) {
 
 // Parse command line arguments
 program
-  .option('-H, --host <host>', 'Gendl server host (default: 127.0.0.1)')
-  .option('--swank-host-port <port>', 'SWANK port on host system (default: 4201)')
-  .option('--http-host-port <port>', 'HTTP port on host system (default: 9081)')
-  .option('--https-host-port <port>', 'HTTPS port on host system (default: 9444)')
-  .option('--telnet-host-port <port>', 'TELNET port on host system (default: 4024)')
-  .option('--http-port <port>', 'HTTP port inside container (default: 9080)')
-  .option('--https-port <port>', 'HTTPS port inside container (default: 9443)')
-  .option('--swank-port <port>', 'SWANK port inside container (default: 4200)')
-  .option('--telnet-port <port>', 'TELNET port inside container (default: 4023)')
-  .option('--docker-image <image>', 'Docker image for Gendl (default: auto-detected from current branch)')
-  .option('--lisp-impl <impl>', 'Lisp implementation to use, ccl or sbcl (default: ccl)')
-  .option('--no-auto-start', 'Do not auto-start Gendl docker container if not running')
-  .option('--docker-socket <path>', 'Path to docker socket (default: /var/run/docker.sock)')
-  .option('--log-file <path>', 'Path to log file (default: /tmp/mcp-wrapper.log)')
-  .option('--debug', 'Enable debug logging')
-  .option('--mount <mounts...>', 'Mount volumes in format "src:dst" (can specify multiple times)', collect, [])
-  .option('--start-http', 'Start HTTP service in Gendl container (default: true)')
-  .option('--start-https', 'Start HTTPS service in Gendl container (default: false)')
-  .option('--start-swank', 'Start SWANK service in Gendl container (default: true)')
-  .option('--start-telnet', 'Start TELNET service in Gendl container (default: false)')
-  .option('--no-use-stdio', 'Disable stdio for Lisp communication with local container (default: enabled)')
-  .option('--repl-prompt <pattern>', 'REPL prompt pattern to detect Lisp evaluation completion (default: ?)')
-  .option('--eval-timeout <ms>', 'Timeout for Lisp evaluation in milliseconds (default: 30000)')
-  .parse(process.argv);
+    .option('-H, --host <host>', 'Gendl server host (default: 127.0.0.1)')
+    .option('--swank-host-port <port>', 'SWANK port on host system (default: 4201)')
+    .option('--http-host-port <port>', 'HTTP port on host system (default: 9081)')
+    .option('--https-host-port <port>', 'HTTPS port on host system (default: 9444)')
+    .option('--telnet-host-port <port>', 'TELNET port on host system (default: 4024)')
+    .option('--http-port <port>', 'HTTP port inside container (default: 9080)')
+    .option('--https-port <port>', 'HTTPS port inside container (default: 9443)')
+    .option('--swank-port <port>', 'SWANK port inside container (default: 4200)')
+    .option('--telnet-port <port>', 'TELNET port inside container (default: 4023)')
+    .option('--docker-image <image>', 'Docker image for Gendl (default: auto-detected from current branch)')
+    .option('--lisp-impl <impl>', 'Lisp implementation to use, ccl or sbcl (default: ccl)')
+    .option('--no-auto-start', 'Do not auto-start Gendl docker container if not running')
+    .option('--docker-socket <path>', 'Path to docker socket (default: /var/run/docker.sock)')
+    .option('--log-file <path>', 'Path to log file (default: /tmp/mcp-wrapper.log)')
+    .option('--debug', 'Enable debug logging')
+    .option('--mount <mounts...>', 'Mount volumes in format "src:dst" (can specify multiple times)', collect, [])
+    .option('--start-http', 'Start HTTP service in Gendl container (default: true)')
+    .option('--start-https', 'Start HTTPS service in Gendl container (default: false)')
+    .option('--start-swank', 'Start SWANK service in Gendl container (default: true)')
+    .option('--start-telnet', 'Start TELNET service in Gendl container (default: false)')
+    .option('--use-stdio', 'Use simpl standard I/O for Lisp communication with local container (default: disabled). Note this mode results in mixed standard output with return values in lisp_eval.')
+    .option('--repl-prompt <pattern>', 'REPL prompt pattern to detect Lisp evaluation completion (default: ?)')
+    .option('--eval-timeout <ms>', 'Timeout for Lisp evaluation in milliseconds (default: 30000)')
+    .parse(process.argv);
 
 const options = program.opts();
 
@@ -105,7 +105,7 @@ const START_TELNET = options.startTelnet || process.env.START_TELNET === 'true' 
 
 // Lisp REPL communication configuration
 // Default to stdio for local containers unless explicitly disabled
-const USE_STDIO = options.useStdio !== false && process.env.USE_STDIO !== 'false';
+const USE_STDIO = options.useStdio === true || process.env.USE_STDIO !== 'true';
 
 // Default REPL prompts by implementation
 const DEFAULT_PROMPTS = {
@@ -1108,7 +1108,7 @@ function handlePingGendl(request) {
   }, 'PING');
 }
 
-// Handle lisp_eval tool with either HTTP or stdio
+// Handle lisp_eval tool with either HTTP or stdio based on mode parameter
 function handleLispEval(request, args) {
   logger.info(`Handling lisp_eval with code: ${args.code?.substring(0, 100)}${args.code?.length > 100 ? '...' : ''}`);
   
@@ -1119,6 +1119,10 @@ function handleLispEval(request, args) {
       return;
     }
     
+    // Check the mode parameter (default to 'http' if not specified)
+    const requestedMode = (args.mode || 'http').toLowerCase();
+    logger.info(`Requested mode: ${requestedMode}`);
+    
     // Check if we should use stdio for local containers
     const isLocalHost = (GENDL_HOST === '127.0.0.1' || GENDL_HOST === 'localhost');
     
@@ -1126,14 +1130,22 @@ function handleLispEval(request, args) {
     let canUseStdio = isLocalHost && global.dockerProcess && USE_STDIO;
     
     // If we don't have a direct connection but stdio is enabled, try to find and attach to the container
-    if (isLocalHost && !global.dockerProcess && USE_STDIO) {
+    if (isLocalHost && !global.dockerProcess && USE_STDIO && requestedMode === 'stdio') {
       canUseStdio = tryAttachToContainer();
     }
     
     // Check if this is a debugger command
     const isDebuggerCommand = args.debugger_mode === true;
     
-    if (canUseStdio) {
+    // If mode is explicitly set to stdio and we can't use stdio, we should warn about it
+    if (requestedMode === 'stdio' && !canUseStdio) {
+      logger.warn(`Stdio mode requested but not available. Will use HTTP mode instead.`);
+    }
+    
+    // Determine which mode to use based on requested mode and availability
+    const useStdio = (requestedMode === 'stdio' && canUseStdio);
+    
+    if (useStdio) {
       // Use stdin/stdout communication with the Docker container
       if (isDebuggerCommand) {
         logger.info(`Using stdio for Lisp debugger command with local container`);
@@ -1149,7 +1161,7 @@ function handleLispEval(request, args) {
         return;
       }
       
-      // Fall back to HTTP communication
+      // Use HTTP communication
       logger.info(`Using HTTP for Lisp evaluation with ${GENDL_HOST}`);
       handleLispEvalViaHttp(request, args);
     }

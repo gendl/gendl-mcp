@@ -338,8 +338,34 @@ The `lisp_eval` tool allows Claude to evaluate Lisp code directly within the Gen
 - Perform complex calculations using Gendl's geometric primitives
 - Access and modify Gendl's state
 
-Example usage:
+The tool accepts the following parameters:
+
+- `code` (required): The Lisp code to evaluate
+- `package` (optional): The package to use for the evaluation
+- `mode` (optional): The mode to use to talk to Gendl
+  - `http` (default): Uses HTTP communication for structured responses
+  - `stdio`: Uses standard input/output communication for a raw REPL experience
+
+**Mode Comparison:**
+
+| Feature | HTTP Mode | STDIO Mode |
+|---------|-----------|------------|
+| Response Format | Structured with separate Result and Stdout fields | Raw REPL-like output |
+| Error Handling | Traps errors and returns them as strings | Can enter interactive debugger |
+| Debugger Support | No interactive debugging | Supports interactive debugger |
+| Compatibility | Works with local & remote servers | Only for local containers started by MCP |
+| Use Case | Clean integration, simple queries | Development, debugging, complex interactions |
+
+Example usage with default HTTP mode:
 ```lisp
+(in-package :gdl-user)
+(defparameter *test-box* (make-box :width 10 :height 5 :depth 3))
+(theo *test-box* width)
+```
+
+Example usage with STDIO mode (for debugging):
+```lisp
+;; This will allow interactive debugging if errors occur
 (in-package :gdl-user)
 (defparameter *test-box* (make-box :width 10 :height 5 :depth 3))
 (theo *test-box* width)
