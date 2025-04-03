@@ -42,6 +42,7 @@ Gendl knowledge-based engineering system. It enables Claude to:
 
 The MCP wrapper implements the Model Context Protocol (MCP) to connect Claude with Gendl's capabilities. Here's how the components interact:
 
+
 ```mermaid
 flowchart TB
     User("User") <--> Claude("Claude AI Assistant")
@@ -52,7 +53,7 @@ flowchart TB
 
     Wrapper --> GendlHttp("Gendl HTTP Server")
     
-    subgraph Docker ("Docker Container")
+    subgraph Docker ["Docker Container"]
     subgraph GendlExec["Gendl Executable"]
     GendlHttp
     GendlSwank("Gendl SWANK Server")
@@ -81,8 +82,6 @@ flowchart TB
     style Endpoints fill:#bfb,stroke:#333,stroke-width:1px
     style LispEval fill:#bfb,stroke:#333,stroke-width:1px
 ```
-
-
 
 The wrapper script handles:
 1. Starting and managing the Gendl Docker container
