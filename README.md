@@ -53,13 +53,14 @@ flowchart TB
     Wrapper --> GendlHttp("Gendl HTTP Server")
     
     subgraph Docker ("Docker Container")
-    Wrapper <-- "Manages" --> Docker
     subgraph GendlExec["Gendl Executable"]
     GendlHttp
     GendlSwank("Gendl SWANK Server")
     end
     end
-    
+	
+    Wrapper <-- "Manages" --> Docker
+
     Emacs <-.-> GendlSwank
     
     KB[("Gendl Knowledge Base")] <--> Wrapper
