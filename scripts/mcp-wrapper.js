@@ -767,93 +767,39 @@ function handleInitialize(request) {
   logger.info('Initialization complete');
 }
 
+
 // Handle tool list requests
 function handleToolsList(request) {
   logger.info('Handling tools/list request');
   
-  // Define our tools
-  const toolsData = {
-    tools: [
-      {
-        name: 'http_request',
-        description: 'Make an HTTP request to any endpoint on the Gendl server',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            method: {
-              type: 'string',
-              description: 'HTTP method (GET, POST, PUT, DELETE, etc.)',
-              default: 'GET'
-            },
-            path: {
-              type: 'string',
-              description: 'The path part of the URL (e.g., /color-map)'
-            },
-            body: {
-              type: 'string',
-              description: 'Request body for POST, PUT, etc.'
-            },
-            headers: {
-              type: 'object',
-              description: 'HTTP headers as key-value pairs',
-              additionalProperties: {
-                type: 'string'
-              }
-            },
-            rawResponse: {
-              type: 'boolean',
-              description: 'If true, return the raw response instead of parsing it',
-              default: false
-            }
-          },
-          required: ['path']
-        }
-      },
-      {
-        name: 'ping_gendl',
-        description: 'Check if the Gendl server is available',
-        inputSchema: {
-          type: 'object',
-          properties: {},
-          required: []
-        }
-      },
-      {
-        name: 'lisp_eval',
-        description: 'Evaluate Lisp code on the Gendl server',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            code: {
-              type: 'string',
-              description: 'The Lisp code to evaluate'
-            },
-	      package: {
-		  type: 'string',
-		  description: 'The package to use for the evaluation (optional)'
-	      }
-          },
-            required: ['code'],
-        }
-      },
-      {
-        name: 'query_gendl_kb',
-        description: 'Search the Gendl documentation knowledge base for information about Gendl/GDL, a General-purpose Declarative Language',
-        inputSchema: {
-          type: 'object',
-          properties: {
-            query: {
-              type: 'string',
-              description: 'The search query about Gendl/GDL'
-            }
-          },
-          required: ['query']
-        }
-      }
-    ]
+  const options = {
+    hostname: GENDL_HOST,
+    port: HTTP_HOST_PORT,
+    path: '/mcp/tools/list',
+    method: 'GET'
   };
   
-  sendStandardResponse(request, toolsData);
+  makeHttpRequest(options, null, (error, response) => {
+    if (error) {
+      logger.error(`Error fetching tools list: ${error.message}`);
+      sendErrorResponse(request, -32603, `Error fetching tools list: ${error.message}`);
+      return;
+    }
+    
+    try {
+      const toolsData = JSON.parse(response.content);
+      
+      // Validate the response structure
+      if (!toolsData.tools || !Array.isArray(toolsData.tools)) {
+        throw new Error('Invalid tools list response format');
+      }
+      
+      sendStandardResponse(request, toolsData);
+    } catch (parseError) {
+      logger.error(`Error parsing tools list: ${parseError.message}`);
+      sendErrorResponse(request, -32603, `Error parsing tools list: ${parseError.message}`);
+    }
+  }, 'TOOLS-LIST');
 }
 
 // Handle tool calls
