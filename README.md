@@ -49,7 +49,7 @@ flowchart TB
     
     Claude <--> MCP("MCP Protocol")
     MCP <--> Wrapper("MCP Wrapper")
-    Wrapper <--> Docker("Docker Container")
+    Wrapper <-- "Manages" --> Docker("Docker Container")
     Wrapper --> GendlHttp("Gendl HTTP Server")
     
     subgraph Docker["Docker Container"]
@@ -79,6 +79,8 @@ flowchart TB
     style Endpoints fill:#bfb,stroke:#333,stroke-width:1px
     style LispEval fill:#bfb,stroke:#333,stroke-width:1px
 ```
+
+
 
 The wrapper script handles:
 1. Starting and managing the Gendl Docker container
