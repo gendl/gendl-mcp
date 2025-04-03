@@ -44,21 +44,35 @@ The MCP wrapper implements the Model Context Protocol (MCP) to connect Claude wi
 
 ```mermaid
 flowchart TB
-    Claude[Claude AI Assistant] <--> MCP[MCP Protocol]
-    MCP <--> Wrapper[MCP Wrapper]
-    Wrapper <--> Docker[Docker Container]
-    Docker <--> GendlHttp[Gendl HTTP Server]
-    Docker <--> GendlSwank[Gendl SWANK Server]
+    User("User") <--> Claude("Claude AI Assistant")
+    User <-.-> Emacs("Emacs Text Editor (Optional)")
     
-    KB[(Gendl Knowledge Base)] <--> Wrapper
+    Claude <--> MCP("MCP Protocol")
+    MCP <--> Wrapper("MCP Wrapper")
+    Wrapper <--> Docker("Docker Container")
+    Wrapper --> GendlHttp("Gendl HTTP Server")
     
-    GendlHttp --> Endpoints[RESTful Endpoints]
-    GendlSwank --> LispEval[Lisp Evaluation]
+    subgraph Docker["Docker Container"]
+    subgraph GendlExec["Gendl Executable"]
+    GendlHttp
+    GendlSwank("Gendl SWANK Server")
+    end
+    end
     
+    Emacs <-.-> GendlSwank
+    
+    KB[("Gendl Knowledge Base")] <--> Wrapper
+    
+    GendlHttp --> Endpoints("RESTful Endpoints")
+    GendlHttp --> LispEval("Lisp Evaluation")
+    
+    style User fill:#ff9,stroke:#333,stroke-width:2px
     style Claude fill:#f9f,stroke:#333,stroke-width:2px
+    style Emacs fill:#9ff,stroke:#333,stroke-width:2px,stroke-dasharray:5
     style Wrapper fill:#bbf,stroke:#333,stroke-width:2px
     style MCP fill:#bbf,stroke:#333,stroke-width:1px
     style Docker fill:#bfb,stroke:#333,stroke-width:2px
+    style GendlExec fill:#8f8,stroke:#333,stroke-width:2px
     style GendlHttp fill:#bfb,stroke:#333,stroke-width:1px
     style GendlSwank fill:#bfb,stroke:#333,stroke-width:1px
     style KB fill:#bfb,stroke:#333,stroke-width:1px
