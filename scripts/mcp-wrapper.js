@@ -61,6 +61,9 @@ program
   .option('--start-https', 'Start HTTPS service in Gendl container (default: false)')
   .option('--start-swank', 'Start SWANK service in Gendl container (default: true)')
   .option('--start-telnet', 'Start TELNET service in Gendl container (default: false)')
+  .option('--no-use-stdio', 'Disable stdio for Lisp communication with local container (default: enabled)')
+  .option('--repl-prompt <pattern>', 'REPL prompt pattern to detect Lisp evaluation completion (default: ?)')
+  .option('--eval-timeout <ms>', 'Timeout for Lisp evaluation in milliseconds (default: 30000)')
   .parse(process.argv);
 
 const options = program.opts();
@@ -80,12 +83,6 @@ const HTTPS_PORT = parseInt(options.httpsPort || process.env.HTTPS_PORT || '9443
 const SWANK_PORT = parseInt(options.swankPort || process.env.SWANK_PORT || '4200', 10);
 const TELNET_PORT = parseInt(options.telnetPort || process.env.TELNET_PORT || '4023', 10);
 
-// Service startup flags
-const START_HTTP = options.startHttp !== false && (process.env.START_HTTP !== 'false'); // Default to true like SWANK
-const START_HTTPS = options.startHttps || process.env.START_HTTPS === 'true' || false;
-const START_SWANK = options.startSwank !== false && (process.env.START_SWANK !== 'false'); // Default to true
-const START_TELNET = options.startTelnet || process.env.START_TELNET === 'true' || false;
-
 // Other configuration
 // Version information
 const VERSION = '1.0.1';
@@ -94,13 +91,37 @@ const VERSION = '1.0.1';
 const DEFAULT_IMPL = 'ccl';
 const DEFAULT_BRANCH = 'master';
 
+// Validate Lisp implementation
+const SUPPORTED_IMPLS = ['ccl', 'sbcl'];
+
 // Get Lisp implementation from arguments or environment variable
 const LISP_IMPL = (options.lispImpl || process.env.GENDL_LISP_IMPL || DEFAULT_IMPL).toLowerCase();
 
-// Validate Lisp implementation
-const SUPPORTED_IMPLS = ['ccl', 'sbcl'];
-// We'll check this after logger is initialized
+// Service startup flags
+const START_HTTP = options.startHttp !== false && (process.env.START_HTTP !== 'false'); // Default to true like SWANK
+const START_HTTPS = options.startHttps || process.env.START_HTTPS === 'true' || false;
+const START_SWANK = options.startSwank !== false && (process.env.START_SWANK !== 'false'); // Default to true
+const START_TELNET = options.startTelnet || process.env.START_TELNET === 'true' || false;
 
+// Lisp REPL communication configuration
+// Default to stdio for local containers unless explicitly disabled
+const USE_STDIO = options.useStdio !== false && process.env.USE_STDIO !== 'false';
+
+// Default REPL prompts by implementation
+const DEFAULT_PROMPTS = {
+  'ccl': '?',
+  'sbcl': '*'
+};
+
+// Debugger prompts by implementation (for future use)
+const DEBUGGER_PROMPTS = {
+  'ccl': '>', // CCL debugger prompt
+  'sbcl': '0]' // SBCL debugger level 0 prompt
+};
+
+// Get the appropriate REPL prompt for the selected Lisp implementation
+const REPL_PROMPT = options.replPrompt || process.env.REPL_PROMPT || DEFAULT_PROMPTS[LISP_IMPL] || '?';
+const EVAL_TIMEOUT = parseInt(options.evalTimeout || process.env.EVAL_TIMEOUT || '30000', 10);
 
 // Set up logging to file for debugging
 const LOG_FILE = options.logFile || process.env.GENDL_LOG_FILE || '/tmp/mcp-wrapper.log';
@@ -187,6 +208,7 @@ if (!SUPPORTED_IMPLS.includes(LISP_IMPL)) {
 
 logger.info(`Starting MCP wrapper with Gendl host: ${GENDL_HOST}, SWANK port: ${SWANK_HOST_PORT}, HTTP port: ${HTTP_HOST_PORT}`);
 logger.info(`Auto-start is ${AUTO_START ? 'enabled' : 'disabled'}, Docker image: ${GENDL_DOCKER_IMAGE}`);
+logger.info(`Lisp REPL communication mode: ${USE_STDIO ? 'stdio' : 'HTTP'}, Prompt: '${REPL_PROMPT}', Timeout: ${EVAL_TIMEOUT}ms`);
 if (ALL_MOUNTS.length > 0) {
   logger.info(`Configured mounts: ${ALL_MOUNTS.join(', ')}`);
 }
@@ -305,6 +327,80 @@ let isMcpWrapperStarted = false;
 
 // Global variable to store the container name for reference and logging
 let gendlContainerName = null;
+
+// Try to find and attach to an existing Gendl container
+function tryAttachToContainer() {
+  try {
+    logger.info('Attempting to find and attach to existing Gendl container');
+    
+    // Find containers using our expected ports
+    const command = `docker ps --filter "publish=${HTTP_HOST_PORT}" --format "{{.ID}}:{{.Names}}"`;
+    const result = execSync(command, { encoding: 'utf8' }).trim();
+    
+    if (!result) {
+      logger.info('No running containers found with matching port');
+      return false;
+    }
+    
+    // Parse container info
+    const containers = result.split('\n').map(line => {
+      const [id, name] = line.split(':');
+      return { id, name };
+    });
+    
+    logger.info(`Found ${containers.length} potential containers: ${JSON.stringify(containers)}`);
+    
+    if (containers.length === 0) {
+      return false;
+    }
+    
+    // Choose the first container
+    const container = containers[0];
+    gendlContainerName = container.name;
+    
+    logger.info(`Connecting to container ${container.id} (${container.name})`);
+    
+    // Try using 'exec' instead of 'attach' for better stability
+    // The -i flag keeps stdin open
+    const dockerProcess = spawn('docker', ['exec', '-i', container.id, 'ccl', '--no-init', '--quiet'], {
+      stdio: ['pipe', 'pipe', 'pipe'] // Keep stdin open with pipe
+    });
+    
+    // Add explicit exit handler to log when the process exits
+    dockerProcess.on('exit', (code, signal) => {
+      logger.error(`Docker exec process exited with code ${code} and signal ${signal}`);
+      global.dockerProcess = null;
+    });
+    
+    // Handle potential errors
+    dockerProcess.on('error', (error) => {
+      logger.error(`Error executing in container: ${error.message}`);
+      return false;
+    });
+    
+    // Store the process globally
+    global.dockerProcess = dockerProcess;
+    
+    // Setup event handlers for the process
+    dockerProcess.stdout.on('data', (data) => {
+      const output = data.toString();
+      logger.debug(`Container stdout: ${output.substring(0, 100)}${output.length > 100 ? '...' : ''}`);
+    });
+    
+    dockerProcess.stderr.on('data', (data) => {
+      logger.error(`Container stderr: ${data.toString().trim()}`);
+    });
+    
+    // Send a newline to check if the container is responsive
+    dockerProcess.stdin.write('\n');
+    
+    logger.info('Successfully started Lisp REPL in container');
+    return true;
+  } catch (error) {
+    logger.error(`Failed to connect to container: ${error.message}`);
+    return false;
+  }
+}
 
 // Check if Docker login is valid and attempt login if necessary
 async function ensureDockerLogin() {
@@ -549,6 +645,12 @@ function startGendlContainer() {
       // Store the process globally so it stays alive with the script
       global.dockerProcess = dockerProcess;
       
+      // Add explicit exit handler to log when the process exits
+      dockerProcess.on('exit', (code, signal) => {
+        logger.error(`Docker container process exited with code ${code} and signal ${signal}`);
+        global.dockerProcess = null;
+      });
+      
       // Wait briefly for the container to start before continuing
       setTimeout(() => {
         // Check if the container is running using the container name
@@ -702,8 +804,28 @@ function setupProcessEvents(rl) {
   const cleanup = async () => {
     logger.info('Cleanup started'); // Log when cleanup begins
     
-    // Note: Local containers with -i flag and --rm flag terminate automatically when this process exits
-    // We don't need to do anything to clean up the container, it happens automatically
+    // Check if we're the process that started the container or just attached to it
+    if (global.dockerProcess) {
+      // If we started the container, it will terminate automatically due to --rm flag
+      // If we attached to the container, we need to detach cleanly
+      if (gendlContainerName && !gendlContainerName.startsWith('gendl-mcp-')) {
+        // We likely attached to an existing container, so just detach
+        logger.info(`Detaching from container ${gendlContainerName}`);
+        
+        try {
+          // Send CTRL+P CTRL+Q to detach from the container
+          if (global.dockerProcess.stdin.writable) {
+            // We need to do this without actually detaching ourselves,
+            // so we'll just close our stdin pipe
+            global.dockerProcess.stdin.end();
+          }
+        } catch (error) {
+          logger.error(`Error detaching from container: ${error.message}`);
+        }
+      } else {
+        logger.info('Container will be removed automatically due to --rm flag');
+      }
+    }
     
     if (logStream) {
       logStream.end();
@@ -986,7 +1108,7 @@ function handlePingGendl(request) {
   }, 'PING');
 }
 
-// Handle lisp_eval tool with HTTP request
+// Handle lisp_eval tool with either HTTP or stdio
 function handleLispEval(request, args) {
   logger.info(`Handling lisp_eval with code: ${args.code?.substring(0, 100)}${args.code?.length > 100 ? '...' : ''}`);
   
@@ -997,57 +1119,40 @@ function handleLispEval(request, args) {
       return;
     }
     
-    // Create JSON payload for the request
-    const payload = JSON.stringify({ 
-      code: args.code,
-      ...(args.package && { package: args.package })
-    });
+    // Check if we should use stdio for local containers
+    const isLocalHost = (GENDL_HOST === '127.0.0.1' || GENDL_HOST === 'localhost');
     
-    // HTTP POST to lisp-eval endpoint with proper content type
-    const options = {
-      hostname: GENDL_HOST,
-      port: HTTP_HOST_PORT,
-      path: `${GENDL_BASE_PATH}/lisp-eval`,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Content-Length': Buffer.byteLength(payload)
+    // First check if we already have a direct stdio connection
+    let canUseStdio = isLocalHost && global.dockerProcess && USE_STDIO;
+    
+    // If we don't have a direct connection but stdio is enabled, try to find and attach to the container
+    if (isLocalHost && !global.dockerProcess && USE_STDIO) {
+      canUseStdio = tryAttachToContainer();
+    }
+    
+    // Check if this is a debugger command
+    const isDebuggerCommand = args.debugger_mode === true;
+    
+    if (canUseStdio) {
+      // Use stdin/stdout communication with the Docker container
+      if (isDebuggerCommand) {
+        logger.info(`Using stdio for Lisp debugger command with local container`);
+      } else {
+        logger.info(`Using stdio for Lisp evaluation with local container`);
       }
-    };
-    
-    // Use the common HTTP request helper
-    makeHttpRequest(options, payload, (error, response) => {
-      if (error) {
-        logger.error(`Error evaluating Lisp code: ${error.message}`);
-        sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
+      handleLispEvalViaStdio(request, args);
+    } else {
+      // Debugger mode requires stdio
+      if (isDebuggerCommand) {
+        logger.error(`Debugger mode requires local container with stdio enabled`);
+        sendErrorResponse(request, -32603, `Debugger mode requires local container with stdio enabled`);
         return;
       }
       
-      // Process the response
-      try {
-        // Try to parse as JSON
-        const result = JSON.parse(response.content);
-        
-        // Handle success/error based on the JSON structure
-        if ('success' in result) {
-          if (result.success) {
-            logger.info(`Lisp eval success result: ${result.result}`);
-            sendTextResponse(request, `Result: ${result.result}`);
-          } else {
-            logger.error(`Lisp eval error result: ${result.error || "Unknown error"}`);
-            sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${result.error || "Unknown error"}`);
-          }
-        } else {
-          // Not a standard success/error format, return as-is
-          logger.info(`Non-standard JSON format, returning as-is`);
-          sendTextResponse(request, JSON.stringify(result, null, 2));
-        }
-      } catch (e) {
-        // Not JSON, treat as text
-        logger.info(`Response is not JSON: ${e.message}`);
-        sendTextResponse(request, response.content);
-      }
-    }, 'LISP-EVAL');
+      // Fall back to HTTP communication
+      logger.info(`Using HTTP for Lisp evaluation with ${GENDL_HOST}`);
+      handleLispEvalViaHttp(request, args);
+    }
   } catch (error) {
     logger.error(`Error in lisp_eval: ${error.message}`);
     if (error.stack) {
@@ -1055,6 +1160,277 @@ function handleLispEval(request, args) {
     }
     sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
   }
+}
+
+// Handle lisp_eval tool using stdio with local Docker container
+function handleLispEvalViaStdio(request, args) {
+  // Safety check for dockerProcess
+  if (!global.dockerProcess || !global.dockerProcess.stdin || !global.dockerProcess.stdout) {
+    logger.error('Docker process or its stdio streams are not available');
+    return handleLispEvalViaHttp(request, args); // Fallback to HTTP
+  }
+  
+  const lisp_expr = args.code;
+  const packageName = args.package || 'COMMON-LISP-USER';
+  
+  logger.info(`Sending Lisp expression to container REPL via stdio`);
+  
+  // Add package prefix if requested
+  const fullExpr = packageName !== 'COMMON-LISP-USER' 
+    ? `(in-package :${packageName}) ${lisp_expr}`
+    : lisp_expr;
+    
+  // Set up variables to capture the response
+  let responseData = '';
+  let isEvaluationComplete = false;
+  let responseTimeout = null;
+  
+  // Prepare event handlers for stdout data
+  const stdoutDataHandler = (data) => {
+    const output = data.toString();
+    logger.debug(`REPL output: ${output}`);
+    
+    // Collect all output
+    responseData += output;
+    
+    // Log the current state
+    logger.debug(`Current responseData: ${responseData}`);
+    
+    // Look for prompt in both the entire response and just this output chunk
+    const responseTrimmed = responseData.trim();
+    const outputTrimmed = output.trim();
+    const debuggerPrompt = DEBUGGER_PROMPTS[LISP_IMPL];
+    
+    // Log what we're looking for
+    logger.debug(`Looking for REPL prompt: '${REPL_PROMPT}' or debugger prompt: '${debuggerPrompt}'`);
+    
+    // Check for regular REPL prompt in both places
+    const outputEndsWithPrompt = outputTrimmed.endsWith(REPL_PROMPT);
+    const responseEndsWithPrompt = responseTrimmed.endsWith(REPL_PROMPT);
+    const isReplPrompt = outputEndsWithPrompt || responseEndsWithPrompt;
+    
+    // Check for debugger prompt
+    const isDebuggerPrompt = debuggerPrompt && (
+      outputTrimmed.endsWith(debuggerPrompt) || 
+      responseTrimmed.endsWith(debuggerPrompt) ||
+      outputTrimmed.includes(debuggerPrompt)
+    );
+    
+    // Log detection status
+    logger.debug(`Prompt detection - outputEndsWithPrompt: ${outputEndsWithPrompt}, responseEndsWithPrompt: ${responseEndsWithPrompt}, isDebuggerPrompt: ${isDebuggerPrompt}`);
+    
+    // Only complete when we see a prompt
+    if (isReplPrompt || isDebuggerPrompt) {
+      if (isReplPrompt) {
+        logger.info('Detected REPL prompt - evaluation complete');
+      } else {
+        logger.info('Detected debugger prompt - evaluation entered debugger');
+      }
+      
+      // Prevent multiple completions
+      if (isEvaluationComplete) {
+        logger.debug('Evaluation already marked as complete, skipping processing');
+        return;
+      }
+      
+      isEvaluationComplete = true;
+      clearTimeout(responseTimeout);
+      
+      // Remove the stdout data handler to prevent capturing unrelated output
+      logger.info('Removing stdout data handler');
+      global.dockerProcess.stdout.removeListener('data', stdoutDataHandler);
+      
+      // Clean up response
+      let cleanedResponse = responseData;
+      
+      // For regular REPL prompt, just remove it
+      if (isReplPrompt) {
+        try {
+          // Try to extract the result - everything before the prompt
+          const promptIndex = responseData.lastIndexOf(REPL_PROMPT);
+          if (promptIndex > 0) {
+            // Find the last newline before the prompt
+            const lastNewline = responseData.lastIndexOf('\n', promptIndex);
+            if (lastNewline > 0) {
+              // Get the text between the last newline and the prompt
+              cleanedResponse = responseData.substring(0, lastNewline).trim();
+            } else {
+              // Just remove the prompt if no newline
+              cleanedResponse = responseData.replace(new RegExp(REPL_PROMPT + '$'), '').trim();
+            }
+          } else {
+            // Fallback to simple replacement
+            cleanedResponse = responseData.replace(new RegExp(REPL_PROMPT + '$'), '').trim();
+          }
+        } catch (e) {
+          logger.error(`Error cleaning response: ${e.message}`);
+          cleanedResponse = responseData.trim();
+        }
+      } 
+      // For debugger prompt, keep it in the response
+      else if (isDebuggerPrompt) {
+        // Just trim whitespace
+        cleanedResponse = responseData.trim();
+      }
+      
+      logger.info(`Lisp evaluation complete, response length: ${cleanedResponse.length}`);
+      logger.info(`Response content: "${cleanedResponse}"`);
+      logger.info(`Debugger detected: ${isDebuggerPrompt}`);
+      
+      // Add debugger metadata to help the LLM
+      if (isDebuggerPrompt) {
+        // Create a response with metadata about the debugger state
+        const responseWithMetadata = {
+          output: cleanedResponse,
+          debugger: {
+            active: true,
+            implementation: LISP_IMPL,
+            prompt: debuggerPrompt
+          }
+        };
+        
+        try {
+          logger.info('Sending debugger response to LLM');
+          sendTextResponse(request, responseWithMetadata);
+          logger.info('Debugger response sent successfully');
+        } catch (error) {
+          logger.error(`Error sending debugger response: ${error.message}`);
+        }
+      } else {
+        // Regular response without debugger
+        try {
+          logger.info('Sending regular response to LLM');
+          sendTextResponse(request, cleanedResponse);
+          logger.info('Regular response sent successfully');
+        } catch (error) {
+          logger.error(`Error sending regular response: ${error.message}`);
+        }
+      }
+    }
+  };
+  
+  // Set up timeout for evaluation
+  responseTimeout = setTimeout(() => {
+    if (!isEvaluationComplete) {
+      logger.warn(`Lisp evaluation timed out after ${EVAL_TIMEOUT}ms`);
+      global.dockerProcess.stdout.removeListener('data', stdoutDataHandler);
+      
+      // Send what we have so far plus timeout message
+      const timeoutResponse = responseData + "\n;; ERROR: Evaluation timed out";
+      sendTextResponse(request, timeoutResponse);
+    }
+  }, EVAL_TIMEOUT);
+  
+  // Set up error handler
+  const errorHandler = (error) => {
+    logger.error(`Error during Lisp evaluation via stdio: ${error.message}`);
+    clearTimeout(responseTimeout);
+    global.dockerProcess.stdout.removeListener('data', stdoutDataHandler);
+    sendErrorResponse(request, -32603, `Error during Lisp evaluation: ${error.message}`);
+  };
+  
+  // Attach the stdout data handler
+  global.dockerProcess.stdout.on('data', stdoutDataHandler);
+  
+  // Handle potential errors
+  global.dockerProcess.stdin.once('error', errorHandler);
+  global.dockerProcess.stdout.once('error', errorHandler);
+  
+  // Send the Lisp code to the container's stdin
+  try {
+    // Check if dockerProcess is still valid and writable
+    if (!global.dockerProcess || !global.dockerProcess.stdin || !global.dockerProcess.stdin.writable) {
+      logger.error('Docker process is no longer available or stdin is not writable');
+      
+      // Try to reattach to the container if it exists but our connection was lost
+      if (gendlContainerName && !global.dockerProcess) {
+        logger.info(`Attempting to reattach to container ${gendlContainerName}`);
+        // Check if container is still running
+        exec(`docker ps --filter "name=${gendlContainerName}" --format "{{.ID}}"`, (error, stdout, stderr) => {
+          if (!error && stdout.trim()) {
+            logger.info(`Container ${gendlContainerName} is still running, reattaching`);
+            tryAttachToContainer();
+          } else {
+            logger.error(`Container ${gendlContainerName} is no longer running`);
+            return handleLispEvalViaHttp(request, args); // Fall back to HTTP
+          }
+        });
+      } else {
+        return handleLispEvalViaHttp(request, args); // Fall back to HTTP
+      }
+    }
+    
+    // Send a newline first to ensure we're at a fresh prompt
+    logger.debug('Sending initial newline to REPL');
+    global.dockerProcess.stdin.write('\n');
+    
+    // Then send the actual Lisp code with a newline
+    logger.debug(`Sending Lisp expression: ${fullExpr}`);
+    global.dockerProcess.stdin.write(fullExpr + '\n');
+    
+    // Keep stdin open
+    logger.debug('Keeping stdin open after sending Lisp code');
+    
+    logger.debug(`Sent Lisp code to container: ${fullExpr}`);
+  } catch (error) {
+    logger.error(`Error sending code to container: ${error.message}`);
+    errorHandler(error);
+  }
+}
+
+// Handle lisp_eval tool with HTTP request (original implementation)
+function handleLispEvalViaHttp(request, args) {
+  // Create JSON payload for the request
+  const payload = JSON.stringify({ 
+    code: args.code,
+    ...(args.package && { package: args.package })
+  });
+  
+  // HTTP POST to lisp-eval endpoint with proper content type
+  const options = {
+    hostname: GENDL_HOST,
+    port: HTTP_HOST_PORT,
+    path: `${GENDL_BASE_PATH}/lisp-eval`,
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Content-Length': Buffer.byteLength(payload)
+    }
+  };
+  
+  // Use the common HTTP request helper
+  makeHttpRequest(options, payload, (error, response) => {
+    if (error) {
+      logger.error(`Error evaluating Lisp code: ${error.message}`);
+      sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${error.message}`);
+      return;
+    }
+    
+    // Process the response
+    try {
+      // Try to parse as JSON
+      const result = JSON.parse(response.content);
+      
+      // Handle success/error based on the JSON structure
+      if ('success' in result) {
+        if (result.success) {
+          logger.info(`Lisp eval success result: ${result.result}`);
+            sendTextResponse(request, `Result: ${result.result}, Stdout: ${result.stdout}`);
+        } else {
+          logger.error(`Lisp eval error result: ${result.error || "Unknown error"}`);
+          sendErrorResponse(request, -32603, `Error evaluating Lisp code: ${result.error || "Unknown error"}`);
+        }
+      } else {
+        // Not a standard success/error format, return as-is
+        logger.info(`Non-standard JSON format, returning as-is`);
+        sendTextResponse(request, JSON.stringify(result, null, 2));
+      }
+    } catch (e) {
+      // Not JSON, treat as text
+      logger.info(`Response is not JSON: ${e.message}`);
+      sendTextResponse(request, response.content);
+    }
+  }, 'LISP-EVAL');
 }
 
 // Handle queries to the Gendl knowledge base
@@ -1077,7 +1453,7 @@ function handleKnowledgeBaseQuery(request, args) {
     }
     
     // Check knowledge base directory - relative to script directory
-const kbPath = path.join(__dirname, '..', 'gendl-kb');
+    const kbPath = path.join(__dirname, '..', 'gendl-kb');
     fs.access(kbPath, fs.constants.F_OK | fs.constants.R_OK, (err) => {
       if (err) {
         logger.error(`Knowledge base directory access error: ${err.message}`);
@@ -1088,7 +1464,7 @@ const kbPath = path.join(__dirname, '..', 'gendl-kb');
       logger.info(`Script and KB directory verified, executing Python script`);
       
       // Execute the Python script as a child process with full path
-      const command = `python3 ${GENDL_KB_SCRIPT} "${query.replace(/"/g, '\"')}"`;  
+      const command = `python3 ${GENDL_KB_SCRIPT} "${query.replace(/"/g, '\\"')}"`;  
       logger.info(`Executing command: ${command}`);
       
       exec(command, (error, stdout, stderr) => {
