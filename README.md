@@ -52,7 +52,7 @@ flowchart TB
     Wrapper <-- "Manages" --> Docker("Docker Container")
     Wrapper --> GendlHttp("Gendl HTTP Server")
     
-    subgraph Docker["Docker Container"]
+    subgraph Docker
     subgraph GendlExec["Gendl Executable"]
     GendlHttp
     GendlSwank("Gendl SWANK Server")
