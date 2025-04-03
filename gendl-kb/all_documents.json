@@ -22568,6 +22568,32 @@
     "id": "1b69d007860df269e90fc1d66b457045"
   },
   {
+    "text": "# Capturing Console Output in Common Lisp\n\n## Technique: Using `with-output-to-string`\n\n### Overview\nThe `with-output-to-string` macro allows you to capture console output as a string instead of printing to the console.\n\n### Basic Syntax\n```lisp\n(with-output-to-string (*standard-output*)\n  ;; Code that would normally print to console\n  (function-that-prints-to-stdout))\n```\n\n### Example\n```lisp\n;; Define a function that prints to stdout\n(defun example-function ()\n  (format t \"Hello, world!\"))\n\n;; Capture the output as a string\n(let ((output (with-output-to-string (*standard-output*)\n                (example-function))))\n  ;; output will be \"Hello, world!\\n\"\n  output)\n```\n\n### Key Points\n- Redirects standard output to a string\n- Useful for testing or capturing console output\n- Includes newline characters by default\n- Works with `format`, `print`, and other stdout-writing functions\n\n### Use Cases\n- Unit testing\n- Capturing diagnostic output\n- Debugging print statements",
+    "metadata": {
+      "source": "lisp-techniques/console-output-capture.md",
+      "file_name": "console-output-capture.md",
+      "file_type": "md",
+      "content_type": "unknown",
+      "topic": "general",
+      "chunk_id": 0,
+      "chunk_count": 2
+    },
+    "id": "50cdb69070fafcf264bb8a4d9e7f7f87"
+  },
+  {
+    "text": "ne characters by default\n- Works with `format`, `print`, and other stdout-writing functions\n\n### Use Cases\n- Unit testing\n- Capturing diagnostic output\n- Debugging print statements\n- Collecting function output without side effects",
+    "metadata": {
+      "source": "lisp-techniques/console-output-capture.md",
+      "file_name": "console-output-capture.md",
+      "file_type": "md",
+      "content_type": "unknown",
+      "topic": "general",
+      "chunk_id": 1,
+      "chunk_count": 2
+    },
+    "id": "a884b5fbb57f551a2d766e46e50a6856"
+  },
+  {
     "text": "# Gendl Project Structure Best Practices\n\n## Creating a New Project with gendl-skel\n\nThe easiest way to create a new Gendl project is using the `gendl-skel` utility. Once Gendl is loaded, you can create a new project with:\n\n```lisp\n;; Load the gendl-skel package if not already loaded\n(ql:quickload :gendl-skel)\n\n;; Create a new project named \"my-project\" in the /projects/xfer/ directory\n(gendl-skel:gendl-skel :project-name \"my-project\" :base-path \"/projects/xfer/\")\n```\n\nThis will create a complete project structure with all necessary files.\n\n## Standard Directory Structure\n\nA well-organized Gendl project typically follows this structure:\n\n```\nproject-name/\n  \u251c\u2500\u2500 project-name.asd     # ASDF system definition (auto-generated)\n  \u251c\u2500\u2500 init.lisp            # Initialization file for loading the project\n  \u251c\u2500\u2500 source/              # Source code directory\n  \u2502   \u251c\u2500\u2500 package.lisp     # Package definition\n  \u2502   \u251c\u2500\u2500 file-ordering.isc # Controls file loading order",
     "metadata": {
       "source": "gendl-project-guide/gendl-project-structure.md",
