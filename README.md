@@ -47,14 +47,13 @@ flowchart TB
     User("User") <--> Claude("Claude AI Assistant")
     User <-.-> Emacs("Emacs Text Editor (Optional)")
 
-    subgraph Docker ("Docker Container")
-
     Claude <--> MCP("MCP Protocol")
     MCP <--> Wrapper("MCP Wrapper")
-    Wrapper <-- "Manages" --> Docker
+
     Wrapper --> GendlHttp("Gendl HTTP Server")
     
-
+    subgraph Docker ("Docker Container")
+    Wrapper <-- "Manages" --> Docker
     subgraph GendlExec["Gendl Executable"]
     GendlHttp
     GendlSwank("Gendl SWANK Server")
