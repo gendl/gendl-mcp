@@ -1,6 +1,76 @@
-# Enhanced MCP Wrapper for Gendl
+# Model Context Protocol (MCP) Wrapper for Gendl
 
-This is an enhanced MCP wrapper script for Gendl integration with Claude Desktop. It provides a powerful interface between Claude and Gendl, enabling AI-assisted generative engineering design.
+This is an MCP wrapper script for Gendl integration with Claude
+Desktop. It provides a powerful interface between Claude and Gendl,
+enabling AI-assisted generative engineering design.
+
+## Table of Contents
+
+- [Overview](#overview)
+- [Architecture](#architecture)
+- [What is Gendl?](#what-is-gendl)
+- [Features](#features)
+- [Installation](#installation)
+- [Configuration](#configuration)
+  - [Command-Line Arguments](#command-line-arguments)
+  - [Environment Variables](#environment-variables)
+- [Docker Integration](#docker-integration)
+  - [Docker Image Selection](#docker-image-selection)
+  - [Docker Hub Authentication](#docker-hub-authentication)
+  - [Existing Service Detection](#existing-service-detection)
+  - [Volume Mounting](#volume-mounting)
+- [Usage Examples](#usage-examples)
+- [Claude Integration](#claude-integration)
+  - [Tools for Claude](#tools-for-claude)
+  - [Claude Desktop Configuration](#claude-desktop-configuration)
+- [Real-World Examples](#real-world-examples)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
+
+## Overview
+
+The Gendl MCP wrapper provides a bridge between Claude AI and the
+Gendl knowledge-based engineering system. It enables Claude to:
+
+1. Evaluate Lisp code in the Gendl environment
+2. Make HTTP requests to Gendl endpoints
+3. Access the Gendl knowledge base
+4. Create and manipulate 3D geometry programmatically
+5. Decompose complex engineering problems into manageable object trees
+
+## Architecture
+
+The MCP wrapper implements the Model Context Protocol (MCP) to connect Claude with Gendl's capabilities. Here's how the components interact:
+
+```mermaid
+flowchart TB
+    Claude[Claude AI Assistant] <--> MCP[MCP Protocol]
+    MCP <--> Wrapper[MCP Wrapper]
+    Wrapper <--> Docker[Docker Container]
+    Docker <--> GendlHttp[Gendl HTTP Server]
+    Docker <--> GendlSwank[Gendl SWANK Server]
+    
+    KB[(Gendl Knowledge Base)] <--> Wrapper
+    
+    GendlHttp --> Endpoints[RESTful Endpoints]
+    GendlSwank --> LispEval[Lisp Evaluation]
+    
+    style Claude fill:#f9f,stroke:#333,stroke-width:2px
+    style Wrapper fill:#bbf,stroke:#333,stroke-width:2px
+    style MCP fill:#bbf,stroke:#333,stroke-width:1px
+    style Docker fill:#bfb,stroke:#333,stroke-width:2px
+    style GendlHttp fill:#bfb,stroke:#333,stroke-width:1px
+    style GendlSwank fill:#bfb,stroke:#333,stroke-width:1px
+    style KB fill:#bfb,stroke:#333,stroke-width:1px
+    style Endpoints fill:#bfb,stroke:#333,stroke-width:1px
+    style LispEval fill:#bfb,stroke:#333,stroke-width:1px
+```
+
+The wrapper script handles:
+1. Starting and managing the Gendl Docker container
+2. Routing requests between Claude and Gendl
+3. Translating between the MCP protocol and Gendl's API
+4. Error handling and logging
 
 ## What is Gendl?
 
@@ -20,7 +90,7 @@ Gendl is available as open source software under the AGPL license at [https://gi
 - **Volume Mounting**: Mount host directories into the Gendl container
 - **Environment Detection**: Run directly on host or inside a container with Docker socket
 - **Improved Error Handling**: Better detection and reporting of errors
-- **Enhanced Logging**: Detailed logs with timestamps and optional debug mode
+- **Detailed Logging**: Detailed logs with timestamps and optional debug mode
 - **Automatic Docker Image Selection**: Detects current branch and Lisp implementation
 - **Docker Hub Authentication**: Attempts to pull latest images with authentication handling
 - **Existing Service Detection**: Properly uses existing services when available
@@ -31,25 +101,29 @@ Gendl is available as open source software under the AGPL license at [https://gi
 ```bash
 cd /projects/gendl/gwl/mcp/scripts
 npm install
-chmod +x enhanced-mcp-wrapper.js
+chmod +x mcp-wrapper.js
 ```
 
-You also need docker installed.
+2. Ensure Docker is installed on your system.
 
-2. Test the script:
+3. Test the script:
 ```bash
-node enhanced-mcp-wrapper.js --help
+node mcp-wrapper.js --help
 ```
 
-## Command-Line Arguments
+## Configuration
 
-```
+You can configure the MCP wrapper using either command-line arguments or environment variables.
+
+### Command-Line Arguments
+
+```bash
 Options:
   -H, --host <host>            Gendl server host (default: 127.0.0.1)
-  --swank-host-port <port>     SWANK port on host system (default: 5200)
-  --http-host-port <port>      HTTP port on host system (default: 10080)
-  --https-host-port <port>     HTTPS port on host system (default: 10443)
-  --telnet-host-port <port>    TELNET port on host system (default: 5023)
+  --swank-host-port <port>     SWANK port on host system (default: 4201)
+  --http-host-port <port>      HTTP port on host system (default: 9081)
+  --https-host-port <port>     HTTPS port on host system (default: 9444)
+  --telnet-host-port <port>    TELNET port on host system (default: 4024)
   --http-port <port>           HTTP port inside container (default: 9080)
   --https-port <port>          HTTPS port inside container (default: 9443)
   --swank-port <port>          SWANK port inside container (default: 4200)
@@ -58,7 +132,7 @@ Options:
   --lisp-impl <impl>           Lisp implementation to use, ccl or sbcl (default: ccl)
   --no-auto-start              Do not auto-start Gendl docker container if not running
   --docker-socket <path>       Path to docker socket (default: /var/run/docker.sock)
-  --log-file <path>            Path to log file (default: /tmp/enhanced-mcp-wrapper.log)
+  --log-file <path>            Path to log file (default: /tmp/mcp-wrapper.log)
   --debug                      Enable debug logging
   --mount <mounts...>          Mount volumes in format "src:dst" (can specify multiple times)
   --start-http                 Start HTTP service in Gendl container (default: true)
@@ -68,34 +142,40 @@ Options:
   -h, --help                   Display help for command
 ```
 
-## Environment Variables
+### Environment Variables
 
 The script also supports configuration via environment variables:
 
-- `GENDL_HOST`: Gendl server host (default: 127.0.0.1)
-- `SWANK_HOST_PORT`: SWANK port on host system (default: 5200)
-- `HTTP_HOST_PORT`: HTTP port on host system (default: 10080)
-- `HTTPS_HOST_PORT`: HTTPS port on host system (default: 10443)
-- `TELNET_HOST_PORT`: TELNET port on host system (default: 5023)
-- `HTTP_PORT`: HTTP port inside container (default: 9080)
-- `HTTPS_PORT`: HTTPS port inside container (default: 9443)
-- `SWANK_PORT`: SWANK port inside container (default: 4200)
-- `TELNET_PORT`: TELNET port inside container (default: 4023)
-- `START_HTTP`: Set to "true" to enable HTTP service (default: true)
-- `START_HTTPS`: Set to "true" to enable HTTPS service (default: false)
-- `START_SWANK`: Set to "true" to enable SWANK service (default: true)
-- `START_TELNET`: Set to "true" to enable TELNET service (default: false)
-- `GENDL_DOCKER_IMAGE`: Docker image for Gendl (if not specified, will match current branch)
-- `GENDL_LISP_IMPL`: Lisp implementation to use (ccl or sbcl, default: ccl)
-- `GENDL_AUTO_START`: Set to "false" to disable auto-starting container
-- `DOCKER_SOCKET`: Path to Docker socket
-- `GENDL_LOG_FILE`: Path to log file
-- `DEBUG_GENDL`: Set to "true" to enable debug logging
-- `GENDL_MOUNTS`: Comma-separated list of mount points in format "src:dst"
+| Environment Variable | Description | Default |
+|----------------------|-------------|---------|
+| `GENDL_HOST` | Gendl server host | 127.0.0.1 |
+| `SWANK_HOST_PORT` | SWANK port on host system | 5200 |
+| `HTTP_HOST_PORT` | HTTP port on host system | 10080 |
+| `HTTPS_HOST_PORT` | HTTPS port on host system | 10443 |
+| `TELNET_HOST_PORT` | TELNET port on host system | 5023 |
+| `HTTP_PORT` | HTTP port inside container | 9080 |
+| `HTTPS_PORT` | HTTPS port inside container | 9443 |
+| `SWANK_PORT` | SWANK port inside container | 4200 |
+| `TELNET_PORT` | TELNET port inside container | 4023 |
+| `START_HTTP` | Enable HTTP service | true |
+| `START_HTTPS` | Enable HTTPS service | false |
+| `START_SWANK` | Enable SWANK service | true |
+| `START_TELNET` | Enable TELNET service | false |
+| `GENDL_DOCKER_IMAGE` | Docker image for Gendl | (auto-detected) |
+| `GENDL_LISP_IMPL` | Lisp implementation to use | ccl |
+| `GENDL_AUTO_START` | Enable auto-starting container | true |
+| `DOCKER_SOCKET` | Path to Docker socket | /var/run/docker.sock |
+| `GENDL_LOG_FILE` | Path to log file | /tmp/mcp-wrapper.log |
+| `DEBUG_GENDL` | Enable debug logging | false |
+| `GENDL_MOUNTS` | Comma-separated mount points | (none) |
 
-## Docker Image Selection
+## Docker Integration
 
-The wrapper now automatically selects the appropriate Docker image based on the current branch in your gendl-mcp repository:
+The MCP wrapper integrates closely with Docker to manage Gendl containers efficiently.
+
+### Docker Image Selection
+
+The wrapper automatically selects the appropriate Docker image based on the current branch in your gendl-mcp repository:
 
 1. The Docker image follows the naming pattern: `dcooper8/gendl:${branch}-${impl}`
    - `${branch}` is the current git branch name with any slashes (`/`) converted to double hyphens (`--`)
@@ -127,14 +207,14 @@ The wrapper will attempt to pull the latest version of the appropriate Docker im
 4. Falling back to using a local image if pull fails
 5. Attempting to pull the default image (master-ccl) as a last resort if needed
 
-## Existing Service Detection
+### Existing Service Detection
 
 The wrapper will check if a Gendl service is already running on the specified host and ports before attempting to start a container:
 
 1. HTTP service (HTTP_HOST_PORT) is checked first as the primary service
 2. SWANK service (SWANK_HOST_PORT) is checked as a fallback
 
-### Parameter Behavior with Existing Services
+#### Parameter Behavior with Existing Services
 
 **Important:** When an existing service is detected on the specified host and port:
 
@@ -150,80 +230,90 @@ The wrapper will check if a Gendl service is already running on the specified ho
 
 This ensures the wrapper works properly with external Gendl services while giving clear feedback about ignored configuration options.
 
+### Volume Mounting
+
+You can mount host directories into the Gendl container to share files between your host system and the container:
+
+```bash
+node mcp-wrapper.js --mount /home/user/projects:/projects
+```
+
+Multiple mount points can be specified:
+```bash
+node mcp-wrapper.js --mount /home/user/projects:/projects --mount /home/user/data:/data
+```
+
+Or using environment variables:
+```bash
+GENDL_MOUNTS=/home/user/projects:/projects,/home/user/data:/data node mcp-wrapper.js
+```
+
 ## Usage Examples 
 
 All the below examples can be tested on command line and used in
-`claude_desktop_config.json` configuration (see example below):
+`claude_desktop_config.json` configuration (see [Claude Desktop Configuration](#claude-desktop-configuration)).
 
 ### Basic Usage
 
 Run with default settings (localhost:5200):
 ```bash
-node enhanced-mcp-wrapper.js
+node mcp-wrapper.js
 ```
 
 ### Custom Host and Port
 
 Specify a custom Gendl server:
 ```bash
-node enhanced-mcp-wrapper.js --host 192.168.1.100 --swank-host-port 5200 --http-host-port 10080
+node mcp-wrapper.js --host 192.168.1.100 --swank-host-port 5200 --http-host-port 10080
 ```
 
 ### Custom Lisp Implementation
 
 Specify a different Lisp implementation:
 ```bash
-node enhanced-mcp-wrapper.js --lisp-impl sbcl
+node mcp-wrapper.js --lisp-impl sbcl
 ```
 
 ### Enabling Services
 
 Enable HTTP and HTTPS services:
 ```bash
-node enhanced-mcp-wrapper.js --start-http --start-https
+node mcp-wrapper.js --start-http --start-https
 ```
 
 Or using environment variables:
 ```bash
-START_HTTP=true START_HTTPS=true node enhanced-mcp-wrapper.js
+START_HTTP=true START_HTTPS=true node mcp-wrapper.js
 ```
 
 ### Configuring Internal Container Ports
 
 Specify all internal ports:
 ```bash
-node enhanced-mcp-wrapper.js --http-port 9080 --https-port 9443 --swank-port 4200 --telnet-port 4023
+node mcp-wrapper.js --http-port 9080 --https-port 9443 --swank-port 4200 --telnet-port 4023
 ```
 
 Or using environment variables:
 ```bash
-HTTP_PORT=9080 HTTPS_PORT=9443 SWANK_PORT=4200 TELNET_PORT=4023 node enhanced-mcp-wrapper.js
-```
-
-### Mounting Directories
-
-Mount host directories into the Gendl container:
-```bash
-node enhanced-mcp-wrapper.js --mount /home/user/projects:/projects
-```
-
-Multiple mount points:
-```bash
-node enhanced-mcp-wrapper.js --mount /home/user/projects:/projects --mount /home/user/data:/data
+HTTP_PORT=9080 HTTPS_PORT=9443 SWANK_PORT=4200 TELNET_PORT=4023 node mcp-wrapper.js
 ```
 
 ### Running in a Container
 
 If running the wrapper inside a container, make sure to mount the Docker socket:
 ```bash
-docker run -v /var/run/docker.sock:/var/run/docker.sock -v /path/to/scripts:/app node:18 node /app/enhanced-mcp-wrapper.js
+docker run -v /var/run/docker.sock:/var/run/docker.sock -v /path/to/scripts:/app node:18 node /app/mcp-wrapper.js
 ```
 
-## Tools for Claude Integration
+## Claude Integration
 
-This wrapper includes several tools that enable Claude to interact with Gendl:
+This wrapper enables Claude to interact with Gendl through the Model Context Protocol (MCP).
 
-### Lisp Evaluation Tool
+### Tools for Claude
+
+The MCP wrapper exposes several tools that Claude can use to interact with Gendl:
+
+#### Lisp Evaluation Tool
 
 The `lisp_eval` tool allows Claude to evaluate Lisp code directly within the Gendl environment. This enables Claude to:
 
@@ -231,30 +321,46 @@ The `lisp_eval` tool allows Claude to evaluate Lisp code directly within the Gen
 - Perform complex calculations using Gendl's geometric primitives
 - Access and modify Gendl's state
 
-See the [Lisp Evaluation Examples](./lisp-eval-examples.md) file for detailed examples of how to use this tool.
+Example usage:
+```lisp
+(in-package :gdl-user)
+(defparameter *test-box* (make-box :width 10 :height 5 :depth 3))
+(theo *test-box* width)
+```
 
-### Knowledge Base Integration
+#### HTTP Request Tool
 
-This wrapper includes integration with a Gendl knowledge base through the `query_gendl_kb` tool. This allows Claude to search for information about Gendl/GDL (General-purpose Declarative Language) directly.
+The `http_request` tool enables Claude to interact with any HTTP endpoint exposed by Gendl:
 
-The knowledge base is accessed via a Python script located in the same directory as the wrapper script. When packaging this wrapper, make sure to include:
+```json
+{
+  "path": "/color-map",
+  "method": "GET",
+  "headers": {
+    "Accept": "application/json"
+  }
+}
+```
 
-1. The Python script for knowledge base queries (`gendl_kb.py`)
-2. The knowledge base files themselves (typically stored in the `gendl-kb` directory relative to the script)
+#### Knowledge Base Integration
 
-#### Knowledge Base Tool Usage
+The `query_gendl_kb` tool allows Claude to search for information about Gendl/GDL (General-purpose Declarative Language):
 
-The `query_gendl_kb` tool can be invoked by Claude with a query string, and it will return relevant information from the Gendl documentation and knowledge base.
+```
+query_gendl_kb("How do I create a box in GDL?")
+```
 
-## Claude Desktop Configuration
+#### Ping Tool
 
-Here's an example of how to configure Claude Desktop to use this
-enhanced wrapper. Note that a standard filesystem server is included
-in the below example alongside the gendl server, and we suggest to
-make the same `/projects/` directory mount available for the gendl
-server as well, so Lisp can see and manage files in the same directory
-as the LLM can directly through the standard filesystem server served
-by the `mcp/filesystem` docker container image):
+The `ping_gendl` tool lets Claude check if the Gendl server is available:
+
+```
+ping_gendl()
+```
+
+### Claude Desktop Configuration
+
+Here's an example of how to configure Claude Desktop to use this wrapper:
 
 ```json
 {
@@ -278,7 +384,7 @@ by the `mcp/filesystem` docker container image):
       "command": "wsl",
       "args": [
         "node",
-        "/home/user/projects/gendl-mcp/scripts/enhanced-mcp-wrapper.js",
+        "/home/user/projects/gendl-mcp/scripts/mcp-wrapper.js",
         "--mount", "/home/user/projects:/projects"
       ],
       "env": {
@@ -291,9 +397,136 @@ by the `mcp/filesystem` docker container image):
 }
 ```
 
+## Real-World Examples
+
+### Example 1: Creating a Parametric Box
+
+In this example, Claude creates a parametric box in Gendl and then modifies its properties based on user requirements.
+
+**User**: "Can you create a box in Gendl with width 10, height 5, and depth 3? Then show me how to change the height to 8."
+
+**Claude**:
+
+I'll create a parametric box in Gendl using the lisp_eval tool, then show you how to modify its height.
+
+First, let's create the box with the specified dimensions:
+
+```lisp
+(in-package :gdl-user)
+
+;; First, create a box with the specified dimensions
+(defparameter *my-box* (make-object 'box 
+                         :width 10 
+                         :height 5 
+                         :depth 3))
+
+;; Let's verify the dimensions
+(list (theo *my-box* width)
+      (theo *my-box* height)
+      (theo *my-box* depth))
+```
+
+Now, let's change the height from 5 to 8:
+
+```lisp
+;; Change the height using setf with accessor
+(theo *my-box* (set-slot! :height 8))
+
+;; Alternatively, we could create a new box
+(defparameter *new-box* (make-object 'box 
+                         :width 10 
+                         :height 8  ;; Updated height
+                         :depth 3))
+
+;; Verify the new dimensions of original box
+(list (theo *my-box* width)
+      (theo *my-box* height)
+      (theo *my-box* depth))
+```
+
+You can visualize this box by creating a GWL web interface or using
+Gendl's built-in visualization tools.
+
+Would you like me to show you how to create a more complex parametric
+object or how to set up visualization?
+
+### Example 2: Querying the Knowledge Base for GDL Information
+
+**User**: "How do I create a cylinder in GDL and what parameters does
+it accept?"
+
+**Claude**:
+
+I'll use the Gendl knowledge base to find information about creating
+cylinders in GDL:
+
+The basic syntax for creating a cylinder in GDL is:
+
+```lisp
+(make-object 'cylinder :radius 5 :height 8)
+```
+
+The main parameters for cylinders are:
+- `:radius` - The radius of the cylinder (default is 1)
+- `:height` - The height of the cylinder (default is 1)
+- `:orientation` - The orientation matrix normally created with `alignment`
+- `:center` - The center point (default is (make-point 0 0 0))
+
+Here's a complete example:
+
+```lisp
+(in-package :gdl-user)
+
+(defparameter *my-cylinder* (make-object 'cylinder 
+                              :radius 2.5
+                              :height 10
+                              :orientation 
+							  (alignment :rear (the (face-normal-vector :top)))))
+
+;; Verify the parameters
+(list (theo *my-cylinder* radius)
+      (theo *my-cylinder* height)
+      (theo *my-cylinder* center))
+```
+
+Note that the `:display-controls` is a plist of display properties
+e.g. `:color` for rendering
+
+
+Would you like me to explain any other aspects of working with cylinders in GDL?
+
 ## Troubleshooting
 
-If you encounter issues:
+### Common Issues and Solutions
+
+#### Container Won't Start
+
+If the Gendl container fails to start:
+
+1. Check if Docker is running:
+```bash
+docker info
+```
+
+2. Check if the ports are already in use:
+```bash
+sudo lsof -i :5200
+sudo lsof -i :10080
+```
+
+3. Verify that the Docker image exists:
+```bash
+docker images | grep gendl
+```
+
+4. Try pulling the image manually:
+```bash
+docker pull dcooper8/gendl:master-ccl
+```
+
+#### Connection Errors
+
+If Claude can't connect to Gendl:
 
 1. Check if the Gendl server is running:
 ```bash
@@ -302,12 +535,12 @@ docker ps | grep gendl
 
 2. Enable debug logging:
 ```bash
-node enhanced-mcp-wrapper.js --debug
+node mcp-wrapper.js --debug
 ```
 
 3. Check the log file:
 ```bash
-tail -f /tmp/enhanced-mcp-wrapper.log
+tail -f /tmp/mcp-wrapper.log
 ```
 
 4. Try pinging the Gendl HTTP server:
@@ -318,6 +551,49 @@ curl http://localhost:10080/mcp/ping-gendl
 5. Try connecting to the Gendl SWANK server:
 ```bash
 telnet localhost 5200
+```
+
+#### Permission Issues
+
+If you encounter permission errors:
+
+1. Check Docker socket permissions:
+```bash
+ls -l /var/run/docker.sock
+```
+
+2. Make sure your user has permission to access Docker:
+```bash
+sudo usermod -aG docker $USER
+```
+
+3. Check mounted directory permissions:
+```bash
+ls -l /path/to/mounted/directory
+```
+
+### Diagnostic Commands
+
+Use these commands to diagnose issues:
+
+1. Check wrapper logs:
+```bash
+tail -f /tmp/mcp-wrapper.log
+```
+
+2. Check Docker container logs:
+```bash
+docker logs $(docker ps --filter "name=gendl-mcp" --format "{{.ID}}")
+```
+
+3. Check Gendl service status:
+```bash
+curl http://localhost:10080/mcp/ping-gendl
+```
+
+4. Verify Docker environment:
+```bash
+docker system info
 ```
 
 ## License
@@ -333,3 +609,4 @@ However, if you modify this wrapper and host a service based on the modified sof
 For applications that need to keep their source code closed, Genworks offers an "AGPL escape clause" in the form of a 5% self-reported quarterly royalty. More information and a payment gateway are available at [payments.genworks.com](https://payments.genworks.com).
 
 The full text of the license can be found in the COPYING.txt file in this directory.
+

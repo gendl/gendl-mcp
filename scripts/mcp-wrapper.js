@@ -3,7 +3,7 @@
 /**
  * mcp-wrapper.js
  * 
- * Copyright (C) 2025 Gendl Project Contributors
+ * Copyright (C) 2025 Genworks
  * 
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
@@ -42,10 +42,10 @@ function collect(value, previous) {
 // Parse command line arguments
 program
   .option('-H, --host <host>', 'Gendl server host (default: 127.0.0.1)')
-  .option('--swank-host-port <port>', 'SWANK port on host system (default: 5200)')
-  .option('--http-host-port <port>', 'HTTP port on host system (default: 10080)')
-  .option('--https-host-port <port>', 'HTTPS port on host system (default: 10443)')
-  .option('--telnet-host-port <port>', 'TELNET port on host system (default: 5023)')
+  .option('--swank-host-port <port>', 'SWANK port on host system (default: 4201)')
+  .option('--http-host-port <port>', 'HTTP port on host system (default: 9081)')
+  .option('--https-host-port <port>', 'HTTPS port on host system (default: 9444)')
+  .option('--telnet-host-port <port>', 'TELNET port on host system (default: 4024)')
   .option('--http-port <port>', 'HTTP port inside container (default: 9080)')
   .option('--https-port <port>', 'HTTPS port inside container (default: 9443)')
   .option('--swank-port <port>', 'SWANK port inside container (default: 4200)')
@@ -69,8 +69,8 @@ const options = program.opts();
 const GENDL_HOST = options.host || process.env.GENDL_HOST || '127.0.0.1';
 
 // Host ports (ports exposed on the host system)
-const SWANK_HOST_PORT = parseInt(options.swankHostPort || process.env.SWANK_HOST_PORT || '5200', 10);
-const HTTP_HOST_PORT = parseInt(options.httpHostPort || process.env.HTTP_HOST_PORT || '10080', 10);
+const SWANK_HOST_PORT = parseInt(options.swankHostPort || process.env.SWANK_HOST_PORT || '4201', 10);
+const HTTP_HOST_PORT = parseInt(options.httpHostPort || process.env.HTTP_HOST_PORT || '9081', 10);
 const HTTPS_HOST_PORT = parseInt(options.httpsHostPort || process.env.HTTPS_HOST_PORT || '10443', 10);
 const TELNET_HOST_PORT = parseInt(options.telnetHostPort || process.env.TELNET_HOST_PORT || '5023', 10);
 
